@@ -19,3 +19,10 @@ Route::get('/ping', function () {
     ]);
 });
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::post('/categories', [CategoryController::class, 'store']);
+Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+Route::get('/categories-trash', [CategoryController::class, 'trash']);
+Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']);
+Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);

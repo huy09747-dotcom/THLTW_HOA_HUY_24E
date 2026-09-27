@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'tendanhmuc',
@@ -14,8 +15,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Category extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'danhmuc';
+
     public $timestamps = false;
+
     public function products(): HasMany
     {
         return $this->hasMany(
@@ -24,6 +29,7 @@ class Category extends Model
             'id'
         );
     }
+
     public function scopeActive(Builder $query): void
     {
         $query->where('trangthai', 1);
