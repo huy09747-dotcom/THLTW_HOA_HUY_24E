@@ -6,15 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
-use App\Http\Requests\CategoryIndexRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoryController extends Controller
 {
     // Danh sách danh mục
-    public function index(CategoryIndexRequest $request): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
+        $data = $request->validate([
+            'page' => 'sometimes|integer|min:1|max:2147483647',
+            'per_page' => 'sometimes|integer|min:1|max:100',
+        ]);
         $categories = Category::active()
             ->orderBy('id')
             ->paginate((int) ($data['per_page'] ?? 10), ['*'], 'page', (int) ($data['page'] ?? 1))
