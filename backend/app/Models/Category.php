@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable([
-    'tendanhmuc',
-    'noibat',
-    'trangthai',
-])]
 class Category extends Model
 {
+    use SoftDeletes;
     protected $table = 'danhmuc';
     public $timestamps = false;
+    protected $fillable = [
+        'tendanhmuc',
+        'noibat',
+        'trangthai',
+    ];
     public function products(): HasMany
     {
         return $this->hasMany(
