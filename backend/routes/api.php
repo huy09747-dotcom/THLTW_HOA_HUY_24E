@@ -1,20 +1,30 @@
+```php
 <?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\BaiVietController;
+use App\Http\Controllers\Api\ChudeBaiVietController;
+use App\Http\Controllers\Api\DonhangController;
+use App\Http\Controllers\Api\ChiTietDonHangController;
+use App\Http\Controllers\Api\ChiTietGioHangController;
+use App\Http\Controllers\Api\GioHangController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-<<<<<<< Updated upstream
 
+
+// ==================== PRODUCT ====================
+
+// Danh sách sản phẩm
 Route::get('/products', [ProductController::class, 'index']);
 
-<<<<<<< Updated upstream
-=======
 // Thêm sản phẩm
 Route::post('/products', [ProductController::class, 'store']);
 
@@ -28,37 +38,46 @@ Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 // ==================== BRAND ====================
 
 // Danh sách thương hiệu
-=======
-//Api Product
-Route::get('/products', [ProductController::class, 'index']);
-//Api Brand
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 Route::get('/brands', [BrandController::class, 'index']);
+
+// Thêm thương hiệu
+Route::post('/brands', [BrandController::class, 'store']);
+
+// Sửa thương hiệu
+Route::put('/brands/{id}', [BrandController::class, 'update']);
+
+// Xóa thương hiệu
+Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
+
+
+// ==================== TEST ====================
+
 Route::get('/ping', function () {
     return response()->json([
         'message' => 'pong'
     ]);
 });
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
 
 
 // ==================== CATEGORY ====================
 
 // Danh sách danh mục
->>>>>>> Stashed changes
 Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories', [CategoryController::class, 'index']);
+
+// Thêm danh mục
 Route::post('/categories', [CategoryController::class, 'store']);
+
+// Sửa danh mục
 Route::put('/categories/{id}', [CategoryController::class, 'update']);
+
+// Xóa tạm danh mục
 Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+
+// Danh sách danh mục trong thùng rác
 Route::get('/categories-trash', [CategoryController::class, 'trash']);
+
+// Khôi phục danh mục
 Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']);
-<<<<<<< Updated upstream
-Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
-=======
 
 // Xóa vĩnh viễn danh mục
 Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
@@ -66,8 +85,6 @@ Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete
 
 // ==================== BANNER ====================
 
-=======
->>>>>>> Stashed changes
 Route::get('/banners', [BannerController::class, 'index']);
 
 
@@ -99,15 +116,3 @@ Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
 // ==================== GIỎ HÀNG ====================
 
 Route::get('/giohangs', [GioHangController::class, 'index']);
-<<<<<<< Updated upstream
-=======
-//Api Category
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::post('/categories', [CategoryController::class, 'store']);
-Route::put('/categories/{id}', [CategoryController::class, 'update']);
-Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-Route::get('/categories-trash', [CategoryController::class, 'trash']);
-Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']);
-Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
->>>>>>> Stashed changes
->>>>>>> Stashed changes
