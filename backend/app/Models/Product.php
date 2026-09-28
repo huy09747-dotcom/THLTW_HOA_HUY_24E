@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
+    protected $table = 'sanpham';
+
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class, 'thuonghieu_id');
     }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'parent_id');
