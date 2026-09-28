@@ -59,7 +59,7 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json([
-            'message' => 'Đã xóa sản phẩm thành công'
+            'message' => 'Da xoa san pham thanh cong'
         ]);
     }
 }

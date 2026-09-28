@@ -23,7 +23,7 @@ class AuthController extends Controller
             $user->refresh();
 
             return response()->json([
-                'message' => 'Đăng ký thành công.',
+                'message' => 'Dang ky thanh cong.',
                 'user' => $user,
                 'token' => $user->createToken('api')->plainTextToken,
                 'token_type' => 'Bearer',
@@ -37,15 +37,15 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json(['message' => 'Email hoặc mật khẩu không đúng.'], 401);
+            return response()->json(['message' => 'Email hoac mat khau khong dung.'], 401);
         }
 
         if ($user->status !== 1) {
-            return response()->json(['message' => 'Tài khoản không hoạt động.'], 403);
+            return response()->json(['message' => 'Tai khoan khong hoat dong.'], 403);
         }
 
         return response()->json([
-            'message' => 'Đăng nhập thành công.',
+            'message' => 'Dang nhap thanh cong.',
             'user' => $user,
             'token' => $user->createToken('api')->plainTextToken,
             'token_type' => 'Bearer',
@@ -56,6 +56,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()?->delete();
 
-        return response()->json(['message' => 'Đăng xuất thành công.']);
+        return response()->json(['message' => 'Dang xuat thanh cong.']);
     }
 }

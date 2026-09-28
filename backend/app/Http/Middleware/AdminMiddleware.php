@@ -13,7 +13,7 @@ class AdminMiddleware
         $user = $request->user();
 
         if (!$user || $user->roles !== 'admin' || $user->status !== 1) {
-            return response()->json(['message' => 'Chỉ admin mới được thực hiện thao tác này.'], 403);
+            return response()->json(['message' => 'Chi admin moi duoc thuc hien thao tac nay.'], 403);
         }
 
         return $next($request);

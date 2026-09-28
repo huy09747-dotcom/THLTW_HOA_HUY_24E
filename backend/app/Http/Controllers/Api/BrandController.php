@@ -55,7 +55,7 @@ class BrandController extends Controller
         $brand->delete();
 
         return response()->json([
-            'message' => 'Đã xóa thương hiệu thành công'
+            'message' => 'Da xoa thuong hieu thanh cong'
         ]);
     }
 }

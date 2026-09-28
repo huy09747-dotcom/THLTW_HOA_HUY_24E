@@ -48,7 +48,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
         return response()->json([
-            'message' => 'Đã chuyển danh mục vào thùng rác'
+            'message' => 'Da chuyen danh muc vao thung rac'
         ]);
     }
     // Danh sách trong thùng rác
@@ -67,7 +67,7 @@ class CategoryController extends Controller
             ->findOrFail($id);
         $category->restore();
         return response()->json([
-            'message' => 'Khôi phục danh mục thành công'
+            'message' => 'Khoi phuc danh muc thanh cong'
         ]);
     }
     // Xóa vĩnh viễn
@@ -77,7 +77,7 @@ class CategoryController extends Controller
             ->findOrFail($id);
         $category->forceDelete();
         return response()->json([
-            'message' => 'Đã xóa vĩnh viễn danh mục'
+            'message' => 'Da xoa vinh vien danh muc'
         ]);
     }
 }

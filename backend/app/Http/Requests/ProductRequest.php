@@ -77,53 +77,53 @@ class ProductRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'category_id.required' => 'Danh mục không được để trống.',
-            'category_id.integer' => 'Danh mục phải là số nguyên.',
-            'category_id.exists' => 'Danh mục không tồn tại.',
+            'category_id.required' => 'Danh muc khong duoc de trong.',
+            'category_id.integer' => 'Danh muc phai la so nguyen.',
+            'category_id.exists' => 'Danh muc khong ton tai.',
 
-            'brand_id.required' => 'Thương hiệu không được để trống.',
-            'brand_id.integer' => 'Thương hiệu phải là số nguyên.',
-            'brand_id.exists' => 'Thương hiệu không tồn tại.',
+            'brand_id.required' => 'Thuong hieu khong duoc de trong.',
+            'brand_id.integer' => 'Thuong hieu phai la so nguyen.',
+            'brand_id.exists' => 'Thuong hieu khong ton tai.',
 
-            'name.required' => 'Tên sản phẩm không được để trống.',
-            'name.string' => 'Tên sản phẩm phải là chuỗi.',
-            'name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
-            'name.unique' => 'Tên sản phẩm đã tồn tại, không được tạo trùng.',
+            'name.required' => 'Ten san pham khong duoc de trong.',
+            'name.string' => 'Ten san pham phai la chuoi.',
+            'name.max' => 'Ten san pham khong duoc vuot qua 255 ky tu.',
+            'name.unique' => 'Ten san pham da ton tai, khong duoc tao trung.',
 
-            'slug.required' => 'Slug không được để trống.',
-            'slug.string' => 'Slug phải là chuỗi.',
-            'slug.max' => 'Slug không được vượt quá 255 ký tự.',
-            'slug.unique' => 'Slug sản phẩm đã tồn tại.',
+            'slug.required' => 'Slug khong duoc de trong.',
+            'slug.string' => 'Slug phai la chuoi.',
+            'slug.max' => 'Slug khong duoc vuot qua 255 ky tu.',
+            'slug.unique' => 'Slug san pham da ton tai.',
 
-            'price_buy.required' => 'Giá nhập không được để trống.',
-            'price_buy.numeric' => 'Giá nhập phải là số.',
-            'price_buy.min' => 'Giá nhập không được nhỏ hơn 0.',
+            'price_buy.required' => 'Gia nhap khong duoc de trong.',
+            'price_buy.numeric' => 'Gia nhap phai la so.',
+            'price_buy.min' => 'Gia nhap khong duoc nho hon 0.',
 
-            'price_sale.numeric' => 'Giá bán phải là số.',
-            'price_sale.min' => 'Giá bán không được nhỏ hơn 0.',
+            'price_sale.numeric' => 'Gia ban phai la so.',
+            'price_sale.min' => 'Gia ban khong duoc nho hon 0.',
 
-            'image.required' => 'Hình ảnh không được để trống.',
+            'image.required' => 'Hinh anh khong duoc de trong.',
 
-            'qty.required' => 'Số lượng không được để trống.',
-            'qty.integer' => 'Số lượng phải là số nguyên.',
-            'qty.min' => 'Số lượng không được nhỏ hơn 0.',
+            'qty.required' => 'So luong khong duoc de trong.',
+            'qty.integer' => 'So luong phai la so nguyen.',
+            'qty.min' => 'So luong khong duoc nho hon 0.',
 
-            'detail.required' => 'Chi tiết sản phẩm không được để trống.',
+            'detail.required' => 'Chi tiet san pham khong duoc de trong.',
 
-            'status.required' => 'Trạng thái không được để trống.',
-            'status.integer' => 'Trạng thái phải là số nguyên.',
+            'status.required' => 'Trang thai khong duoc de trong.',
+            'status.integer' => 'Trang thai phai la so nguyen.',
 
-            'sku.unique' => 'Mã SKU đã tồn tại.',
-            'sku.max' => 'Mã SKU không được vượt quá 50 ký tự.',
+            'sku.unique' => 'Ma SKU da ton tai.',
+            'sku.max' => 'Ma SKU khong duoc vuot qua 50 ky tu.',
 
-            'unit.max' => 'Đơn vị không được vượt quá 30 ký tự.',
+            'unit.max' => 'Don vi khong duoc vuot qua 30 ky tu.',
 
-            'prep_minutes.integer' => 'Thời gian chuẩn bị phải là số nguyên.',
-            'prep_minutes.min' => 'Thời gian chuẩn bị không được nhỏ hơn 0.',
+            'prep_minutes.integer' => 'Thoi gian chuan bi phai la so nguyen.',
+            'prep_minutes.min' => 'Thoi gian chuan bi khong duoc nho hon 0.',
 
-            'is_available.boolean' => 'Trạng thái bán phải là true hoặc false.',
+            'is_available.boolean' => 'Trang thai ban phai la true hoac false.',
 
-            'is_featured.boolean' => 'Trạng thái nổi bật phải là true hoặc false.',
+            'is_featured.boolean' => 'Trang thai noi bat phai la true hoac false.',
         ];
     }
 }
