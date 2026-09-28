@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BrandRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BrandController extends Controller
@@ -13,41 +13,36 @@ class BrandController extends Controller
     // Danh sách thương hiệu
     public function index(): AnonymousResourceCollection
     {
-        $brands = Brand::with('products')->get();
+        $brands = Brand::with('products')
+            ->latest()
+            ->paginate(10);
 
         return BrandResource::collection($brands);
     }
 
-    // Thêm thương hiệu
-    public function store(Request $request)
+    // Chi tiết thương hiệu
+    public function show($id)
     {
-        $request->validate([
-            'tenthuonghieu' => 'required|string|max:255',
-            'trangthai' => 'required|integer',
-        ]);
+        $brand = Brand::with('products')
+            ->findOrFail($id);
 
-        $brand = Brand::create([
-            'tenthuonghieu' => $request->tenthuonghieu,
-            'trangthai' => $request->trangthai,
-        ]);
+        return new BrandResource($brand);
+    }
+
+    // Thêm thương hiệu
+    public function store(BrandRequest $request)
+    {
+        $brand = Brand::create($request->validated());
 
         return new BrandResource($brand);
     }
 
     // Sửa thương hiệu
-    public function update(Request $request, $id)
+    public function update(BrandRequest $request, $id)
     {
         $brand = Brand::findOrFail($id);
 
-        $request->validate([
-            'tenthuonghieu' => 'required|string|max:255',
-            'trangthai' => 'required|integer',
-        ]);
-
-        $brand->update([
-            'tenthuonghieu' => $request->tenthuonghieu,
-            'trangthai' => $request->trangthai,
-        ]);
+        $brand->update($request->validated());
 
         return new BrandResource($brand);
     }
