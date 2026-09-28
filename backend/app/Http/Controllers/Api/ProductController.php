@@ -3,80 +3,55 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
 {
+    // Danh sách sản phẩm
     public function index(): AnonymousResourceCollection
     {
-        $products = Product::with('brand')->get();
+        $products = Product::with(['category', 'brand'])
+            ->latest()
+            ->paginate(10);
 
         return ProductResource::collection($products);
     }
 
-    public function store(Request $request)
+    // Chi tiết sản phẩm
+    public function show($id)
     {
-        $request->validate([
-            'danhmuc_id' => 'required|integer',
-            'thuonghieu_id' => 'required|integer',
-            'tensanpham' => 'required|string|max:255',
-            'hinhanh' => 'nullable|string|max:255',
-            'gia' => 'required|numeric',
-            'giakhuyenmai' => 'nullable|numeric',
-            'mota' => 'nullable|string',
-            'soluongton' => 'required|integer',
-            'trangthai' => 'required|integer',
-        ]);
-
-        $product = Product::create([
-            'danhmuc_id' => $request->danhmuc_id,
-            'thuonghieu_id' => $request->thuonghieu_id,
-            'tensanpham' => $request->tensanpham,
-            'hinhanh' => $request->hinhanh,
-            'gia' => $request->gia,
-            'giakhuyenmai' => $request->giakhuyenmai,
-            'mota' => $request->mota,
-            'soluongton' => $request->soluongton,
-            'trangthai' => $request->trangthai,
-        ]);
+        $product = Product::with(['category', 'brand'])
+            ->findOrFail($id);
 
         return new ProductResource($product);
     }
 
-    public function update(Request $request, $id)
+    // Thêm sản phẩm
+    public function store(ProductRequest $request)
+    {
+        $product = Product::create($request->validated());
+
+        $product->load(['category', 'brand']);
+
+        return new ProductResource($product);
+    }
+
+    // Sửa sản phẩm
+    public function update(ProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
 
-        $request->validate([
-            'danhmuc_id' => 'required|integer',
-            'thuonghieu_id' => 'required|integer',
-            'tensanpham' => 'required|string|max:255',
-            'hinhanh' => 'nullable|string|max:255',
-            'gia' => 'required|numeric',
-            'giakhuyenmai' => 'nullable|numeric',
-            'mota' => 'nullable|string',
-            'soluongton' => 'required|integer',
-            'trangthai' => 'required|integer',
-        ]);
+        $product->update($request->validated());
 
-        $product->update([
-            'danhmuc_id' => $request->danhmuc_id,
-            'thuonghieu_id' => $request->thuonghieu_id,
-            'tensanpham' => $request->tensanpham,
-            'hinhanh' => $request->hinhanh,
-            'gia' => $request->gia,
-            'giakhuyenmai' => $request->giakhuyenmai,
-            'mota' => $request->mota,
-            'soluongton' => $request->soluongton,
-            'trangthai' => $request->trangthai,
-        ]);
+        $product->load(['category', 'brand']);
 
         return new ProductResource($product);
     }
 
+    // Xóa sản phẩm
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
