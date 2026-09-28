@@ -1,4 +1,3 @@
-```php
 <?php
 
 use Illuminate\Http\Request;
@@ -7,15 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
-<<<<<<< HEAD
-// use App\Http\Controllers\Api\BannerController;
-// use App\Http\Controllers\Api\BaiVietController;
-// use App\Http\Controllers\Api\ChudeBaiVietController;
-// use App\Http\Controllers\Api\DonhangController;
-// use App\Http\Controllers\Api\ChiTietDonHangController;
-// use App\Http\Controllers\Api\ChiTietGioHangController;
-// use App\Http\Controllers\Api\GioHangController;
-=======
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\BaiVietController;
 use App\Http\Controllers\Api\ChudeBaiVietController;
@@ -23,7 +13,6 @@ use App\Http\Controllers\Api\DonhangController;
 use App\Http\Controllers\Api\ChiTietDonHangController;
 use App\Http\Controllers\Api\ChiTietGioHangController;
 use App\Http\Controllers\Api\GioHangController;
->>>>>>> main
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -95,39 +84,6 @@ Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete
 
 // ==================== BANNER ====================
 
-<<<<<<< HEAD
-// Route::get('/banners', [BannerController::class, 'index']);
-
-
-// // ==================== BÀI VIẾT ====================
-
-// Route::get('/baiviets', [BaiVietController::class, 'index']);
-
-
-// // ==================== CHỦ ĐỀ BÀI VIẾT ====================
-
-// Route::get('/chudebaiviets', [ChudeBaiVietController::class, 'index']);
-
-
-// // ==================== ĐƠN HÀNG ====================
-
-// Route::get('/donhangs', [DonhangController::class, 'index']);
-
-
-// // ==================== CHI TIẾT ĐƠN HÀNG ====================
-
-// Route::get('/chitietdonhangs', [ChiTietDonHangController::class, 'index']);
-
-
-// // ==================== CHI TIẾT GIỎ HÀNG ====================
-
-// Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
-
-
-// // ==================== GIỎ HÀNG ====================
-
-// Route::get('/giohangs', [GioHangController::class, 'index']);
-=======
 Route::get('/banners', [BannerController::class, 'index']);
 
 
@@ -159,4 +115,3 @@ Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
 // ==================== GIỎ HÀNG ====================
 
 Route::get('/giohangs', [GioHangController::class, 'index']);
->>>>>>> main
