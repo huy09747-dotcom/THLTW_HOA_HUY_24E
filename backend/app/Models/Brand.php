@@ -9,6 +9,13 @@ class Brand extends Model
 {
     protected $table = 'thuonghieu';
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'tenthuonghieu',
+        'trangthai',
+    ];
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'thuonghieu_id');
