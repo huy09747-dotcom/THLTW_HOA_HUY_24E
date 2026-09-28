@@ -19,7 +19,6 @@ class CategoryController extends Controller
 
         return CategoryResource::collection($categories);
     }
-
     // Thêm danh mục
     public function store(Request $request)
     {
@@ -28,7 +27,6 @@ class CategoryController extends Controller
             'noibat' => 'required|integer',
             'trangthai' => 'required|integer',
         ]);
-
         $category = Category::create([
             'tendanhmuc' => $request->tendanhmuc,
             'noibat' => $request->noibat,
@@ -37,46 +35,37 @@ class CategoryController extends Controller
 
         return new CategoryResource($category);
     }
-
     // Sửa danh mục
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-
         $request->validate([
             'tendanhmuc' => 'required|string|max:255',
             'noibat' => 'required|integer',
             'trangthai' => 'required|integer',
         ]);
-
         $category->update([
             'tendanhmuc' => $request->tendanhmuc,
             'noibat' => $request->noibat,
             'trangthai' => $request->trangthai,
         ]);
-
         return new CategoryResource($category);
     }
-
     // Xóa tạm -> đưa vào thùng rác
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
-
         $category->delete();
-
         return response()->json([
             'message' => 'Đã chuyển danh mục vào thùng rác'
         ]);
     }
-
     // Danh sách trong thùng rác
     public function trash(): AnonymousResourceCollection
     {
         $categories = Category::onlyTrashed()
             ->orderBy('id')
             ->get();
-
         return CategoryResource::collection($categories);
     }
 
@@ -85,22 +74,17 @@ class CategoryController extends Controller
     {
         $category = Category::onlyTrashed()
             ->findOrFail($id);
-
         $category->restore();
-
         return response()->json([
             'message' => 'Khôi phục danh mục thành công'
         ]);
     }
-
     // Xóa vĩnh viễn
     public function forceDelete($id)
     {
         $category = Category::onlyTrashed()
             ->findOrFail($id);
-
         $category->forceDelete();
-
         return response()->json([
             'message' => 'Đã xóa vĩnh viễn danh mục'
         ]);
