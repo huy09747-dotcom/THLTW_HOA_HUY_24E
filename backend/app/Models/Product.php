@@ -10,6 +10,20 @@ class Product extends Model
 {
     protected $table = 'sanpham';
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'danhmuc_id',
+        'thuonghieu_id',
+        'tensanpham',
+        'hinhanh',
+        'gia',
+        'giakhuyenmai',
+        'mota',
+        'soluongton',
+        'trangthai',
+    ];
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class, 'thuonghieu_id');
