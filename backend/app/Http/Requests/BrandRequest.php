@@ -48,25 +48,25 @@ class BrandRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Tên thương hiệu không được để trống.',
-            'name.string' => 'Tên thương hiệu phải là chuỗi.',
-            'name.max' => 'Tên thương hiệu không được vượt quá 255 ký tự.',
-            'name.unique' => 'Tên thương hiệu đã tồn tại, không được tạo trùng.',
+            'name.required' => 'Ten thuong hieu khong duoc de trong.',
+            'name.string' => 'Ten thuong hieu phai la chuoi.',
+            'name.max' => 'Ten thuong hieu khong duoc vuot qua 255 ky tu.',
+            'name.unique' => 'Ten thuong hieu da ton tai, khong duoc tao trung.',
 
-            'slug.required' => 'Slug không được để trống.',
-            'slug.string' => 'Slug phải là chuỗi.',
-            'slug.max' => 'Slug không được vượt quá 255 ký tự.',
-            'slug.unique' => 'Slug thương hiệu đã tồn tại.',
+            'slug.required' => 'Slug khong duoc de trong.',
+            'slug.string' => 'Slug phai la chuoi.',
+            'slug.max' => 'Slug khong duoc vuot qua 255 ky tu.',
+            'slug.unique' => 'Slug thuong hieu da ton tai.',
 
-            'sort_order.integer' => 'Thứ tự phải là số nguyên.',
-            'sort_order.min' => 'Thứ tự không được nhỏ hơn 0.',
+            'sort_order.integer' => 'Thu tu phai la so nguyen.',
+            'sort_order.min' => 'Thu tu khong duoc nho hon 0.',
 
-            'description.required' => 'Mô tả không được để trống.',
+            'description.required' => 'Mo ta khong duoc de trong.',
 
-            'content.required' => 'Nội dung không được để trống.',
+            'content.required' => 'Noi dung khong duoc de trong.',
 
-            'status.required' => 'Trạng thái không được để trống.',
-            'status.integer' => 'Trạng thái phải là số nguyên.',
+            'status.required' => 'Trang thai khong duoc de trong.',
+            'status.integer' => 'Trang thai phai la so nguyen.',
         ];
     }
 }

@@ -44,11 +44,11 @@ class CategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Tên danh mục không được để trống.',
-            'name.unique' => 'Tên danh mục đã tồn tại.',
-            'slug.required' => 'Slug không được để trống.',
-            'slug.unique' => 'Slug đã tồn tại.',
-            'status.required' => 'Trạng thái không được để trống.',
+            'name.required' => 'Ten danh muc khong duoc de trong.',
+            'name.unique' => 'Ten danh muc da ton tai.',
+            'slug.required' => 'Slug khong duoc de trong.',
+            'slug.unique' => 'Slug da ton tai.',
+            'status.required' => 'Trang thai khong duoc de trong.',
         ];
     }
 }
