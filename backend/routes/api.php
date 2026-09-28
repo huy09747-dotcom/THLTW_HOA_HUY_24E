@@ -13,10 +13,8 @@ use App\Http\Controllers\Api\DonhangController;
 use App\Http\Controllers\Api\ChiTietDonHangController;
 use App\Http\Controllers\Api\ChiTietGioHangController;
 use App\Http\Controllers\Api\GioHangController;
+use App\Http\Controllers\Api\AuthController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 
 // ==================== PRODUCT ====================
@@ -25,13 +23,13 @@ Route::get('/user', function (Request $request) {
 Route::get('/products', [ProductController::class, 'index']);
 
 // Thêm sản phẩm
-Route::post('/products', [ProductController::class, 'store']);
+Route::post('/products', [ProductController::class, 'store'])->middleware(['auth:sanctum', 'admin']);
 
 // Sửa sản phẩm
-Route::put('/products/{id}', [ProductController::class, 'update']);
+Route::put('/products/{id}', [ProductController::class, 'update'])->middleware(['auth:sanctum', 'admin']);
 
 // Xóa sản phẩm
-Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== BRAND ====================
@@ -40,13 +38,13 @@ Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 Route::get('/brands', [BrandController::class, 'index']);
 
 // Thêm thương hiệu
-Route::post('/brands', [BrandController::class, 'store']);
+Route::post('/brands', [BrandController::class, 'store'])->middleware(['auth:sanctum', 'admin']);
 
 // Sửa thương hiệu
-Route::put('/brands/{id}', [BrandController::class, 'update']);
+Route::put('/brands/{id}', [BrandController::class, 'update'])->middleware(['auth:sanctum', 'admin']);
 
 // Xóa thương hiệu
-Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
+Route::delete('/brands/{id}', [BrandController::class, 'destroy'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== TEST ====================
@@ -64,22 +62,22 @@ Route::get('/ping', function () {
 Route::get('/categories', [CategoryController::class, 'index']);
 
 // Thêm danh mục
-Route::post('/categories', [CategoryController::class, 'store']);
+Route::post('/categories', [CategoryController::class, 'store'])->middleware(['auth:sanctum', 'admin']);
 
 // Sửa danh mục
-Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::put('/categories/{id}', [CategoryController::class, 'update'])->middleware(['auth:sanctum', 'admin']);
 
 // Xóa tạm danh mục
-Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->middleware(['auth:sanctum', 'admin']);
 
 // Danh sách danh mục trong thùng rác
 Route::get('/categories-trash', [CategoryController::class, 'trash']);
 
 // Khôi phục danh mục
-Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']);
+Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore'])->middleware(['auth:sanctum', 'admin']);
 
 // Xóa vĩnh viễn danh mục
-Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
+Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== BANNER ====================
@@ -115,3 +113,20 @@ Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
 // ==================== GIỎ HÀNG ====================
 
 Route::get('/giohangs', [GioHangController::class, 'index']);
+
+
+// ==================== XÁC THỰC USER / ADMIN ====================
+
+// Đăng ký thành viên (quyền user)
+Route::post('/register', [AuthController::class, 'register']);
+
+// Đăng nhập user / admin và lấy token
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+
+// Thông tin tài khoản đang đăng nhập
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+// Đăng xuất user / admin và thu hồi token hiện tại
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
