@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
@@ -26,19 +25,18 @@ Route::get('/ping', function () {
         'message' => 'pong'
     ]);
 });
-
 Route::get('/categories', [CategoryController::class, 'index']);
-
 Route::get('/banners', [BannerController::class, 'index']);
-
 Route::get('/baiviets', [BaiVietController::class, 'index']);
-
 Route::get('/chudebaiviets', [ChudeBaiVietController::class, 'index']);
-
 Route::get('/donhangs', [DonhangController::class, 'index']);
-
 Route::get('/chitietdonhangs', [ChiTietDonHangController::class, 'index']);
-
 Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
 
 Route::get('/giohangs', [GioHangController::class, 'index']);
+Route::post('/categories', [CategoryController::class, 'store']);
+Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+Route::get('/categories-trash', [CategoryController::class, 'trash']);
+Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']);
+Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
