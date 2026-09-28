@@ -11,22 +11,27 @@ class Category extends Model
 {
     use SoftDeletes;
     protected $table = 'danhmuc';
-    public $timestamps = false;
     protected $fillable = [
-        'tendanhmuc',
-        'noibat',
-        'trangthai',
+        'name',
+        'slug',
+        'image',
+        'parent_id',
+        'sort_order',
+        'description',
+        'created_by',
+        'updated_by',
+        'status',
     ];
     public function products(): HasMany
     {
         return $this->hasMany(
             Product::class,
-            'danhmuc_id',
+            'category_id',
             'id'
         );
     }
     public function scopeActive(Builder $query): void
     {
-        $query->where('trangthai', 1);
+        $query->where('status', 1);
     }
 }
