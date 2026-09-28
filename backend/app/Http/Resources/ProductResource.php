@@ -11,16 +11,36 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'danhmuc_id' => $this->danhmuc_id,
-            'thuonghieu_id' => $this->thuonghieu_id,
-            'tensanpham' => $this->tensanpham,
-            'hinhanh' => $this->hinhanh,
-            'gia' => $this->gia,
-            'giakhuyenmai' => $this->giakhuyenmai,
-            'mota' => $this->mota,
-            'soluongton' => $this->soluongton,
-            'trangthai' => $this->trangthai,
+
+            'category_id' => $this->category_id,
+            'category_name' => $this->category?->name,
+
+            'brand_id' => $this->brand_id,
+            'brand_name' => $this->brand?->name,
+
+            'name' => $this->name,
+            'slug' => $this->slug,
+
+            'price_buy' => $this->price_buy,
+            'price_sale' => $this->price_sale,
+
+            'image' => $this->image,
+            'qty' => $this->qty,
+
+            'detail' => $this->detail,
+            'description' => $this->description,
+
+            'status' => $this->status,
+
+            'sku' => $this->sku,
+            'unit' => $this->unit,
+            'prep_minutes' => $this->prep_minutes,
+
+            'is_available' => $this->is_available,
+            'is_featured' => $this->is_featured,
+
             'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
