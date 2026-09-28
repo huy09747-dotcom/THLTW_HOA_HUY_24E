@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $exception, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json(['message' => 'Ban chua Login'], 401);
+            }
+        });
         $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $exception): bool {
             return $request->is('api/*') || $request->expectsJson();
         });
