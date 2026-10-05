@@ -98,12 +98,12 @@ Route::get('/chudebaiviets', [ChudeBaiVietController::class, 'index']);
 
 // ==================== ĐƠN HÀNG ====================
 
-Route::get('/donhangs', [DonhangController::class, 'index']);
+Route::get('/donhangs', [DonhangController::class, 'index'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== CHI TIẾT ĐƠN HÀNG ====================
 
-Route::get('/chitietdonhangs', [ChiTietDonHangController::class, 'index']);
+Route::get('/chitietdonhangs', [ChiTietDonHangController::class, 'index'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== CHI TIẾT GIỎ HÀNG ====================
@@ -159,3 +159,8 @@ Route::delete('/products/{id}/force', [ProductController::class, 'forceDelete'])
 Route::get('/brands-trash', [BrandController::class, 'trash'])->middleware(['auth:sanctum', 'admin']);
 Route::patch('/brands/{id}/restore', [BrandController::class, 'restore'])->middleware(['auth:sanctum', 'admin']);
 Route::delete('/brands/{id}/force', [BrandController::class, 'forceDelete'])->middleware(['auth:sanctum', 'admin']);
+
+// ==================== DAT HANG ====================
+// Dat hang tu gio hang cua tai khoan dang dang nhap
+Route::post('/checkout', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])
+    ->middleware('auth:sanctum');

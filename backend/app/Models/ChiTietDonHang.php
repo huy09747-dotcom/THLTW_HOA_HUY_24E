@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ChiTietDonHang extends Model
 {
@@ -12,27 +11,16 @@ class ChiTietDonHang extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'donhang_id',
-        'sanpham_id',
-        'tensanpham',
-        'dongia',
-        'soluong',
-        'thanhtien',
+        'order_id', 'product_id', 'item_name', 'price', 'qty', 'amount',
     ];
 
-    protected $casts = [
-        'dongia' => 'decimal:2',
-        'soluong' => 'integer',
-        'thanhtien' => 'decimal:2',
-    ];
-
-    public function donhang(): BelongsTo
+    public function donhang()
     {
-        return $this->belongsTo(Donhang::class, 'donhang_id');
+        return $this->belongsTo(Donhang::class, 'order_id');
     }
 
-    public function sanpham(): BelongsTo
+    public function sanpham()
     {
-        return $this->belongsTo(Product::class, 'sanpham_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

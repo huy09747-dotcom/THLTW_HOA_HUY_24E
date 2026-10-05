@@ -110,9 +110,25 @@ export default function CartProvider({ children }) {
       setBusy(false);
     }
   }
+  async function checkout(body) {
+    if (busy) return null;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await api("/checkout", { method: "POST", body, token });
+      setCart(EMPTY_CART);
+      return result.data;
+    } catch (e) {
+      if (e.status === 401) clearSession();
+      setError(e.message);
+      return null;
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <CartContext.Provider
-      value={{ user, cart, loading, busy, error, login, register, logout, changeCart }}
+      value={{ user, cart, loading, busy, error, login, register, logout, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>
