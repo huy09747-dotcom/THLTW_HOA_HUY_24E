@@ -45,6 +45,7 @@ export default function ManagementPage({
     async function load() {
       setLoading(true);
       setError("");
+
       try {
         const data = await adminApi(endpoint + "?page=" + page, token);
         let choices = {};
@@ -54,11 +55,16 @@ export default function ManagementPage({
             allOptions("/categories", token),
             allOptions("/brands", token),
           ]);
-          choices = { category_id: categories, brand_id: brands };
+
+          choices = {
+            category_id: categories,
+            brand_id: brands,
+          };
         }
 
         if (active) {
           const lastPage = data.meta?.last_page || 1;
+
           if (page > lastPage) {
             setPage(lastPage);
           } else {
@@ -72,11 +78,14 @@ export default function ManagementPage({
           setError(exception.message);
         }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
     load();
+
     return () => {
       active = false;
     };
@@ -110,12 +119,16 @@ export default function ManagementPage({
 
   function remove(item) {
     const message = trash
-      ? "Xóa vĩnh viễn danh mục " + item.name + "? Không thể khôi phục sau thao tác này."
+      ? "Xóa vĩnh viễn danh mục " +
+        item.name +
+        "? Không thể khôi phục sau thao tác này."
       : "Xóa " + item.name + "?";
 
     if (window.confirm(message)) {
       mutate(
-        trash ? "/categories/" + item.id + "/force" : endpoint + "/" + item.id,
+        trash
+          ? "/categories/" + item.id + "/force"
+          : endpoint + "/" + item.id,
         "DELETE",
         undefined,
         trash ? "Đã xóa vĩnh viễn." : "Đã xóa thành công.",
@@ -127,15 +140,48 @@ export default function ManagementPage({
     <div>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>{title}</h1>
+
         <div className={styles.actions}>
           {category && (
             <Link
               href={trash ? "/admin/categories" : "/admin/categories/trash"}
               className={styles.button}
             >
-              {trash ? "Danh sách danh mục" : "Thùng rác"}
+              <span className={styles.iconOnly}>
+                {trash ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M19 6l-1 15H6L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 12h18" />
+                    <path d="M13 6l6 6-6 6" />
+                  </svg>
+                )}
+              </span>
+
+              <span>
+                {trash ? "Danh sách danh mục" : "Thùng rác"}
+              </span>
             </Link>
           )}
+
           {!trash && (
             <button
               className={styles.primaryButton}
@@ -146,27 +192,37 @@ export default function ManagementPage({
                 setNotice("");
               }}
             >
-              Thêm mới
+              <span className={styles.iconOnly}>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
+              </span>
+
+              <span>Thêm mới</span>
             </button>
           )}
         </div>
       </div>
+
       {error && (
-        <p
-          role="alert"
-          className={styles.error}
-        >
+        <p role="alert" className={styles.error}>
           {error}
         </p>
       )}
+
       {notice && (
-        <p
-          role="status"
-          className={styles.success}
-        >
+        <p role="status" className={styles.success}>
           {notice}
         </p>
       )}
+
       {editing && (
         <Form
           key={editing.id || "new"}
@@ -177,6 +233,7 @@ export default function ManagementPage({
           onCancel={() => setEditing(null)}
         />
       )}
+
       {loading ? (
         <p role="status">Đang tải dữ liệu…</p>
       ) : !result ? (
@@ -191,34 +248,49 @@ export default function ManagementPage({
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <caption className="sr-only">{title}</caption>
+
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Hình ảnh</th>
                   <th>Tên</th>
                   <th>Slug</th>
+
                   {product && (
                     <>
                       <th>Danh mục / Thương hiệu</th>
                       <th>Giá bán / Tồn</th>
                     </>
                   )}
+
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
+
               <tbody>
                 {result.data.length === 0 && (
                   <tr>
-                    <td colSpan={product ? 8 : 6}>Chưa có dữ liệu.</td>
+                    <td colSpan={product ? 8 : 6}>
+                      Chưa có dữ liệu.
+                    </td>
                   </tr>
                 )}
+
                 {result.data.map((item) => (
                   <tr key={item.id}>
                     <td>{item.id}</td>
-                    <td><AdminImage image={item.image} name={item.name} /></td>
+
+                    <td>
+                      <AdminImage
+                        image={item.image}
+                        name={item.name}
+                      />
+                    </td>
+
                     <td>{item.name}</td>
                     <td>{item.slug}</td>
+
                     {product && (
                       <>
                         <td>
@@ -226,6 +298,7 @@ export default function ManagementPage({
                           <br />
                           {item.brand_name || "—"}
                         </td>
+
                         <td>
                           {formatPrice(item.price_sale)}
                           <br />
@@ -233,47 +306,111 @@ export default function ManagementPage({
                         </td>
                       </>
                     )}
+
                     <td>
                       {Number(item.status) === 1
                         ? "Hoạt động"
                         : "Ẩn (" + item.status + ")"}
                     </td>
+
                     <td>
                       <div className={styles.actions}>
                         {trash ? (
                           <button
                             className={styles.button}
                             disabled={busy}
+                            title="Khôi phục"
+                            aria-label="Khôi phục"
                             onClick={() =>
                               mutate(
-                                "/categories/" + item.id + "/restore",
+                                "/categories/" +
+                                  item.id +
+                                  "/restore",
                                 "PATCH",
                                 undefined,
                                 "Đã khôi phục danh mục.",
                               )
                             }
                           >
-                            Khôi phục
+                            <span className={styles.actionIcon}>
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                aria-hidden="true"
+                              >
+                                <path d="M3 12a9 9 0 1 0 3-6.7" />
+                                <path d="M3 4v6h6" />
+                                <path d="M12 8v4l3 2" />
+                              </svg>
+                            </span>
+                            <span className={styles.actionText}>
+                              Khôi phục
+                            </span>
                           </button>
                         ) : (
                           <button
                             className={styles.button}
                             disabled={busy}
+                            title="Sửa"
+                            aria-label="Sửa"
                             onClick={() => {
                               setEditing(item);
                               setError("");
                               setNotice("");
                             }}
                           >
-                            Sửa
+                            <span className={styles.actionIcon}>
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                aria-hidden="true"
+                              >
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                              </svg>
+                            </span>
+                            <span className={styles.actionText}>
+                              Sửa
+                            </span>
                           </button>
                         )}
+
                         <button
                           className={styles.dangerButton}
                           disabled={busy}
+                          title={trash ? "Xóa vĩnh viễn" : "Xóa"}
+                          aria-label={
+                            trash ? "Xóa vĩnh viễn" : "Xóa"
+                          }
                           onClick={() => remove(item)}
                         >
-                          {trash ? "Xóa vĩnh viễn" : category ? "Xóa mềm" : "Xóa"}
+                          <span className={styles.actionIcon}>
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              aria-hidden="true"
+                            >
+                              <path d="M3 6h18" />
+                              <path d="M8 6V4h8v2" />
+                              <path d="M19 6l-1 15H6L5 6" />
+                              <path d="M10 11v6" />
+                              <path d="M14 11v6" />
+                            </svg>
+                          </span>
+
+                          <span className={styles.actionText}>
+                            {trash
+                              ? "Xóa vĩnh viễn"
+                              : category
+                                ? "Xóa mềm"
+                                : "Xóa"}
+                          </span>
                         </button>
                       </div>
                     </td>
@@ -282,6 +419,7 @@ export default function ManagementPage({
               </tbody>
             </table>
           </div>
+
           {result.meta && (
             <nav
               className={styles.pagination}
@@ -297,12 +435,17 @@ export default function ManagementPage({
               >
                 Trang trước
               </button>
+
               <span>
-                Trang {result.meta.current_page} / {result.meta.last_page}
+                Trang {result.meta.current_page} /{" "}
+                {result.meta.last_page}
               </span>
+
               <button
                 className={styles.button}
-                disabled={busy || page >= result.meta.last_page}
+                disabled={
+                  busy || page >= result.meta.last_page
+                }
                 onClick={() => {
                   setEditing(null);
                   setPage(page + 1);
