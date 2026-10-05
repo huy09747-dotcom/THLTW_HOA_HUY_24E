@@ -62,4 +62,30 @@ class ProductController extends Controller
             'message' => 'Da xoa san pham thanh cong'
         ]);
     }
+
+    // Danh sách trong thùng rác
+    public function trash(): AnonymousResourceCollection
+    {
+        $items = Product::onlyTrashed()->with(['category', 'brand'])->orderBy('id')->paginate(10);
+
+        return ProductResource::collection($items);
+    }
+
+    // Khôi phục bản ghi đã xóa mềm
+    public function restore($id)
+    {
+        $item = Product::onlyTrashed()->findOrFail($id);
+        $item->restore();
+
+        return response()->json(['message' => 'Khoi phuc thanh cong.']);
+    }
+
+    // Xóa vĩnh viễn bản ghi trong thùng rác
+    public function forceDelete($id)
+    {
+        $item = Product::onlyTrashed()->findOrFail($id);
+        $item->forceDelete();
+
+        return response()->json(['message' => 'Da xoa vinh vien.']);
+    }
 }

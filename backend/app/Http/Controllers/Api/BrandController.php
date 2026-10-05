@@ -58,4 +58,30 @@ class BrandController extends Controller
             'message' => 'Da xoa thuong hieu thanh cong'
         ]);
     }
+
+    // Danh sách trong thùng rác
+    public function trash(): AnonymousResourceCollection
+    {
+        $items = Brand::onlyTrashed()->orderBy('id')->paginate(10);
+
+        return BrandResource::collection($items);
+    }
+
+    // Khôi phục bản ghi đã xóa mềm
+    public function restore($id)
+    {
+        $item = Brand::onlyTrashed()->findOrFail($id);
+        $item->restore();
+
+        return response()->json(['message' => 'Khoi phuc thanh cong.']);
+    }
+
+    // Xóa vĩnh viễn bản ghi trong thùng rác
+    public function forceDelete($id)
+    {
+        $item = Brand::onlyTrashed()->findOrFail($id);
+        $item->forceDelete();
+
+        return response()->json(['message' => 'Da xoa vinh vien.']);
+    }
 }

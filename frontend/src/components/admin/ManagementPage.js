@@ -28,6 +28,7 @@ export default function ManagementPage({
   category = false,
   trash = false,
 }) {
+  const resourcePath = endpoint.replace(/-trash$/, "");
   const { token } = useAdminAuth();
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
@@ -50,7 +51,7 @@ export default function ManagementPage({
         const data = await adminApi(endpoint + "?page=" + page, token);
         let choices = {};
 
-        if (product) {
+        if (product && !trash) {
           const [categories, brands] = await Promise.all([
             allOptions("/categories", token),
             allOptions("/brands", token),
@@ -89,7 +90,7 @@ export default function ManagementPage({
     return () => {
       active = false;
     };
-  }, [endpoint, token, page, revision, product]);
+  }, [endpoint, token, page, revision, product, trash]);
 
   async function mutate(path, method, body, message) {
     setBusy(true);
@@ -119,7 +120,7 @@ export default function ManagementPage({
 
   function remove(item) {
     const message = trash
-      ? "Xóa vĩnh viễn danh mục " +
+      ? "Xóa vĩnh viễn " +
         item.name +
         "? Không thể khôi phục sau thao tác này."
       : "Xóa " + item.name + "?";
@@ -127,7 +128,7 @@ export default function ManagementPage({
     if (window.confirm(message)) {
       mutate(
         trash
-          ? "/categories/" + item.id + "/force"
+          ? resourcePath + "/" + item.id + "/force"
           : endpoint + "/" + item.id,
         "DELETE",
         undefined,
@@ -142,9 +143,9 @@ export default function ManagementPage({
         <h1 className={styles.title}>{title}</h1>
 
         <div className={styles.actions}>
-          {category && (
+          {(category || product || resourcePath === "/brands") && (
             <Link
-              href={trash ? "/admin/categories" : "/admin/categories/trash"}
+              href={trash ? "/admin" + resourcePath : "/admin" + resourcePath + "/trash"}
               className={styles.button}
             >
               <span className={styles.iconOnly}>
@@ -177,7 +178,7 @@ export default function ManagementPage({
               </span>
 
               <span>
-                {trash ? "Danh sách danh mục" : "Thùng rác"}
+                {trash ? "Quay lại danh sách" : "Thùng rác"}
               </span>
             </Link>
           )}
@@ -323,12 +324,12 @@ export default function ManagementPage({
                             aria-label="Khôi phục"
                             onClick={() =>
                               mutate(
-                                "/categories/" +
+                                resourcePath + "/" +
                                   item.id +
                                   "/restore",
                                 "PATCH",
                                 undefined,
-                                "Đã khôi phục danh mục.",
+                                "Đã khôi phục thành công.",
                               )
                             }
                           >
