@@ -1,69 +1,152 @@
-import Image from "next/image";
+import Link from "next/link";
+import ProductCard from "@/components/ProductCard";
+import CategoryList from "@/components/CategoryList";
+import { getProducts, getCategories } from "@/services/api";
 
-export default function Home() {
+export default async function Home() {
+  const [productsResult, categoriesResult] = await Promise.allSettled([
+    getProducts(),
+    getCategories(),
+  ]);
+  const products = productsResult.status === "fulfilled" ? productsResult.value : [];
+  const categories =
+    categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
+  const featured = products.filter((product) => Number(product.is_featured) === 1);
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
+    <div className="container home-page">
+      <section
+        className="hero"
+        aria-labelledby="hero-title"
+      >
+        <div className="hero-copy">
+          <span className="eyebrow">CHÀO MỪNG ĐẾN VỚI HH SHOP</span>
+          <h1 id="hero-title">
+            Công nghệ mới.
+            <br />
+            <span>Cảm hứng mỗi ngày.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p>
+            Khám phá những sản phẩm công nghệ phù hợp với phong cách và nhu cầu của bạn.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            className="primary-button"
+            href="/products"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Khám phá sản phẩm <span aria-hidden="true">↗</span>
+          </Link>
+          <span className="hero-caption">KẾT NỐI · SÁNG TẠO · TRẢI NGHIỆM</span>
         </div>
-      </main>
+        <div
+          className="hero-art"
+          aria-hidden="true"
+        >
+          <div className="orbit" />
+          <div className="orbit orbit-outer" />
+          <div className="phone phone-back">
+            <div className="camera">
+              <i />
+              <i />
+              <i />
+            </div>
+          </div>
+          <div className="phone phone-front">
+            <div className="phone-island" />
+            <div className="phone-glow" />
+            <span>
+              HH<small>EXPLORE MORE</small>
+            </span>
+          </div>
+          <span className="art-caption">YOUR EVERYDAY INSPIRATION</span>
+        </div>
+      </section>
+      <section
+        id="danh-muc"
+        className="home-section"
+        aria-labelledby="category-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">BẮT ĐẦU KHÁM PHÁ</span>
+            <h2 id="category-title">Danh mục sản phẩm</h2>
+          </div>
+          <span className="section-number">01 /</span>
+        </div>
+        {categoriesResult.status === "rejected" ? (
+          <p
+            role="alert"
+            className="error-message"
+          >
+            {categoriesResult.reason.message}
+          </p>
+        ) : categories.length ? (
+          <CategoryList categories={categories} />
+        ) : (
+          <div className="empty-panel">
+            <p>Chưa có danh mục sản phẩm.</p>
+          </div>
+        )}
+      </section>
+      <section
+        id="san-pham"
+        className="home-section"
+        aria-labelledby="products-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">DÀNH CHO BẠN</span>
+            <h2 id="products-title">Sản phẩm mới</h2>
+          </div>
+          <Link href="/products">Xem tất cả ↗</Link>
+        </div>
+        {productsResult.status === "rejected" ? (
+          <p
+            role="alert"
+            className="error-message"
+          >
+            {productsResult.reason.message}
+          </p>
+        ) : products.length ? (
+          <div className="product-grid">
+            {products.slice(0, 4).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="empty-panel">
+            <p>Chưa có sản phẩm.</p>
+          </div>
+        )}
+      </section>
+      <section
+        className="home-section"
+        aria-labelledby="featured-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">GỢI Ý KHÁM PHÁ</span>
+            <h2 id="featured-title">Sản phẩm nổi bật</h2>
+          </div>
+        </div>
+        {productsResult.status === "rejected" ? (
+          <p className="notice">Chưa tải được sản phẩm nổi bật.</p>
+        ) : featured.length ? (
+          <div className="product-grid">
+            {featured.slice(0, 4).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="empty-panel">
+            <p>Chưa có sản phẩm nổi bật.</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
