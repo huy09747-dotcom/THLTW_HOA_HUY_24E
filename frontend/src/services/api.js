@@ -35,7 +35,7 @@ export async function api(path, { token, method = "GET", body } = {}) {
   return data;
 }
 
-async function getAllPages(path) {
+export async function getAllPages(path) {
   const first = await api(`${path}?page=1`);
   if (!Array.isArray(first.data)) throw new Error("Dữ liệu danh sách không hợp lệ.");
   const result = [...first.data];
@@ -46,29 +46,4 @@ async function getAllPages(path) {
     result.push(...next.data);
   }
   return result;
-}
-export async function getProducts() {
-  return (await getAllPages("/products")).filter((p) => Number(p.status) === 1);
-}
-export function getCategories() {
-  return getAllPages("/categories");
-}
-export async function getProduct(id) {
-  return (await api(`/products/${encodeURIComponent(id)}`)).data;
-}
-export function formatPrice(price) {
-  return price == null
-    ? "Liên hệ"
-    : new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-        Number(price),
-      );
-}
-// Chỉ sử dụng URL/đường dẫn ảnh được API cung cấp, không đoán thư mục ảnh.
-export function imageUrl(image) {
-  if (!image) return null;
-  if (/^https?:\/\//i.test(image)) return image;
-  if (image.startsWith("/") && !image.startsWith("//")) {
-    return `${process.env.NEXT_PUBLIC_LARAVEL_ORIGIN || "http://127.0.0.1:8000"}${image}`;
-  }
-  return null;
 }

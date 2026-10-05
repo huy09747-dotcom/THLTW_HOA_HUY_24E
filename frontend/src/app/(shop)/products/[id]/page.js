@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct, formatPrice } from "@/services/api";
-import { ProductImage } from "@/components/ProductCard";
-import AddToCart from "@/components/AddToCart";
+import { getProduct } from "@/services/productServices";
+import { formatPrice } from "@/utils/format";
+import { ProductImage } from "@/components/shop/ProductCard";
+import AddToCart from "@/components/shop/AddToCart";
 
 export default async function ProductDetailPage({ params }) {
   const { id } = await params;

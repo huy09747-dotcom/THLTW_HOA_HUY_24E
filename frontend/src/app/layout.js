@@ -1,6 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import CartProvider from "@/components/CartProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -18,11 +15,7 @@ export default function RootLayout({ children }) {
         >
           Đến nội dung chính
         </a>
-        <CartProvider>
-          <Header />
-          <main id="main-content">{children}</main>
-          <Footer />
-        </CartProvider>
+        {children}
       </body>
     </html>
   );

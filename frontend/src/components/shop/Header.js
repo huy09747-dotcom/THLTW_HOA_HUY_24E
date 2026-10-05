@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
-import { useCart } from "@/components/CartProvider";
+import { useCart } from "@/components/shop/CartProvider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -35,7 +36,7 @@ export default function Header() {
           <button type="submit">Tìm</button>
         </form>
         <div className="header-actions">
-          <Link href="/cart">
+          <Link href="/login">
             {loading ? "Tài khoản" : user ? "Tài khoản" : "Đăng nhập"}
           </Link>
           <Link href="/cart">
@@ -60,7 +61,7 @@ export default function Header() {
           >
             Sản phẩm
           </Link>
-          <Link href="/#danh-muc">Danh mục</Link>
+          <CategoryMenu />
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>
         </div>
       </nav>

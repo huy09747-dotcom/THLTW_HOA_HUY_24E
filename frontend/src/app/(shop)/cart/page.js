@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/components/CartProvider";
-import { ProductImage } from "@/components/ProductCard";
-import { formatPrice } from "@/services/api";
+
+import { useCart } from "@/components/shop/CartProvider";
+import { ProductImage } from "@/components/shop/ProductCard";
+import { formatPrice } from "@/utils/format";
 
 export default function CartPage() {
-  const { user, cart, loading, busy, error, login, logout, changeCart } = useCart();
-  const router = useRouter();
+  const { user, cart, loading, busy, error, logout, changeCart } = useCart();
+
   if (loading)
     return (
       <div
@@ -36,43 +36,12 @@ export default function CartPage() {
         <div className="login-panel">
           <h2>Đăng nhập để sử dụng giỏ hàng</h2>
           <p>Giỏ hàng được lưu theo tài khoản của bạn.</p>
-          <form
-            onSubmit={async (event) => {
-              event.preventDefault();
-              const form = event.currentTarget;
-              const data = new FormData(form);
-              if (await login(data.get("email"), data.get("password"))) {
-                form.reset();
-                const next = new URLSearchParams(window.location.search).get("next");
-                if (next && /^\/products\/\d+$/.test(next)) router.push(next);
-              }
-            }}
+          <Link
+            href="/login?next=/cart"
+            className="primary-button"
           >
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              disabled={busy}
-            />
-            <label htmlFor="password">Mật khẩu</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              disabled={busy}
-            />
-            <button
-              className="primary-button"
-              disabled={busy}
-            >
-              {busy ? "Đang đăng nhập…" : "Đăng nhập"}
-            </button>
-          </form>
+            Đăng nhập
+          </Link>
         </div>
       ) : (
         <>

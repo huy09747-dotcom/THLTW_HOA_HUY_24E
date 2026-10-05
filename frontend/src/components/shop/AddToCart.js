@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useCart } from "@/components/CartProvider";
+import { useCart } from "@/components/shop/CartProvider";
 
 export default function AddToCart({ product }) {
   const { user, loading, busy, error, changeCart } = useCart();
@@ -17,7 +17,7 @@ export default function AddToCart({ product }) {
     return (
       <Link
         className="primary-button"
-        href={`/cart?next=${encodeURIComponent(`/products/${product.id}`)}`}
+        href={`/login?next=${encodeURIComponent(`/products/${product.id}`)}`}
       >
         Đăng nhập để thêm vào giỏ
       </Link>

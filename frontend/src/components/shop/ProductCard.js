@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { formatPrice, imageUrl } from "@/services/api";
+import { formatPrice, imageUrl } from "@/utils/format";
 
 export function ProductImage({ image, name }) {
   const [failed, setFailed] = useState(null);

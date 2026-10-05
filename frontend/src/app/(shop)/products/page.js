@@ -1,7 +1,8 @@
 import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
-import CategoryList from "@/components/CategoryList";
-import { getProducts, getCategories } from "@/services/api";
+import ProductCard from "@/components/shop/ProductCard";
+import CategoryList from "@/components/shop/CategoryList";
+import { getProducts } from "@/services/productServices";
+import { getCategories } from "@/services/categoryServices";
 
 export const metadata = { title: "Sản phẩm | HH Shop" };
 export default async function ProductsPage({ searchParams }) {

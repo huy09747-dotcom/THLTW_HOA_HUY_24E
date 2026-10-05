@@ -51,15 +51,19 @@ export default function CartProvider({ children }) {
       active = false;
     };
   }, []);
-  async function login(email, password) {
+  async function authenticate(path, body) {
     setBusy(true);
     setError("");
     try {
-      const result = await api("/login", { method: "POST", body: { email, password } });
+      const result = await api(path, { method: "POST", body });
       sessionStorage.setItem("hh-shop-token", result.token);
       setToken(result.token);
       setUser(result.user);
-      setCart(await api("/cart", { token: result.token }));
+      try {
+        setCart(await api("/cart", { token: result.token }));
+      } catch (cartError) {
+        setError(cartError.message);
+      }
       return true;
     } catch (e) {
       setError(e.message);
@@ -67,6 +71,12 @@ export default function CartProvider({ children }) {
     } finally {
       setBusy(false);
     }
+  }
+  function login(email, password) {
+    return authenticate("/login", { email, password });
+  }
+  function register(body) {
+    return authenticate("/register", body);
   }
   async function logout() {
     setBusy(true);
@@ -97,7 +107,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ user, cart, loading, busy, error, login, logout, changeCart }}
+      value={{ user, cart, loading, busy, error, login, register, logout, changeCart }}
     >
       {children}
     </CartContext.Provider>
