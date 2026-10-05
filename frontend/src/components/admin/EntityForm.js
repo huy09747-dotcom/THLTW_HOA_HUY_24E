@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAdminAuth } from "./AdminAuthProvider";
 import { adminApi } from "@/services/adminApi";
 import AdminImage from "./AdminImage";
+import { toSlug } from "@/utils/format";
 import styles from "@/app/admin/admin.module.css";
 
 export default function EntityForm({
@@ -15,6 +16,7 @@ export default function EntityForm({
   options = {},
 }) {
   const { token } = useAdminAuth();
+  const [slug, setSlug] = useState(initial.slug ?? toSlug(initial.name));
   const [preview, setPreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -165,7 +167,15 @@ export default function EntityForm({
                     id={id}
                     name={field.name}
                     type={field.type || "text"}
-                    defaultValue={value}
+                    {...(field.name === "slug"
+                      ? { value: slug, onChange: (event) => setSlug(event.target.value) }
+                      : {
+                          defaultValue: value,
+                          onChange:
+                            field.name === "name"
+                              ? (event) => setSlug(toSlug(event.target.value))
+                              : undefined,
+                        })}
                     required={field.required}
                     maxLength={field.maxLength}
                     min={field.min}
