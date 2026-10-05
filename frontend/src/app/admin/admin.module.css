@@ -383,3 +383,139 @@
   display: inline;
   margin-left: 5px;
 }
+.filterBox {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #dce5e0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.filterField {
+  min-width: 0;
+}
+
+.filterField label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #34483f;
+}
+
+.filterField input,
+.filterField select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #b9cdc1;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+  color: #172332;
+}
+
+.filterField input:focus-visible,
+.filterField select:focus-visible {
+  outline: 2px solid #176454;
+  outline-offset: 2px;
+}
+
+.filterActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .filterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .filterGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterBox {
+    padding: 16px;
+  }
+}
+
+.filterBox {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #dce5e0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.filterField {
+  min-width: 0;
+}
+
+.filterField label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #34483f;
+}
+
+.filterField input,
+.filterField select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #b9cdc1;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+  color: #172332;
+}
+
+.filterField input:focus-visible,
+.filterField select:focus-visible {
+  outline: 2px solid #176454;
+  outline-offset: 2px;
+}
+
+.filterActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .filterGrid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+@media (max-width: 600px) {
+  .filterGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterBox {
+    padding: 16px;
+  }
+}
