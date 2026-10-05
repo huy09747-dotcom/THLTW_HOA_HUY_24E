@@ -1191,3 +1191,53 @@ button:disabled {
     margin-block: 28px;
   }
 }
+
+.secondary-button {
+  padding: 12px 20px;
+  border: 1px solid #176454;
+  border-radius: 8px;
+  color: #176454;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.secondary-button:disabled {
+  opacity: 0.5;
+}
+.purchase-row {
+  flex-wrap: wrap;
+}
+
+/* Bộ lọc danh mục gọn trên một hàng ở trang sản phẩm. */
+.category-filter-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+  margin: 20px 0;
+}
+.category-filter {
+  flex: 0 0 auto;
+  padding: 9px 18px;
+  border: 1px solid #d5e3dc;
+  border-radius: 8px;
+  background: #fff;
+  color: #254339;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.category-filter:hover {
+  background: #eef7f1;
+  border-color: #176454;
+}
+.category-filter.selected {
+  background: #176454;
+  border-color: #176454;
+  color: #fff;
+}
+
+.category-menu-panel .category-filter-row {
+  margin: 12px 0 0;
+  padding-bottom: 4px;
+}

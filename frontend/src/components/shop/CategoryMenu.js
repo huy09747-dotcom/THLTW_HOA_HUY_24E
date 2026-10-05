@@ -87,7 +87,10 @@ export default function CategoryMenu() {
                 if (event.target.closest("a")) setOpen(false);
               }}
             >
-              <CategoryList categories={categories} />
+              <CategoryList
+            compact
+            categories={categories}
+          />
             </div>
           )}
         </div>

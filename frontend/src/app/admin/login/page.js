@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
     <section className={styles.loginCard}>
       <p className={styles.caption}>HH SHOP ADMIN</p>
       <h1 className={styles.title}>Đăng nhập quản trị</h1>
-      <p className={styles.description}>Sử dụng tài khoản có quyền Admin để tiếp tục.</p>
+      <p className={styles.description}>Đăng nhập để quản lý HH Shop.</p>
       {error && (
         <p
           role="alert"
@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
           {error}
         </p>
       )}
-      <form
+<form
         onSubmit={handleSubmit}
         className={styles.form}
       >

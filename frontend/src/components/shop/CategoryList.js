@@ -39,7 +39,29 @@ function CategoryTile({ category, selected }) {
   );
 }
 
-export default function CategoryList({ categories, selected = "" }) {
+export default function CategoryList({ categories, selected = "", compact = false }) {
+  if (compact) {
+    const items = [{ id: "", name: "Tất cả" }, ...categories];
+
+    return (
+      <nav className="category-filter-row" aria-label="Danh mục sản phẩm">
+        {items.map((item) => {
+          const active = String(item.id) === String(selected);
+          return (
+            <Link
+              key={item.id}
+              href={item.id === "" ? "/products" : "/products?category=" + item.id}
+              className={active ? "category-filter selected" : "category-filter"}
+              aria-current={active ? "page" : undefined}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
+      </nav>
+    );
+  }
+
   const ids = new Set(categories.map((item) => Number(item.id)));
   let roots = categories.filter(
     (item) =>

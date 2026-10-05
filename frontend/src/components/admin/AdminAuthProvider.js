@@ -1,15 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { adminApi } from "@/services/adminApi";
 
 const AdminAuthContext = createContext(null);
-const TOKEN_KEY = "hh-shop-admin-token";
-
-function isAdmin(user) {
-  return user?.roles === "admin" && Number(user.status) === 1;
-}
+const SESSION_KEY = "hh-shop-admin-demo-session";
+const DEMO_TOKEN = "hh-shop-admin-preview";
+const DEMO_ACCOUNT = { name: "Admin HH Shop", email: "admin@gmail.com" };
 
 export default function AdminAuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -18,48 +14,16 @@ export default function AdminAuthProvider({ children }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  function clearSession() {
-    sessionStorage.removeItem(TOKEN_KEY);
-    setToken("");
-    setUser(null);
-  }
-
   useEffect(() => {
-    let active = true;
-
     async function restoreSession() {
-      try {
-        const savedToken = sessionStorage.getItem(TOKEN_KEY);
-
-        if (savedToken) {
-          const account = await adminApi("/user", savedToken);
-
-          if (!isAdmin(account)) {
-            throw new Error("Tai khoan khong co quyen quan tri hoac da bi khoa.");
-          }
-
-          if (active) {
-            setToken(savedToken);
-            setUser(account);
-          }
-        }
-      } catch (exception) {
-        if (active) {
-          sessionStorage.removeItem(TOKEN_KEY);
-          setError(exception.message);
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
+      if (sessionStorage.getItem(SESSION_KEY) === "active") {
+        setUser(DEMO_ACCOUNT);
+        setToken(DEMO_TOKEN);
       }
+      setLoading(false);
     }
 
     restoreSession();
-
-    return () => {
-      active = false;
-    };
   }, []);
 
   async function login(email, password) {
@@ -67,45 +31,26 @@ export default function AdminAuthProvider({ children }) {
     setError("");
 
     try {
-      const result = await api("/login", {
-        method: "POST",
-        body: { email, password },
-      });
-
-      if (!isAdmin(result.user)) {
-        // Thu hồi token vừa cấp cho tài khoản không có quyền Admin.
-        await adminApi("/logout", result.token, { method: "POST" });
-        throw new Error("Tai khoan khong co quyen quan tri.");
+      // Tài khoản mẫu chỉ dùng trong frontend, không xác thực qua Laravel.
+      if (email.trim().toLowerCase() !== DEMO_ACCOUNT.email || password !== "admin123") {
+        setError("Tai khoan hoac mat khau khong dung.");
+        return false;
       }
 
-      sessionStorage.setItem(TOKEN_KEY, result.token);
-      setToken(result.token);
-      setUser(result.user);
+      sessionStorage.setItem(SESSION_KEY, "active");
+      setUser(DEMO_ACCOUNT);
+      setToken(DEMO_TOKEN);
       return true;
-    } catch (exception) {
-      setError(exception.message);
-      return false;
     } finally {
       setBusy(false);
     }
   }
 
-  async function logout() {
-    setBusy(true);
+  function logout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    setUser(null);
+    setToken("");
     setError("");
-
-    try {
-      await adminApi("/logout", token, { method: "POST" });
-      clearSession();
-    } catch (exception) {
-      if (exception.status === 401) {
-        clearSession();
-      } else {
-        setError(exception.message);
-      }
-    } finally {
-      setBusy(false);
-    }
   }
 
   return (
