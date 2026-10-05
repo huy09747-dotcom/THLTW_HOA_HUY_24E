@@ -8,7 +8,6 @@ export function formatPrice(price) {
 // Chỉ sử dụng URL/đường dẫn ảnh được API cung cấp, không đoán thư mục ảnh.
 export function imageUrl(image) {
   if (!image) return null;
-  if (image.startsWith("/demo/")) return image;
   if (/^https?:\/\//i.test(image)) return image;
   if (image.startsWith("/") && !image.startsWith("//")) {
     return `${process.env.NEXT_PUBLIC_LARAVEL_ORIGIN || "http://127.0.0.1:8000"}${image}`;

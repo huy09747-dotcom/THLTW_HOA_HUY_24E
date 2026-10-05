@@ -32,7 +32,7 @@ export default function AddToCart({ product }) {
   if (!Number(product.is_available) || !max)
     return <p className="notice">Tạm hết hàng</p>;
   if (loading) return <p role="status">Đang tải…</p>;
-  if (!user && !product.is_demo) {
+  if (!user) {
     return (
       <Link
         className="primary-button"

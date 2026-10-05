@@ -1,6 +1,5 @@
 "use client";
 
-import { USE_DEMO_CATALOG } from "@/data/demoCatalog";
 import Link from "next/link";
 
 import { useCart } from "@/components/shop/CartProvider";
@@ -33,7 +32,7 @@ export default function CartPage() {
           {error}
         </p>
       )}
-      {!user && !USE_DEMO_CATALOG ? (
+      {!user ? (
         <div className="login-panel">
           <h2>Đăng nhập để sử dụng giỏ hàng</h2>
           <p>Giỏ hàng được lưu theo tài khoản của bạn.</p>
