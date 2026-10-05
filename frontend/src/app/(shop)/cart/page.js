@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import CheckoutForm from "@/components/shop/CheckoutForm";
 
 import { useCart } from "@/components/shop/CartProvider";
 import { ProductImage } from "@/components/shop/ProductCard";
 import { formatPrice } from "@/utils/format";
 
 export default function CartPage() {
+  const [order, setOrder] = useState(null);
   const { user, cart, loading, busy, error, logout, changeCart } = useCart();
 
   if (loading)
@@ -24,6 +27,14 @@ export default function CartPage() {
         <Link href="/">Trang chủ</Link> / Giỏ hàng
       </p>
       <h1>Giỏ hàng của bạn</h1>
+      {user && order && (
+        <div className="success" role="status">
+          <h2>Đặt hàng thành công</h2>
+          <p>Mã đơn hàng: {order.code}</p>
+          <p>Tổng tiền: {formatPrice(order.total)}</p>
+          <p>Thanh toán khi nhận hàng.</p>
+        </div>
+      )}
       {error && (
         <p
           role="alert"
@@ -135,10 +146,7 @@ export default function CartPage() {
                   <span>Tạm tính</span>
                   <strong>{formatPrice(cart.total)}</strong>
                 </div>
-                <p className="notice">
-                  Tạm tính cho sản phẩm còn khả dụng. Chưa bao gồm phí giao hàng. Chức
-                  năng thanh toán chưa được mở.
-                </p>
+                <CheckoutForm onSuccess={setOrder} />
                 <Link href="/products">← Tiếp tục mua sắm</Link>
               </aside>
             </div>
