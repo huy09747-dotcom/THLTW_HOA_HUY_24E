@@ -3,8 +3,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "@/services/api";
 
-import { USE_DEMO_CATALOG } from "@/data/demoCatalog";
-import { readDemoCart, updateDemoCart } from "@/services/demoCart";
 
 const CartContext = createContext(null);
 const EMPTY_CART = { data: [], total: 0, count: 0 };
@@ -22,20 +20,17 @@ export default function CartProvider({ children }) {
     sessionStorage.removeItem("hh-shop-token");
     setToken(null);
     setUser(null);
-    setCart(USE_DEMO_CATALOG ? readDemoCart() : EMPTY_CART);
+    setCart(EMPTY_CART);
   }
   useEffect(() => {
     let active = true;
     async function restore() {
       try {
-        if (USE_DEMO_CATALOG && active) setCart(readDemoCart());
         const saved = sessionStorage.getItem("hh-shop-token");
         if (!saved) return;
         const [account, basket] = await Promise.all([
           api("/user", { token: saved }),
-          USE_DEMO_CATALOG
-            ? Promise.resolve(readDemoCart())
-            : api("/cart", { token: saved }),
+          api("/cart", { token: saved }),
         ]);
         if (active) {
           setToken(saved);
@@ -67,7 +62,7 @@ export default function CartProvider({ children }) {
       setUser(result.user);
       try {
         setCart(
-          USE_DEMO_CATALOG ? readDemoCart() : await api("/cart", { token: result.token }),
+          await api("/cart", { token: result.token }),
         );
       } catch (cartError) {
         setError(cartError.message);
@@ -104,9 +99,7 @@ export default function CartProvider({ children }) {
     setError("");
     try {
       setCart(
-        USE_DEMO_CATALOG
-          ? updateDemoCart(path, method, body)
-          : await api(path, { method, body, token }),
+        await api(path, { method, body, token }),
       );
       return true;
     } catch (e) {

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAdminAuth } from "./AdminAuthProvider";
 import { adminApi } from "@/services/adminApi";
 import { formatPrice } from "@/utils/format";
+import AdminImage from "./AdminImage";
 import styles from "@/app/admin/admin.module.css";
 
 async function allOptions(path, token) {
@@ -150,12 +151,6 @@ export default function ManagementPage({
           )}
         </div>
       </div>
-      {category && (
-        <p className={styles.description}>
-          API danh sách hiện chỉ hiển thị danh mục hoạt động. Danh mục ẩn sẽ không xuất
-          hiện trong danh sách sau khi lưu hoặc khôi phục.
-        </p>
-      )}
       {error && (
         <p
           role="alert"
@@ -195,12 +190,11 @@ export default function ManagementPage({
         <>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
-              <caption>
-                {title} — {result.meta?.total ?? result.data.length} bản ghi
-              </caption>
+              <caption className="sr-only">{title}</caption>
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Hình ảnh</th>
                   <th>Tên</th>
                   <th>Slug</th>
                   {product && (
@@ -216,12 +210,13 @@ export default function ManagementPage({
               <tbody>
                 {result.data.length === 0 && (
                   <tr>
-                    <td colSpan={product ? 7 : 5}>Chưa có dữ liệu.</td>
+                    <td colSpan={product ? 8 : 6}>Chưa có dữ liệu.</td>
                   </tr>
                 )}
                 {result.data.map((item) => (
                   <tr key={item.id}>
                     <td>{item.id}</td>
+                    <td><AdminImage image={item.image} name={item.name} /></td>
                     <td>{item.name}</td>
                     <td>{item.slug}</td>
                     {product && (

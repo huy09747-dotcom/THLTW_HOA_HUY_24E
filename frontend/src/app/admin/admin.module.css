@@ -338,3 +338,18 @@
     padding: 16px;
   }
 }
+
+.thumbnail, .imageFallback {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: #f2f6f4;
+}
+.thumbnail {
+  object-fit: contain;
+}
+.imageFallback {
+  display: grid;
+  place-items: center;
+  color: #71847a;
+}
