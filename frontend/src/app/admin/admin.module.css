@@ -353,3 +353,33 @@
   place-items: center;
   color: #71847a;
 }
+.iconOnly {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.iconOnly svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+}
+
+.actionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.actionIcon svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.actionText {
+  display: inline;
+  margin-left: 5px;
+}
