@@ -36,7 +36,7 @@ export default function AddToCart({ product }) {
     return (
       <Link
         className="primary-button"
-        href={"/login?next=/products/" + product.id}
+        href={"/login?next=" + encodeURIComponent("/products/" + encodeURIComponent(product.slug))}
       >
         Đăng nhập để mua hàng
       </Link>

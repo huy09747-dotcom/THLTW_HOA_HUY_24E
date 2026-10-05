@@ -59,10 +59,10 @@ class ProductController extends Controller
     }
 
     // Chi tiết sản phẩm
-    public function show($id)
+    public function show($slug)
     {
         $product = Product::with(['category', 'brand'])
-            ->findOrFail($id);
+            ->where('slug', $slug)->firstOrFail();
 
         return new ProductResource($product);
     }

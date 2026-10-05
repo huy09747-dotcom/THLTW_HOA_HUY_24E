@@ -31,7 +31,7 @@ export default function ProductCard({ product }) {
   return (
     <article className="product-card">
       <Link
-        href={`/products/${product.id}`}
+        href={`/products/${encodeURIComponent(product.slug)}`}
         aria-label={`Xem ${product.name}`}
       >
         <ProductImage
@@ -42,7 +42,7 @@ export default function ProductCard({ product }) {
       <div className="product-card-body">
         <p className="product-category">{product.category_name || "Sản phẩm"}</p>
         <h3>
-          <Link href={`/products/${product.id}`}>{product.name}</Link>
+          <Link href={`/products/${encodeURIComponent(product.slug)}`}>{product.name}</Link>
         </h3>
         <p className="product-price">{formatPrice(product.price_sale)}</p>
         <div className="product-card-bottom">
@@ -51,7 +51,7 @@ export default function ProductCard({ product }) {
               ? "Còn hàng"
               : "Tạm hết hàng"}
           </span>
-          <Link href={`/products/${product.id}`}>Xem chi tiết ↗</Link>
+          <Link href={`/products/${encodeURIComponent(product.slug)}`}>Xem chi tiết ↗</Link>
         </div>
       </div>
     </article>
