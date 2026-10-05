@@ -6,16 +6,53 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BrandRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Brand;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BrandController extends Controller
 {
     // Danh sách thương hiệu
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $brands = Brand::with('products')
+        $data = $request->validate([
+            'page' => 'sometimes|integer|min:1|max:2147483647',
+            'per_page' => 'sometimes|integer|min:1|max:100',
+            'search' => 'sometimes|string|max:255',
+            'status' => 'sometimes|in:0,1',
+        ]);
+
+        $query = Brand::with('products');
+
+        // Tìm kiếm theo tên hoặc slug
+        if (!empty($data['search'])) {
+            $search = trim($data['search']);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Lọc theo trạng thái
+        if (isset($data['status'])) {
+            $query->where('status', $data['status']);
+        }
+
+        $brands = $query
             ->latest()
-            ->paginate(10);
+            ->paginate(
+                (int) ($data['per_page'] ?? 10),
+                ['*'],
+                'page',
+                (int) ($data['page'] ?? 1)
+            )
+            ->appends(
+                $request->only([
+                    'search',
+                    'status',
+                    'per_page',
+                ])
+            );
 
         return BrandResource::collection($brands);
     }
