@@ -1,5 +1,6 @@
 "use client";
 
+import { USE_DEMO_CATALOG } from "@/data/demoCatalog";
 import Link from "next/link";
 
 import { useCart } from "@/components/shop/CartProvider";
@@ -32,7 +33,7 @@ export default function CartPage() {
           {error}
         </p>
       )}
-      {!user ? (
+      {!user && !USE_DEMO_CATALOG ? (
         <div className="login-panel">
           <h2>Đăng nhập để sử dụng giỏ hàng</h2>
           <p>Giỏ hàng được lưu theo tài khoản của bạn.</p>
@@ -46,14 +47,16 @@ export default function CartPage() {
       ) : (
         <>
           <div className="account-row">
-            <span>Xin chào, {user.name}</span>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={logout}
-            >
-              Đăng xuất
-            </button>
+            <span>Xin chào, {user?.name || "bạn"}</span>
+            {user && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={logout}
+              >
+                Đăng xuất
+              </button>
+            )}
           </div>
           {!cart.data.length ? (
             <div className="empty-cart">

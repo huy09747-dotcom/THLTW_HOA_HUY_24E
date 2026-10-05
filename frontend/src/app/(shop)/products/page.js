@@ -69,6 +69,7 @@ export default async function ProductsPage({ searchParams }) {
         <button className="primary-button">Tìm kiếm</button>
       </form>
       <CategoryList
+        compact
         categories={categories}
         selected={category}
       />

@@ -80,7 +80,10 @@ export default async function Home() {
             {categoriesResult.reason.message}
           </p>
         ) : categories.length ? (
-          <CategoryList categories={categories} />
+          <CategoryList
+            compact
+            categories={categories}
+          />
         ) : (
           <div className="empty-panel">
             <p>Chưa có danh mục sản phẩm.</p>
