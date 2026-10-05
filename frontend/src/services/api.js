@@ -6,6 +6,7 @@ const SERVER_API = (process.env.LARAVEL_API_URL || "http://127.0.0.1:8000/api").
 
 export async function api(path, { token, method = "GET", body } = {}) {
   const base = typeof window === "undefined" ? SERVER_API : "/api/laravel";
+  const multipart = body instanceof FormData;
   let response;
   try {
     response = await fetch(`${base}${path}`, {
@@ -14,10 +15,10 @@ export async function api(path, { token, method = "GET", body } = {}) {
       signal: AbortSignal.timeout(10000),
       headers: {
         Accept: "application/json",
-        ...(body ? { "Content-Type": "application/json" } : {}),
+        ...(body && !multipart ? { "Content-Type": "application/json" } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(body ? { body: multipart ? body : JSON.stringify(body) } : {}),
     });
   } catch {
     throw new Error("Chưa kết nối được cửa hàng. Vui lòng thử lại sau.");

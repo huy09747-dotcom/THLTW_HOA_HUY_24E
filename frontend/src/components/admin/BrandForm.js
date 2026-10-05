@@ -3,7 +3,7 @@ import EntityForm from "./EntityForm";
 const fields = [
   { name: "name", label: "Tên thương hiệu", required: true, maxLength: 255 },
   { name: "slug", label: "Slug", required: true, maxLength: 255 },
-  { name: "image", label: "Đường dẫn hình ảnh", nullable: true, maxLength: 255 },
+  { name: "image", label: "Hình ảnh", nullable: true, maxLength: 255 },
   { name: "title", label: "Tiêu đề", nullable: true, maxLength: 255 },
   {
     name: "sort_order",

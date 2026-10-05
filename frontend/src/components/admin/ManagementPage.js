@@ -36,6 +36,7 @@ export default function ManagementPage({
   category = false,
   trash = false,
 }) {
+  const resourcePath = endpoint.replace(/-trash$/, "");
   const { token } = useAdminAuth();
 
   const [page, setPage] = useState(1);
@@ -105,7 +106,7 @@ export default function ManagementPage({
         // FILTER SẢN PHẨM
         // =====================================================
 
-        if (product) {
+        if (product && !trash) {
           if (appliedFilters.search.trim()) {
             params.set(
               "search",
@@ -200,8 +201,7 @@ export default function ManagementPage({
 
         let choices = {};
 
-        // Product cần danh sách category + brand
-        if (product) {
+        if (product && !trash) {
           const [categories, brands] = await Promise.all([
             allOptions("/categories", token),
             allOptions("/brands", token),
@@ -296,7 +296,7 @@ export default function ManagementPage({
 
   function remove(item) {
     const message = trash
-      ? "Xóa vĩnh viễn danh mục " +
+      ? "Xóa vĩnh viễn " +
         item.name +
         "? Không thể khôi phục sau thao tác này."
       : "Xóa " + item.name + "?";
@@ -304,9 +304,7 @@ export default function ManagementPage({
     if (window.confirm(message)) {
       mutate(
         trash
-          ? "/categories/" +
-              item.id +
-              "/force"
+          ? resourcePath + "/" + item.id + "/force"
           : endpoint + "/" + item.id,
         "DELETE",
         undefined,
@@ -401,13 +399,9 @@ export default function ManagementPage({
         </h1>
 
         <div className={styles.actions}>
-          {category && (
+          {(category || product || resourcePath === "/brands") && (
             <Link
-              href={
-                trash
-                  ? "/admin/categories"
-                  : "/admin/categories/trash"
-              }
+              href={trash ? "/admin" + resourcePath : "/admin" + resourcePath + "/trash"}
               className={styles.button}
             >
               <span className={styles.iconOnly}>
@@ -440,9 +434,7 @@ export default function ManagementPage({
               </span>
 
               <span>
-                {trash
-                  ? "Danh sách danh mục"
-                  : "Thùng rác"}
+                {trash ? "Quay lại danh sách" : "Thùng rác"}
               </span>
             </Link>
           )}
@@ -480,7 +472,7 @@ export default function ManagementPage({
           FILTER SẢN PHẨM
       ===================================================== */}
 
-      {product && (
+      {product && !trash && (
         <form
           className={styles.filterBox}
           onSubmit={applyFilters}
@@ -1052,12 +1044,10 @@ export default function ManagementPage({
                               aria-label="Khôi phục"
                               onClick={() =>
                                 mutate(
-                                  "/categories/" +
-                                    item.id +
-                                    "/restore",
+                                  resourcePath + "/" + item.id + "/restore",
                                   "PATCH",
                                   undefined,
-                                  "Đã khôi phục danh mục.",
+                                  "Đã khôi phục thành công.",
                                 )
                               }
                             >

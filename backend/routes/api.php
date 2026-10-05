@@ -144,3 +144,18 @@ Route::post('/cart/items', [CartController::class, 'store'])->middleware('auth:s
 Route::put('/cart/items/{id}', [CartController::class, 'update'])->middleware('auth:sanctum')->whereNumber('id');
 // Xóa một dòng khỏi giỏ
 Route::delete('/cart/items/{id}', [CartController::class, 'destroy'])->middleware('auth:sanctum')->whereNumber('id');
+
+// ==================== TẢI HÌNH ẢNH ADMIN ====================
+// Tải ảnh cho danh mục, sản phẩm và thương hiệu
+Route::post('/images', [\App\Http\Controllers\Api\ImageUploadController::class, 'store'])
+    ->middleware(['auth:sanctum', 'admin']);
+
+// ==================== THÙNG RÁC SẢN PHẨM ====================
+Route::get('/products-trash', [ProductController::class, 'trash'])->middleware(['auth:sanctum', 'admin']);
+Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->middleware(['auth:sanctum', 'admin']);
+Route::delete('/products/{id}/force', [ProductController::class, 'forceDelete'])->middleware(['auth:sanctum', 'admin']);
+
+// ==================== THÙNG RÁC THƯƠNG HIỆU ====================
+Route::get('/brands-trash', [BrandController::class, 'trash'])->middleware(['auth:sanctum', 'admin']);
+Route::patch('/brands/{id}/restore', [BrandController::class, 'restore'])->middleware(['auth:sanctum', 'admin']);
+Route::delete('/brands/{id}/force', [BrandController::class, 'forceDelete'])->middleware(['auth:sanctum', 'admin']);

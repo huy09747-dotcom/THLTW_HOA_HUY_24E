@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useAdminAuth } from "./AdminAuthProvider";
+import { adminApi } from "@/services/adminApi";
+import AdminImage from "./AdminImage";
 import styles from "@/app/admin/admin.module.css";
 
 export default function EntityForm({
@@ -10,12 +14,20 @@ export default function EntityForm({
   busy,
   options = {},
 }) {
+  const { token } = useAdminAuth();
+  const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [uploaded, setUploaded] = useState(null);
+
   async function submit(event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const body = {};
+    setUploadError("");
 
     for (const field of fields) {
+      if (field.name === "image") continue;
       const value = data.get(field.name);
       body[field.name] =
         field.type === "checkbox"
@@ -27,7 +39,27 @@ export default function EntityForm({
               : value;
     }
 
-    await onSave(body);
+    setUploading(true);
+    try {
+      body.image = initial.image || null;
+      const file = data.get("image");
+      if (file?.size) {
+        if (uploaded?.key === file.name + file.size + file.lastModified) {
+          body.image = uploaded.path;
+        } else {
+          const payload = new FormData();
+          payload.append("image", file);
+          const result = await adminApi("/images", token, { method: "POST", body: payload });
+          body.image = result.image;
+          setUploaded({ key: file.name + file.size + file.lastModified, path: result.image });
+        }
+      }
+      await onSave(body);
+    } catch (exception) {
+      setUploadError(exception.message);
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
@@ -35,11 +67,9 @@ export default function EntityForm({
       onSubmit={submit}
       className={styles.editor}
     >
-      <fieldset disabled={busy}>
+      <fieldset disabled={busy || uploading}>
         <legend>{initial.id ? "Chỉnh sửa thông tin" : "Thêm mới"}</legend>
-        <p>
-          Các trường có dấu * là bắt buộc. Hình ảnh nhập đường dẫn, không tải file lên.
-        </p>
+        {uploadError && <p role="alert" className={styles.error}>{uploadError}</p>}
         <div className={styles.fieldGrid}>
           {fields.map((field) => {
             const id = "field-" + field.name;
@@ -64,7 +94,41 @@ export default function EntityForm({
                   {field.label}
                   {field.required ? " *" : ""}
                 </label>
-                {field.type === "textarea" ? (
+                {field.name === "image" ? (
+                  <>
+                    <input
+                      id={id}
+                      name="image"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      required={field.required && !initial.image}
+                      onChange={(event) => {
+                        const input = event.currentTarget;
+                        const file = input.files?.[0];
+                        setPreview("");
+                        setUploaded(null);
+                        setUploadError("");
+                        if (!file) return;
+                        if (file.size > 5 * 1024 * 1024) {
+                          input.value = "";
+                          setUploadError("Hinh anh toi da 5 MB.");
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          if (input.files?.[0] === file) setPreview(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                    {preview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={preview} alt="Ảnh đã chọn" className={styles.thumbnail} />
+                    ) : initial.image ? (
+                      <AdminImage image={initial.image} name="Ảnh hiện tại" />
+                    ) : null}
+                  </>
+                ) : field.type === "textarea" ? (
                   <textarea
                     id={id}
                     name={field.name}

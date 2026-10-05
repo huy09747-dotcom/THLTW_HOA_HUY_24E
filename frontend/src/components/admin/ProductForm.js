@@ -29,7 +29,7 @@ const fields = [
     required: true,
     default: 0,
   },
-  { name: "image", label: "Đường dẫn hình ảnh", required: true, maxLength: 255 },
+  { name: "image", label: "Hình ảnh", required: true, maxLength: 255 },
   { name: "sku", label: "SKU", nullable: true, maxLength: 50 },
   { name: "unit", label: "Đơn vị", nullable: true, maxLength: 30 },
   {
