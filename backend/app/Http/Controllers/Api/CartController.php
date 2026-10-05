@@ -44,6 +44,7 @@ class CartController extends Controller
                 return [
                     'id' => $item->id,
                     'product_id' => $item->sanpham_id,
+                    'slug' => $product?->slug,
                     'name' => $product?->name ?? 'San pham khong con ton tai',
                     'image' => $product?->image,
                     'price' => $product?->price_sale,

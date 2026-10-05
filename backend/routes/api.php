@@ -133,7 +133,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // ==================== CHI TIẾT SẢN PHẨM USER ====================
-Route::get('/products/{id}', [ProductController::class, 'show'])->whereNumber('id');
+Route::get('/products/{slug}', [ProductController::class, 'show']);
 
 // ==================== GIỎ HÀNG CỦA TÀI KHOẢN ====================
 // Xem giỏ hàng của người đang đăng nhập

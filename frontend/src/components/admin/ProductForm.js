@@ -30,15 +30,7 @@ const fields = [
     default: 0,
   },
   { name: "image", label: "Hình ảnh", required: true, maxLength: 255 },
-  { name: "sku", label: "SKU", nullable: true, maxLength: 50 },
   { name: "unit", label: "Đơn vị", nullable: true, maxLength: 30 },
-  {
-    name: "prep_minutes",
-    label: "Thời gian chuẩn bị (phút)",
-    type: "number",
-    min: 0,
-    nullable: true,
-  },
   {
     name: "status",
     label: "Trạng thái",

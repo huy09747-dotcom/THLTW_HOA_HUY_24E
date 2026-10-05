@@ -82,7 +82,7 @@ export default function CartPage() {
                       name={item.name}
                     />
                     <div className="cart-item-info">
-                      <Link href={`/products/${item.product_id}`}>
+                      <Link href={item.slug ? `/products/${encodeURIComponent(item.slug)}` : "/products"}>
                         <h2>{item.name}</h2>
                       </Link>
                       <p>{formatPrice(item.price)}</p>
