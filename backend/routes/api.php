@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ChiTietDonHangController;
 use App\Http\Controllers\Api\ChiTietGioHangController;
 use App\Http\Controllers\Api\GioHangController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CartController;
 
 
 
@@ -107,12 +108,12 @@ Route::get('/chitietdonhangs', [ChiTietDonHangController::class, 'index']);
 
 // ==================== CHI TIẾT GIỎ HÀNG ====================
 
-Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index']);
+Route::get('/chitietgiohangs', [ChiTietGioHangController::class, 'index'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== GIỎ HÀNG ====================
 
-Route::get('/giohangs', [GioHangController::class, 'index']);
+Route::get('/giohangs', [GioHangController::class, 'index'])->middleware(['auth:sanctum', 'admin']);
 
 
 // ==================== XÁC THỰC USER / ADMIN ====================
@@ -130,3 +131,16 @@ Route::get('/user', function (Request $request) {
 
 // Đăng xuất user / admin và thu hồi token hiện tại
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+// ==================== CHI TIẾT SẢN PHẨM USER ====================
+Route::get('/products/{id}', [ProductController::class, 'show'])->whereNumber('id');
+
+// ==================== GIỎ HÀNG CỦA TÀI KHOẢN ====================
+// Xem giỏ hàng của người đang đăng nhập
+Route::get('/cart', [CartController::class, 'index'])->middleware('auth:sanctum');
+// Thêm sản phẩm vào giỏ
+Route::post('/cart/items', [CartController::class, 'store'])->middleware('auth:sanctum');
+// Đổi số lượng một dòng trong giỏ
+Route::put('/cart/items/{id}', [CartController::class, 'update'])->middleware('auth:sanctum')->whereNumber('id');
+// Xóa một dòng khỏi giỏ
+Route::delete('/cart/items/{id}', [CartController::class, 'destroy'])->middleware('auth:sanctum')->whereNumber('id');

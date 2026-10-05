@@ -2,6 +2,13 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+  async rewrites() {
+    const api = (process.env.LARAVEL_API_URL || "http://127.0.0.1:8000/api").replace(
+      /\/$/,
+      "",
+    );
+    return [{ source: "/api/laravel/:path*", destination: `${api}/:path*` }];
+  },
 };
 
 export default nextConfig;
