@@ -9,6 +9,7 @@ const links = [
   ["/admin/categories", "Danh mục"],
   ["/admin/products", "Sản phẩm"],
   ["/admin/brands", "Thương hiệu"],
+  ["/admin/orders", "Đơn hàng"],
 ];
 
 export default function AdminSidebar() {
