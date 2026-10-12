@@ -44,7 +44,7 @@ export default function ProductCard({ product }) {
         <h3>
           <Link href={`/products/${encodeURIComponent(product.slug)}`}>{product.name}</Link>
         </h3>
-        <p className="product-price">{formatPrice(product.price_sale)}</p>
+        <p className="product-price">{formatPrice(product.final_price ?? product.price_sale)}</p>
         <div className="product-card-bottom">
           <span>
             {Number(product.qty) > 0 && Number(product.is_available) === 1

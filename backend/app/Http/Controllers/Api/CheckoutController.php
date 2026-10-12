@@ -36,19 +36,19 @@ class CheckoutController extends Controller
                 $product = $products->get($item->sanpham_id);
                 $qty = (int) $item->soluong;
                 if (! $product || (int) $product->status !== 1 || ! $product->is_available
-                    || $product->price_sale === null || $product->price_sale < 0
+                    || $product->final_price === null || $product->final_price < 0
                     || $qty < 1 || $qty > 999 || $qty > $product->qty) {
                     throw ValidationException::withMessages([
                         'cart' => 'San pham khong kha dung hoac khong du ton kho. Vui long kiem tra gio hang.',
                     ]);
                 }
 
-                $amount = (int) $product->price_sale * $qty;
+                $amount = (int) $product->final_price * $qty;
                 $total += $amount;
                 $lines[] = [
                     'product_id' => $product->id,
                     'item_name' => $product->name,
-                    'price' => (int) $product->price_sale,
+                    'price' => (int) $product->final_price,
                     'qty' => $qty,
                     'amount' => $amount,
                 ];

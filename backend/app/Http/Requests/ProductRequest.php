@@ -43,9 +43,10 @@ class ProductRequest extends FormRequest
                 Rule::unique('sanpham', 'slug')->ignore($id),
             ],
 
-            'price_buy' => 'required|numeric|min:0',
+            'price_buy' => 'required|integer|min:0',
 
-            'price_sale' => 'nullable|numeric|min:0',
+            'price_sale' => 'required|integer|min:0|gte:price_buy',
+            'discount_percent' => 'sometimes|integer|min:0|max:100',
 
             'image' => 'required|string|max:255',
 
@@ -64,7 +65,7 @@ class ProductRequest extends FormRequest
                 Rule::unique('sanpham', 'sku')->ignore($id),
             ],
 
-            'unit' => 'nullable|string|max:30',
+            'unit' => ['required', Rule::in(['Cái', 'Chiếc', 'Bộ', 'Hộp'])],
 
             'prep_minutes' => 'nullable|integer|min:0',
 
@@ -72,6 +73,21 @@ class ProductRequest extends FormRequest
 
             'is_featured' => 'nullable|boolean',
         ];
+    }
+
+    public function after(): array
+    {
+        return [function ($validator) {
+            if ($validator->errors()->isNotEmpty()) return;
+            $product = $this->route('id')
+                ? \App\Models\Product::find($this->route('id'))
+                : null;
+            $percent = (int) $this->input('discount_percent', $product?->discount_percent ?? 0);
+            $final = (int) round((int) $this->input('price_sale') * (100 - $percent) / 100);
+            if ($final < (int) $this->input('price_buy')) {
+                $validator->errors()->add('discount_percent', 'Gia sau khuyen mai khong duoc thap hon gia nhap.');
+            }
+        }];
     }
 
     public function messages(): array
@@ -99,6 +115,13 @@ class ProductRequest extends FormRequest
             'price_buy.numeric' => 'Gia nhap phai la so.',
             'price_buy.min' => 'Gia nhap khong duoc nho hon 0.',
 
+            'price_sale.required' => 'Vui long nhap gia ban.',
+            'price_sale.gte' => 'Gia ban khong duoc thap hon gia nhap.',
+            'discount_percent.integer' => 'Khuyen mai phai la so nguyen.',
+            'discount_percent.min' => 'Khuyen mai tu 0 den 100%.',
+            'discount_percent.max' => 'Khuyen mai tu 0 den 100%.',
+            'unit.in' => 'Don vi phai la Cai, Chiec, Bo hoac Hop.',
+            'unit.required' => 'Vui long chon don vi.',
             'price_sale.numeric' => 'Gia ban phai la so.',
             'price_sale.min' => 'Gia ban khong duoc nho hon 0.',
 

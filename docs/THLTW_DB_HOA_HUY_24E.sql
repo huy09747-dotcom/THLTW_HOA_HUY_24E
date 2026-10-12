@@ -264,6 +264,7 @@ CREATE TABLE IF NOT EXISTS `sanpham` (
   `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `price_buy` bigint unsigned NOT NULL,
   `price_sale` bigint unsigned DEFAULT NULL,
+  `discount_percent` tinyint unsigned NOT NULL DEFAULT '0',
   `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `qty` int unsigned NOT NULL,
   `detail` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,

@@ -19,6 +19,7 @@ class Product extends Model
         'slug',
         'price_buy',
         'price_sale',
+        'discount_percent',
         'image',
         'qty',
         'detail',
@@ -41,5 +42,13 @@ class Product extends Model
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class, 'brand_id');
+    }
+    public function getFinalPriceAttribute(): ?int
+    {
+        if ($this->price_sale === null) {
+            return null;
+        }
+
+        return (int) round((int) $this->price_sale * (100 - (int) $this->discount_percent) / 100);
     }
 }

@@ -51,7 +51,7 @@ export default async function ProductDetailPage({ params }) {
               {product.category_name}
             </Link>
           )}
-          <p className="detail-price">{formatPrice(product.price_sale)}</p>
+          <p className="detail-price">{formatPrice(product.final_price ?? product.price_sale)}</p>
           <p className="detail-description">
             {product.description || "Thông tin giới thiệu đang được cập nhật."}
           </p>

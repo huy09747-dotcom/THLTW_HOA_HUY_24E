@@ -29,3 +29,17 @@ Không cần migration cho dữ liệu này. Không chạy `migrate:fresh`, `mig
 - Không tạo tài khoản, đổi mật khẩu hay chia sẻ `.env`.
 
 Frontend tiếp tục lấy dữ liệu qua Laravel API.
+
+
+## Cập nhật phần trăm khuyến mãi
+
+Database đã có bảng sanpham: chạy riêng migration sau trong thư mục backend:
+
+```powershell
+php artisan migrate --path=database/migrations/2026_10_12_000001_add_discount_percent_to_sanpham.php
+```
+
+Cột discount_percent mặc định 0, nhận số nguyên từ 0 đến 100.
+Giá cuối = làm tròn(price_sale × (100 - discount_percent) / 100).
+Giá bán và giá sau giảm phải từ giá nhập trở lên.
+Nếu tạo database từ SQL mới đã có cột này, không chạy lại migration thêm cột.

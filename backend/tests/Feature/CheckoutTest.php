@@ -88,4 +88,67 @@ class CheckoutTest extends TestCase
             ->assertJsonValidationErrors(['name', 'phone', 'email', 'address']);
         $this->assertDatabaseCount('donhang', 0);
     }
+
+    public function test_discount_is_used_when_creating_order(): void
+    {
+        Schema::table('sanpham', function (Blueprint $table) {
+            $table->unsignedTinyInteger('discount_percent')->default(0);
+        });
+        DB::table('sanpham')->where('id', 1)->update(['discount_percent' => 10]);
+        Sanctum::actingAs(User::findOrFail(1));
+        $this->postJson('/api/checkout', $this->shipping())
+            ->assertCreated()->assertJsonPath('data.total', 180);
+        $this->assertDatabaseHas('chitietdonhang', ['price' => 90, 'qty' => 2, 'amount' => 180]);
+    }
+
+    public function test_delete_is_blocked_for_categories_and_brands_with_trashed_products(): void
+    {
+        foreach (['danhmuc', 'thuonghieu'] as $name) {
+            Schema::create($name, function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+            DB::table($name)->insert(['id' => 1]);
+        }
+        Schema::table('sanpham', function (Blueprint $table) {
+            $table->integer('category_id')->nullable();
+            $table->integer('brand_id')->nullable();
+        });
+        DB::table('sanpham')->where('id', 1)->update([
+            'category_id' => 1, 'brand_id' => 1, 'deleted_at' => now(),
+        ]);
+        foreach ([
+            [new \App\Http\Controllers\Api\CategoryController, 'danhmuc'],
+            [new \App\Http\Controllers\Api\BrandController, 'thuonghieu'],
+        ] as [$controller, $table]) {
+            foreach (['destroy', 'forceDelete'] as $method) {
+                if ($method === 'forceDelete') {
+                    DB::table($table)->where('id', 1)->update(['deleted_at' => now()]);
+                }
+                try {
+                    $controller->$method(1);
+                    $this->fail('Deletion should be blocked');
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    $this->assertArrayHasKey('products', $e->errors());
+                }
+                $this->assertDatabaseCount($table, 1);
+            }
+        }
+    }
+
+    public function test_sale_and_discount_cannot_go_below_cost(): void
+    {
+        $request = \App\Http\Requests\ProductRequest::create('/', 'POST', [
+            'price_buy' => 90, 'price_sale' => 100, 'discount_percent' => 20,
+        ]);
+        $validator = \Illuminate\Support\Facades\Validator::make([], []);
+        ($request->after()[0])($validator);
+        $this->assertTrue($validator->errors()->has('discount_percent'));
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['price_buy' => 100, 'price_sale' => 90],
+            ['price_buy' => $request->rules()['price_buy'], 'price_sale' => $request->rules()['price_sale']]
+        );
+        $this->assertTrue($validator->fails());
+    }
 }
