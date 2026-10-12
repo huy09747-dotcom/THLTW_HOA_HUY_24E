@@ -10,19 +10,18 @@ use Illuminate\Validation\Rule;
 class DonhangController extends Controller
 {
     // Danh sách đơn hàng dành cho admin
-    public function index()
+    public function index(Request $request)
     {
-        $donhangs = Donhang::with([
-            'nguoidung',
-            'items.sanpham',
-        ])->latest('id')->get();
-
-        return response()->json([
-            'message' => 'Danh sach don hang.',
-            'data' => $donhangs,
+        $request->validate([
+            'page' => 'sometimes|integer|min:1|max:2147483647',
         ]);
-    }
 
+        $donhangs = Donhang::with('nguoidung')
+            ->latest('id')
+            ->paginate(10);
+
+        return response()->json($donhangs);
+    }
     // Xem chi tiết một đơn hàng
     public function show($id)
     {
