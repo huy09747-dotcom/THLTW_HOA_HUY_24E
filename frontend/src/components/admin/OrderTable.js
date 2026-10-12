@@ -51,42 +51,35 @@ export default function OrderTable() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState("");
 
-  async function loadOrders() {
-    if (!token) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const result = await getOrders(page, token);
-
-      // Hỗ trợ cả response dạng mảng và Laravel pagination.
-      const rows = Array.isArray(result)
-        ? result
-        : Array.isArray(result?.data)
-          ? result.data
-          : [];
-
-      setOrders(rows);
-      setCurrentPage(result?.meta?.current_page ?? result?.current_page ?? page);
-      setLastPage(result?.meta?.last_page ?? result?.last_page ?? 1);
-    } catch (exception) {
-      setError(
-        exception?.response?.data?.message ||
-          exception.message ||
-          "Không thể tải danh sách đơn hàng."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
+    if (!token) return;
+    let active = true;
+
+    async function loadOrders() {
+      try {
+        const result = await getOrders(page, token);
+        if (!active) return;
+        setOrders(result.data);
+        setCurrentPage(result.current_page);
+        setLastPage(result.last_page);
+      } catch (exception) {
+        if (active) setError(exception.message || "Không thể tải danh sách đơn hàng.");
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
     loadOrders();
-    // loadOrders được gọi khi trang hoặc token thay đổi.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      active = false;
+    };
   }, [page, token]);
 
+  function changePage(nextPage) {
+    setLoading(true);
+    setError("");
+    setPage(nextPage);
+  }
   async function handleViewDetail(id) {
     setSelectedOrder(null);
     setDetailError("");
@@ -119,14 +112,17 @@ export default function OrderTable() {
     setError("");
 
     try {
-      await updateOrderStatus(order.id, Number(nextStatus), token);
+      const result = await updateOrderStatus(order.id, Number(nextStatus), token);
+      const updatedOrder = result.data;
 
-      await loadOrders();
-
-      if (selectedOrder?.id === order.id) {
-        const result = await getOrderDetail(order.id, token);
-        setSelectedOrder(result?.data ?? result);
-      }
+      setOrders((current) =>
+        current.map((item) =>
+          item.id === order.id ? { ...item, ...updatedOrder } : item
+        )
+      );
+      setSelectedOrder((current) =>
+        current?.id === order.id ? { ...current, ...updatedOrder } : current
+      );
     } catch (exception) {
       setError(
         exception?.response?.data?.message ||
@@ -188,7 +184,7 @@ export default function OrderTable() {
                       <select
                         aria-label={`Trạng thái đơn ${order.code || order.id}`}
                         value={Number(order.status)}
-                        disabled={busyId === order.id}
+                        disabled={busyId !== null}
                         onChange={(event) =>
                           handleUpdateStatus(order, event.target.value)
                         }
@@ -234,7 +230,7 @@ export default function OrderTable() {
               type="button"
               className={styles.button}
               disabled={page <= 1}
-              onClick={() => setPage((value) => value - 1)}
+              onClick={() => changePage(page - 1)}
             >
               Trang trước
             </button>
@@ -247,7 +243,7 @@ export default function OrderTable() {
               type="button"
               className={styles.button}
               disabled={page >= lastPage}
-              onClick={() => setPage((value) => value + 1)}
+              onClick={() => changePage(page + 1)}
             >
               Trang sau
             </button>
