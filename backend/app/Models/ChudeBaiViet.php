@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChudeBaiViet extends Model
 {
+    use \Illuminate\Database\Eloquent\SoftDeletes;
+
     protected $table = 'chudebaiviet';
 
     protected $fillable = [
-        'tenchude',
-        'trangthai',
+        'name', 'slug', 'sort_order', 'description',
+        'status',
     ];
 
     public function baiviets(): HasMany
     {
-        return $this->hasMany(BaiViet::class, 'chude_id');
+        return $this->hasMany(BaiViet::class, 'topic_id');
     }
 }

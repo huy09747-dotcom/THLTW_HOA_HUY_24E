@@ -11,6 +11,8 @@ const links = [
   ["/admin/brands", "Thương hiệu"],
   ["/admin/orders", "Đơn hàng"],
   ["/admin/users", "Người dùng"],
+  ["/admin/posts", "Bài viết"],
+  ["/admin/menus", "Menu"],
 ];
 
 export default function AdminSidebar() {

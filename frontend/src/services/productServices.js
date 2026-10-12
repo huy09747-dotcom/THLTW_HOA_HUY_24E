@@ -7,3 +7,8 @@ export async function getProducts() {
 export async function getProduct(slug) {
   return (await api("/products/" + encodeURIComponent(slug))).data;
 }
+
+export function getProductPage(params = {}) {
+  const query = new URLSearchParams({ ...params, status: "1" });
+  return api(`/products?${query}`);
+}

@@ -15,9 +15,10 @@ export default function EntityForm({
   onCancel,
   busy,
   options = {},
+  slugSource = "name",
 }) {
   const { token } = useAdminAuth();
-  const [slug, setSlug] = useState(initial.slug ?? toSlug(initial.name));
+  const [slug, setSlug] = useState(initial.slug ?? toSlug(initial[slugSource]));
   const [salePrice, setSalePrice] = useState(initial.price_sale ?? "");
   const [discount, setDiscount] = useState(initial.discount_percent ?? 0);
   const [preview, setPreview] = useState("");
@@ -198,7 +199,7 @@ export default function EntityForm({
                       : {
                           defaultValue: value,
                           onChange:
-                            field.name === "name"
+                            field.name === slugSource
                               ? (event) => setSlug(toSlug(event.target.value))
                               : field.name === "price_sale"
                                 ? (event) => setSalePrice(event.target.value)
