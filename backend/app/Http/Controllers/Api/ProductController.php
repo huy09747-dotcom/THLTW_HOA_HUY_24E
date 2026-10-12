@@ -14,6 +14,23 @@ class ProductController extends Controller
     // Danh sách sản phẩm
     public function index(Request $request): AnonymousResourceCollection
     {
+        $request->validate([
+            'page' => 'sometimes|integer|min:1|max:2147483647',
+            'search' => 'nullable|string|max:255',
+            'category_id' => 'nullable|integer|min:1',
+            'brand_id' => 'nullable|integer|min:1',
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0' . ($request->filled('min_price') ? '|gte:min_price' : ''),
+            'on_sale' => 'sometimes|in:0,1',
+            'status' => 'nullable|integer|in:0,1,2',
+            'is_available' => 'nullable|in:0,1',
+            'is_featured' => 'nullable|in:0,1',
+        ], [
+            'max_price.gte' => 'Gia cao nhat phai lon hon hoac bang gia thap nhat.',
+            'min_price.min' => 'Gia khong duoc am.',
+            'max_price.min' => 'Gia khong duoc am.',
+        ]);
+
         $query = Product::with(['category', 'brand'])
             ->latest('id');
 
@@ -53,7 +70,20 @@ class ProductController extends Controller
             $query->where('is_featured', $request->input('is_featured'));
         }
 
-        $products = $query->paginate(10);
+        if ($request->boolean('on_sale')) {
+            $query->where('discount_percent', '>', 0)->whereNotNull('price_sale');
+        }
+
+        // Lọc theo giá thực tế sau khuyến mãi, giống giá hiển thị ở Shop.
+        $finalPrice = 'ROUND(price_sale * (100 - COALESCE(discount_percent, 0)) / 100.0)';
+        if ($request->filled('min_price')) {
+            $query->whereRaw($finalPrice . ' >= CAST(? AS DECIMAL(20, 2))', [$request->input('min_price')]);
+        }
+        if ($request->filled('max_price')) {
+            $query->whereRaw($finalPrice . ' <= CAST(? AS DECIMAL(20, 2))', [$request->input('max_price')]);
+        }
+
+        $products = $query->paginate(10)->withQueryString();
 
         return ProductResource::collection($products);
     }

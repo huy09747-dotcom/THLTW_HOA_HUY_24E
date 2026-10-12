@@ -195,3 +195,61 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/users')->group(funct
     // Danh sách đơn hàng của người dùng
     Route::get('/{id}/orders', [UserController::class, 'orders'])->whereNumber('id');
 });
+
+
+// ==================== POST - ADMIN ====================
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/posts')->group(function () {
+    // Danh sách
+    Route::get('/', [\App\Http\Controllers\Api\PostController::class, 'index']);
+
+    // Dữ liệu cho danh sách chọn
+    Route::get('/options', [\App\Http\Controllers\Api\PostController::class, 'options']);
+
+    // Thùng rác
+    Route::get('/trash', [\App\Http\Controllers\Api\PostController::class, 'trash']);
+
+    // Thêm mới
+    Route::post('/', [\App\Http\Controllers\Api\PostController::class, 'store']);
+
+    // Chỉnh sửa
+    Route::put('/{id}', [\App\Http\Controllers\Api\PostController::class, 'update'])->whereNumber('id');
+
+    // Xóa mềm
+    Route::delete('/{id}', [\App\Http\Controllers\Api\PostController::class, 'destroy'])->whereNumber('id');
+
+    // Khôi phục
+    Route::patch('/{id}/restore', [\App\Http\Controllers\Api\PostController::class, 'restore'])->whereNumber('id');
+
+    // Xóa vĩnh viễn
+    Route::delete('/{id}/force', [\App\Http\Controllers\Api\PostController::class, 'forceDelete'])->whereNumber('id');
+
+});
+
+
+// ==================== MENU - ADMIN ====================
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/menus')->group(function () {
+    // Danh sách
+    Route::get('/', [\App\Http\Controllers\Api\MenuController::class, 'index']);
+
+    // Dữ liệu cho danh sách chọn
+    Route::get('/options', [\App\Http\Controllers\Api\MenuController::class, 'options']);
+
+    // Thùng rác
+    Route::get('/trash', [\App\Http\Controllers\Api\MenuController::class, 'trash']);
+
+    // Thêm mới
+    Route::post('/', [\App\Http\Controllers\Api\MenuController::class, 'store']);
+
+    // Chỉnh sửa
+    Route::put('/{id}', [\App\Http\Controllers\Api\MenuController::class, 'update'])->whereNumber('id');
+
+    // Xóa mềm
+    Route::delete('/{id}', [\App\Http\Controllers\Api\MenuController::class, 'destroy'])->whereNumber('id');
+
+    // Khôi phục
+    Route::patch('/{id}/restore', [\App\Http\Controllers\Api\MenuController::class, 'restore'])->whereNumber('id');
+
+    // Xóa vĩnh viễn
+    Route::delete('/{id}/force', [\App\Http\Controllers\Api\MenuController::class, 'forceDelete'])->whereNumber('id');
+
+});

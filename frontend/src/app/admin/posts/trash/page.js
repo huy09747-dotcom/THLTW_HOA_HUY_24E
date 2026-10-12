@@ -1,0 +1,7 @@
+import ContentManagementPage from "@/components/admin/ContentManagementPage";
+
+export const metadata = { title: "Thùng rác bài viết | HH Shop" };
+
+export default function Page() {
+  return <ContentManagementPage kind="post" trash />;
+}

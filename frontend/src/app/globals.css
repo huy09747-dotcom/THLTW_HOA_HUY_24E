@@ -1331,3 +1331,46 @@ button:disabled {
   font-size: 16px;
   margin: 18px 0;
 }
+
+.shop-filters {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  gap: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  background: #fff;
+  border: 1px solid #dce5e0;
+  border-radius: 14px;
+}
+.shop-filters label {
+  display: block;
+  margin-bottom: 8px;
+}
+.shop-filters input,
+.shop-filters select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #c8d9cf;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+.shop-filter-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .shop-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .shop-filters {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+  }
+}

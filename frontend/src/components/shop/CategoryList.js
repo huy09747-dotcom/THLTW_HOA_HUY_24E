@@ -39,7 +39,7 @@ function CategoryTile({ category, selected }) {
   );
 }
 
-export default function CategoryList({ categories, selected = "", compact = false }) {
+export default function CategoryList({ categories, selected = "", compact = false, filters = {} }) {
   if (compact) {
     const items = [{ id: "", name: "Tất cả" }, ...categories];
 
@@ -50,7 +50,7 @@ export default function CategoryList({ categories, selected = "", compact = fals
           return (
             <Link
               key={item.id}
-              href={item.id === "" ? "/products" : "/products?category=" + item.id}
+              href={"/products?" + new URLSearchParams({ ...filters, category: String(item.id) })}
               className={active ? "category-filter selected" : "category-filter"}
               aria-current={active ? "page" : undefined}
             >

@@ -1,18 +1,22 @@
 import Link from "next/link";
 import ProductCard from "@/components/shop/ProductCard";
 import CategoryList from "@/components/shop/CategoryList";
-import { getProducts } from "@/services/productServices";
+import { getProductPage } from "@/services/productServices";
 import { getCategories } from "@/services/categoryServices";
 
 export default async function Home() {
-  const [productsResult, categoriesResult] = await Promise.allSettled([
-    getProducts(),
+  const [newResult, hotResult, saleResult, categoriesResult] = await Promise.allSettled([
+    getProductPage(),
+    getProductPage({ is_featured: "1" }),
+    getProductPage({ on_sale: "1" }),
     getCategories(),
   ]);
-  const products = productsResult.status === "fulfilled" ? productsResult.value : [];
-  const categories =
-    categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
-  const featured = products.filter((product) => Number(product.is_featured) === 1);
+  const categories = categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
+  const sections = [
+    { id: "new", title: "Sản phẩm mới", result: newResult, href: "/products" },
+    { id: "hot", title: "Sản phẩm hot", result: hotResult, href: "/products?hot=1" },
+    { id: "sale", title: "Sản phẩm sale", result: saleResult, href: "/products?sale=1" },
+  ];
   return (
     <div className="container home-page">
       <section
@@ -90,67 +94,25 @@ export default async function Home() {
           </div>
         )}
       </section>
-      <section
-        id="san-pham"
-        className="home-section"
-        aria-labelledby="products-title"
-      >
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">DÀNH CHO BẠN</span>
-            <h2 id="products-title">Sản phẩm mới</h2>
+      {sections.map(({ id, title, result, href }) => (
+        <section key={id} className="home-section" aria-labelledby={`${id}-title`}>
+          <div className="section-heading">
+            <h2 id={`${id}-title`}>{title}</h2>
+            <Link href={href}>Xem tất cả ↗</Link>
           </div>
-          <Link href="/products">Xem tất cả ↗</Link>
-        </div>
-        {productsResult.status === "rejected" ? (
-          <p
-            role="alert"
-            className="error-message"
-          >
-            {productsResult.reason.message}
-          </p>
-        ) : products.length ? (
-          <div className="product-grid">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="empty-panel">
-            <p>Chưa có sản phẩm.</p>
-          </div>
-        )}
-      </section>
-      <section
-        className="home-section"
-        aria-labelledby="featured-title"
-      >
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">GỢI Ý KHÁM PHÁ</span>
-            <h2 id="featured-title">Sản phẩm nổi bật</h2>
-          </div>
-        </div>
-        {productsResult.status === "rejected" ? (
-          <p className="notice">Chưa tải được sản phẩm nổi bật.</p>
-        ) : featured.length ? (
-          <div className="product-grid">
-            {featured.slice(0, 4).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="empty-panel">
-            <p>Chưa có sản phẩm nổi bật.</p>
-          </div>
-        )}
-      </section>
+          {result.status === "rejected" ? (
+            <p role="alert" className="error-message">{result.reason.message}</p>
+          ) : result.value.data.length ? (
+            <div className="product-grid">
+              {result.value.data.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="empty-panel"><p>Chưa có {title.toLowerCase()}.</p></div>
+          )}
+        </section>
+      ))}
     </div>
   );
 }
