@@ -6,3 +6,17 @@ export function getOrders(page, token) {
     token,
   });
 }
+
+export function getOrderDetail(id, token) {
+  return axiosClient.get(`/donhangs/${id}`, {
+    token,
+  });
+}
+
+export function updateOrderStatus(id, status, token) {
+  return axiosClient.patch(
+    `/donhangs/${id}/status`,
+    { status },
+    { token }
+  );
+}

@@ -164,3 +164,18 @@ Route::delete('/brands/{id}/force', [BrandController::class, 'forceDelete'])->mi
 // Dat hang tu gio hang cua tai khoan dang dang nhap
 Route::post('/checkout', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])
     ->middleware('auth:sanctum');
+// ĐƠN HÀNG - ADMIN
+Route::get('/donhangs', [DonhangController::class, 'index'])
+    ->middleware(['auth:sanctum', 'admin']);
+
+Route::get('/donhangs/{id}', [DonhangController::class, 'show'])
+    ->middleware(['auth:sanctum', 'admin'])
+    ->whereNumber('id');
+
+Route::patch('/donhangs/{id}/status', [DonhangController::class, 'updateStatus'])
+    ->middleware(['auth:sanctum', 'admin'])
+    ->whereNumber('id');
+
+// ĐƠN HÀNG - NGƯỜI DÙNG
+Route::get('/my-orders', [DonhangController::class, 'myOrders'])
+    ->middleware('auth:sanctum');
