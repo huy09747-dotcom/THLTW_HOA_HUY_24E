@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAdminAuth } from "./AdminAuthProvider";
 import { adminApi } from "@/services/adminApi";
 import AdminImage from "./AdminImage";
+import MoneyInput from "./MoneyInput";
 import { toSlug, formatPrice } from "@/utils/format";
 import styles from "@/app/admin/admin.module.css";
 
@@ -38,7 +39,7 @@ export default function EntityForm({
           ? data.has(field.name)
           : value === "" && field.nullable
             ? null
-            : field.type === "number" || (field.type === "select" && field.valueType !== "string")
+            : field.type === "money" || field.type === "number" || (field.type === "select" && field.valueType !== "string")
               ? Number(value)
               : value;
     }
@@ -146,6 +147,14 @@ export default function EntityForm({
                       <AdminImage image={initial.image} name="Ảnh hiện tại" />
                     ) : null}
                   </>
+                 ) : field.type === "money" ? (
+                  <MoneyInput
+                    id={id}
+                    name={field.name}
+                    initialValue={value}
+                    required={field.required}
+                    onValueChange={field.name === "price_sale" ? setSalePrice : undefined}
+                  />
                 ) : field.type === "textarea" ? (
                   <textarea
                     id={id}
@@ -161,7 +170,7 @@ export default function EntityForm({
                     defaultValue={value}
                     required={field.required}
                   >
-                    <option value="">Chọn {field.label.toLowerCase()}</option>
+                    <option value="" disabled hidden>Chọn {field.label.toLowerCase()}</option>
                     {choices.map((item) => (
                       <option
                         key={item.id}

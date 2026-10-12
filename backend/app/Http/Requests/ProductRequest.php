@@ -43,9 +43,9 @@ class ProductRequest extends FormRequest
                 Rule::unique('sanpham', 'slug')->ignore($id),
             ],
 
-            'price_buy' => 'required|integer|min:0',
+            'price_buy' => 'required|integer|min:1000|multiple_of:1000',
 
-            'price_sale' => 'required|integer|min:0|gte:price_buy',
+            'price_sale' => 'required|integer|min:1000|multiple_of:1000|gte:price_buy',
             'discount_percent' => 'sometimes|integer|min:0|max:100',
 
             'image' => 'required|string|max:255',
@@ -113,7 +113,8 @@ class ProductRequest extends FormRequest
 
             'price_buy.required' => 'Gia nhap khong duoc de trong.',
             'price_buy.numeric' => 'Gia nhap phai la so.',
-            'price_buy.min' => 'Gia nhap khong duoc nho hon 0.',
+            'price_buy.min' => 'Gia nhap toi thieu 1.000 dong.',
+            'price_buy.multiple_of' => 'Gia nhap phai la boi so cua 1.000 dong.',
 
             'price_sale.required' => 'Vui long nhap gia ban.',
             'price_sale.gte' => 'Gia ban khong duoc thap hon gia nhap.',
@@ -123,7 +124,8 @@ class ProductRequest extends FormRequest
             'unit.in' => 'Don vi phai la Cai, Chiec, Bo hoac Hop.',
             'unit.required' => 'Vui long chon don vi.',
             'price_sale.numeric' => 'Gia ban phai la so.',
-            'price_sale.min' => 'Gia ban khong duoc nho hon 0.',
+            'price_sale.min' => 'Gia ban toi thieu 1.000 dong.',
+            'price_sale.multiple_of' => 'Gia ban phai la boi so cua 1.000 dong.',
 
             'image.required' => 'Hinh anh khong duoc de trong.',
 

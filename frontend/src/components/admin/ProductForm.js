@@ -8,17 +8,15 @@ const fields = [
   {
     name: "price_buy",
     label: "Giá nhập",
-    type: "number",
-    min: 0,
-    step: "any",
+    type: "money",
+    min: 1000,
     required: true,
   },
   {
     name: "price_sale",
     label: "Giá bán",
-    type: "number",
-    min: 0,
-    step: "any",
+    type: "money",
+    min: 1000,
     required: true,
   },
   {

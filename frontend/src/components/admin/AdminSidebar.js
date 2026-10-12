@@ -10,6 +10,7 @@ const links = [
   ["/admin/products", "Sản phẩm"],
   ["/admin/brands", "Thương hiệu"],
   ["/admin/orders", "Đơn hàng"],
+  ["/admin/users", "Người dùng"],
 ];
 
 export default function AdminSidebar() {

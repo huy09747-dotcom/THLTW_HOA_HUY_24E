@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ChiTietGioHangController;
 use App\Http\Controllers\Api\GioHangController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\UserController;
 
 
 
@@ -179,3 +180,18 @@ Route::patch('/donhangs/{id}/status', [DonhangController::class, 'updateStatus']
 // ĐƠN HÀNG - NGƯỜI DÙNG
 Route::get('/my-orders', [DonhangController::class, 'myOrders'])
     ->middleware('auth:sanctum');
+
+// ==================== NGƯỜI DÙNG - ADMIN ====================
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/users')->group(function () {
+    // Danh sách người dùng
+    Route::get('/', [UserController::class, 'index']);
+
+    // Chi tiết người dùng
+    Route::get('/{id}', [UserController::class, 'show'])->whereNumber('id');
+
+    // Khóa hoặc mở khóa tài khoản
+    Route::patch('/{id}/status', [UserController::class, 'updateStatus'])->whereNumber('id');
+
+    // Danh sách đơn hàng của người dùng
+    Route::get('/{id}/orders', [UserController::class, 'orders'])->whereNumber('id');
+});

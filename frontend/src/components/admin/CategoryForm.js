@@ -10,7 +10,7 @@ const fields = [
     type: "select",
     min: 0,
     max: 4294967295,
-    default: 0,
+    default: "",
     required: true,
   },
   {
@@ -49,7 +49,24 @@ export default function CategoryForm(props) {
       }
     }
   }
-  const parents = categories.filter((item) => !excluded.has(Number(item.id)));
+  const parents = categories
+    .filter((item) => !excluded.has(Number(item.id)))
+    .map((item) => {
+      const names = [item.name];
+      const visited = new Set([Number(item.id)]);
+      let parentId = Number(item.parent_id);
+      while (parentId && !visited.has(parentId)) {
+        visited.add(parentId);
+        const parent = categories.find((entry) => Number(entry.id) === parentId);
+        if (!parent) {
+          names.unshift("Cha không còn tồn tại");
+          break;
+        }
+        names.unshift(parent.name);
+        parentId = Number(parent.parent_id);
+      }
+      return { ...item, name: names.join(" → ") };
+    });
   return (
     <EntityForm
       {...props}
