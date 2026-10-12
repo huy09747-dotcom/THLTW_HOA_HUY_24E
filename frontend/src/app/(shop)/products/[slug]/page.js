@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct } from "@/services/productServices";
+import { getProduct, getRelatedProducts } from "@/services/productServices";
 import { formatPrice } from "@/utils/format";
-import { ProductImage } from "@/components/shop/ProductCard";
+import ProductCard, { ProductImage } from "@/components/shop/ProductCard";
 import AddToCart from "@/components/shop/AddToCart";
 
 export default async function ProductDetailPage({ params }) {
@@ -30,6 +30,15 @@ export default async function ProductDetailPage({ params }) {
       </div>
     );
   if (!product || Number(product.status) !== 1) notFound();
+
+  let relatedProducts = [];
+  let relatedError = "";
+  try {
+    relatedProducts = await getRelatedProducts(product);
+  } catch {
+    relatedError = "Chưa tải được sản phẩm liên quan. Vui lòng thử lại sau.";
+  }
+
   return (
     <div className="container catalog-page">
       <p className="breadcrumb">
@@ -75,6 +84,25 @@ export default async function ProductDetailPage({ params }) {
       <section className="product-information">
         <h2 className="detail-heading">Thông tin sản phẩm</h2>
         <p className="detail-text">{product.detail || "Thông tin đang được cập nhật."}</p>
+      </section>
+      <section className="home-section" aria-labelledby="related-products-title">
+        <div className="section-heading">
+          <h2 id="related-products-title">Sản phẩm liên quan</h2>
+        </div>
+        {relatedError ? (
+          <p role="alert" className="error-message">{relatedError}</p>
+        ) : relatedProducts.length ? (
+          <div className="product-grid related-product-grid">
+            {relatedProducts.map((item) => (
+              <ProductCard
+                key={item.id}
+                product={item}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>Chưa có sản phẩm cùng danh mục.</p>
+        )}
       </section>
     </div>
   );

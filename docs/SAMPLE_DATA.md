@@ -33,6 +33,9 @@ Frontend tiếp tục lấy dữ liệu qua Laravel API.
 
 ## Cập nhật phần trăm khuyến mãi
 
+Hướng dẫn đồng bộ cho thành viên: [DATABASE_UPDATE_2026_10_12.md](DATABASE_UPDATE_2026_10_12.md).
+Script SQL cập nhật riêng: [DATABASE_UPDATE_2026_10_12.sql](DATABASE_UPDATE_2026_10_12.sql).
+
 Database đã có bảng sanpham: chạy riêng migration sau trong thư mục backend:
 
 ```powershell

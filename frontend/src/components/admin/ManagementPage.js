@@ -963,6 +963,7 @@ export default function ManagementPage({
                       <th>
                         Giá bán / Tồn
                       </th>
+                      <th>Giá sale</th>
                     </>
                   )}
 
@@ -976,7 +977,7 @@ export default function ManagementPage({
                   <tr>
                     <td
                       colSpan={
-                        product ? 8 : 6
+                        product ? 9 : 6
                       }
                     >
                       {product
@@ -1022,6 +1023,15 @@ export default function ManagementPage({
                             <br />
 
                             Tồn: {item.qty}
+                          </td>
+                          <td>
+                            {Number(item.discount_percent) > 0 && item.final_price != null ? (
+                              <>
+                                <strong>{formatPrice(item.final_price)}</strong>
+                                <br />
+                                <small>Giảm {item.discount_percent}%</small>
+                              </>
+                            ) : "—"}
                           </td>
                         </>
                       )}

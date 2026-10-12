@@ -28,12 +28,23 @@ export function ProductImage({ image, name }) {
   );
 }
 export default function ProductCard({ product }) {
+  const onSale = Number(product.discount_percent) > 0
+    && product.price_sale != null
+    && product.final_price != null
+    && Number(product.final_price) < Number(product.price_sale);
+
   return (
     <article className="product-card">
       <Link
         href={`/products/${encodeURIComponent(product.slug)}`}
+        className="product-card-visual"
         aria-label={`Xem ${product.name}`}
       >
+        {onSale && (
+          <span className="product-sale-badge" aria-label={`Giảm ${product.discount_percent}%`}>
+            -{product.discount_percent}%
+          </span>
+        )}
         <ProductImage
           image={product.image}
           name={product.name}
@@ -44,7 +55,20 @@ export default function ProductCard({ product }) {
         <h3>
           <Link href={`/products/${encodeURIComponent(product.slug)}`}>{product.name}</Link>
         </h3>
-        <p className="product-price">{formatPrice(product.final_price ?? product.price_sale)}</p>
+        {onSale ? (
+          <div className="product-sale-prices">
+            <p className="product-original-price">
+              <span className="sr-only">Giá gốc: </span>
+              <del>{formatPrice(product.price_sale)}</del>
+            </p>
+            <p className="product-price product-sale-price">
+              <span className="sr-only">Giá sale: </span>
+              {formatPrice(product.final_price)}
+            </p>
+          </div>
+        ) : (
+          <p className="product-price">{formatPrice(product.final_price ?? product.price_sale)}</p>
+        )}
         <div className="product-card-bottom">
           <span>
             {Number(product.qty) > 0 && Number(product.is_available) === 1
