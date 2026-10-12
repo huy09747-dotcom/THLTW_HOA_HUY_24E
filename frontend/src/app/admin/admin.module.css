@@ -519,3 +519,66 @@
     padding: 16px;
   }
 }
+
+.moneyInput {
+  display: flex;
+  align-items: center;
+  border: 1px solid #b9cdc1;
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+}
+.moneyInput input[type="text"] {
+  border: 0;
+  border-radius: 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  text-align: right;
+}
+.moneyInput span {
+  padding-right: 14px;
+  white-space: nowrap;
+}
+
+.userProfile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 20px 0 0;
+}
+.userProfile dt {
+  color: #627269;
+  margin-bottom: 6px;
+}
+.userProfile dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.userOrders {
+  margin-top: 28px;
+}
+.userOrders h2 {
+  margin-bottom: 16px;
+  font-size: 22px;
+}
+.userActive,
+.userBlocked {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.userActive {
+  color: #17553a;
+  background: #e1f2e8;
+}
+.userBlocked {
+  color: #9e3225;
+  background: #fff1ef;
+}
+@media (max-width: 600px) {
+  .userProfile {
+    grid-template-columns: 1fr;
+  }
+}
