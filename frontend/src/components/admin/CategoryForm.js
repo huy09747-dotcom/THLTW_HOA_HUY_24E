@@ -6,8 +6,8 @@ const fields = [
   { name: "image", label: "Hình ảnh", nullable: true, maxLength: 255 },
   {
     name: "parent_id",
-    label: "ID danh mục cha (0 nếu không có)",
-    type: "number",
+    label: "Danh mục cha",
+    type: "select",
     min: 0,
     max: 4294967295,
     default: 0,
@@ -37,10 +37,27 @@ const fields = [
 ];
 
 export default function CategoryForm(props) {
+  const categories = props.options?.parent_id || [];
+  const excluded = new Set([Number(props.initial?.id)]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const item of categories) {
+      if (excluded.has(Number(item.parent_id)) && !excluded.has(Number(item.id))) {
+        excluded.add(Number(item.id));
+        changed = true;
+      }
+    }
+  }
+  const parents = categories.filter((item) => !excluded.has(Number(item.id)));
   return (
     <EntityForm
       {...props}
       fields={fields}
+      options={{
+        ...props.options,
+        parent_id: [{ id: 0, name: "Không có danh mục cha" }, ...parents],
+      }}
     />
   );
 }

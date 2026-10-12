@@ -23,6 +23,8 @@ class ProductResource extends JsonResource
 
             'price_buy' => $this->price_buy,
             'price_sale' => $this->price_sale,
+            'discount_percent' => (int) $this->discount_percent,
+            'final_price' => $this->final_price,
 
             'image' => $this->image,
             'qty' => $this->qty,

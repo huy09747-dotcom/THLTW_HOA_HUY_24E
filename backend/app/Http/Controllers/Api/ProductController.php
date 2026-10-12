@@ -15,7 +15,7 @@ class ProductController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = Product::with(['category', 'brand'])
-            ->latest();
+            ->latest('id');
 
         // Tìm kiếm theo tên, slug hoặc SKU
         if ($request->filled('search')) {
@@ -104,7 +104,7 @@ class ProductController extends Controller
     // Danh sách trong thùng rác
     public function trash(): AnonymousResourceCollection
     {
-        $items = Product::onlyTrashed()->with(['category', 'brand'])->orderBy('id')->paginate(10);
+        $items = Product::onlyTrashed()->with(['category', 'brand'])->orderByDesc('id')->paginate(10);
 
         return ProductResource::collection($items);
     }

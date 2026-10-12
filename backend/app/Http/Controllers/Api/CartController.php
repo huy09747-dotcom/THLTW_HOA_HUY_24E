@@ -21,7 +21,7 @@ class CartController extends Controller
 
     private function checkProduct(Product $product, int $quantity): void
     {
-        if ((int) $product->status !== 1 || ! $product->is_available || $product->price_sale === null) {
+        if ((int) $product->status !== 1 || ! $product->is_available || $product->final_price === null) {
             throw ValidationException::withMessages(['product_id' => 'San pham hien khong the dat mua.']);
         }
         if ($quantity > min(999, (int) $product->qty)) {
@@ -39,7 +39,7 @@ class CartController extends Controller
             ->map(function ($item) {
                 $product = $item->sanpham;
                 $available = $product && (int) $product->status === 1 && $product->is_available
-                    && $product->price_sale !== null && $item->soluong <= $product->qty;
+                    && $product->final_price !== null && $item->soluong <= $product->qty;
 
                 return [
                     'id' => $item->id,
@@ -47,11 +47,11 @@ class CartController extends Controller
                     'slug' => $product?->slug,
                     'name' => $product?->name ?? 'San pham khong con ton tai',
                     'image' => $product?->image,
-                    'price' => $product?->price_sale,
+                    'price' => $product?->final_price,
                     'quantity' => (int) $item->soluong,
                     'stock' => (int) ($product?->qty ?? 0),
                     'available' => (bool) $available,
-                    'subtotal' => $available ? (int) $product->price_sale * $item->soluong : 0,
+                    'subtotal' => $available ? (int) $product->final_price * $item->soluong : 0,
                 ];
             });
 

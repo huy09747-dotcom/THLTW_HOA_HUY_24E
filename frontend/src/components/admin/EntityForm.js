@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAdminAuth } from "./AdminAuthProvider";
 import { adminApi } from "@/services/adminApi";
 import AdminImage from "./AdminImage";
-import { toSlug } from "@/utils/format";
+import { toSlug, formatPrice } from "@/utils/format";
 import styles from "@/app/admin/admin.module.css";
 
 export default function EntityForm({
@@ -17,6 +17,8 @@ export default function EntityForm({
 }) {
   const { token } = useAdminAuth();
   const [slug, setSlug] = useState(initial.slug ?? toSlug(initial.name));
+  const [salePrice, setSalePrice] = useState(initial.price_sale ?? "");
+  const [discount, setDiscount] = useState(initial.discount_percent ?? 0);
   const [preview, setPreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -36,7 +38,7 @@ export default function EntityForm({
           ? data.has(field.name)
           : value === "" && field.nullable
             ? null
-            : field.type === "number" || field.type === "select"
+            : field.type === "number" || (field.type === "select" && field.valueType !== "string")
               ? Number(value)
               : value;
     }
@@ -75,7 +77,12 @@ export default function EntityForm({
         <div className={styles.fieldGrid}>
           {fields.map((field) => {
             const id = "field-" + field.name;
-            const value = initial[field.name] ?? field.default ?? "";
+            let value = initial[field.name] ?? field.default ?? "";
+            if (field.name === "unit") {
+              value = field.options?.find(
+                (item) => item.id.toLocaleLowerCase("vi") === String(value).toLocaleLowerCase("vi")
+              )?.id ?? "";
+            }
             let choices = options[field.name] || field.options || [];
 
             // Giữ liên kết hiện tại nếu bản ghi không có trong danh sách đang hoạt động.
@@ -84,7 +91,16 @@ export default function EntityForm({
               value !== "" &&
               !choices.some((item) => String(item.id) === String(value))
             ) {
-              choices = [...choices, { id: value, name: "Giá trị hiện tại: " + value }];
+              choices = [
+                ...choices,
+                {
+                  id: value,
+                  name: field.name === "parent_id"
+                    ? "Danh mục cha không còn hợp lệ — hãy chọn lại"
+                    : "Giá trị hiện tại: " + value,
+                  disabled: field.name === "parent_id",
+                },
+              ];
             }
 
             return (
@@ -150,6 +166,7 @@ export default function EntityForm({
                       <option
                         key={item.id}
                         value={item.id}
+                        disabled={item.disabled}
                       >
                         {item.name}
                       </option>
@@ -174,7 +191,11 @@ export default function EntityForm({
                           onChange:
                             field.name === "name"
                               ? (event) => setSlug(toSlug(event.target.value))
-                              : undefined,
+                              : field.name === "price_sale"
+                                ? (event) => setSalePrice(event.target.value)
+                                : field.name === "discount_percent"
+                                  ? (event) => setDiscount(event.target.value)
+                                  : undefined,
                         })}
                     required={field.required}
                     maxLength={field.maxLength}
@@ -187,6 +208,13 @@ export default function EntityForm({
             );
           })}
         </div>
+        {fields.some((field) => field.name === "discount_percent") && (
+          <p>
+            Giá sau khuyến mãi: {salePrice === ""
+              ? "—"
+              : formatPrice(Math.round(Number(salePrice) * (100 - Number(discount)) / 100))}
+          </p>
+        )}
         <div className={styles.actions}>
           <button
             type="submit"

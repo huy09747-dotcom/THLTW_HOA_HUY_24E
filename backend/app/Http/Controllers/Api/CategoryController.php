@@ -57,7 +57,7 @@ class CategoryController extends Controller
         }
 
         $categories = $query
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->paginate(
                 (int) ($data['per_page'] ?? 10),
                 ['*'],
@@ -103,6 +103,12 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
+        if ($category->products()->withTrashed()->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'products' => 'Khong the xoa: van con san pham thuoc danh muc nay.',
+            ]);
+        }
+
         $category->delete();
 
         return response()->json([
@@ -114,7 +120,7 @@ class CategoryController extends Controller
     public function trash(): AnonymousResourceCollection
     {
         $categories = Category::onlyTrashed()
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         return CategoryResource::collection($categories);
@@ -138,6 +144,12 @@ class CategoryController extends Controller
     {
         $category = Category::onlyTrashed()
             ->findOrFail($id);
+
+        if ($category->products()->withTrashed()->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'products' => 'Khong the xoa: van con san pham thuoc danh muc nay.',
+            ]);
+        }
 
         $category->forceDelete();
 

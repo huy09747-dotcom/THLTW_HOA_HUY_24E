@@ -18,7 +18,7 @@ async function allOptions(path, token) {
     page++
   ) {
     const next = await adminApi(
-      path + "?page=" + page,
+      path + (path.includes("?") ? "&" : "?") + "page=" + page,
       token,
     );
 
@@ -211,6 +211,14 @@ export default function ManagementPage({
             category_id: categories,
             brand_id: brands,
           };
+        }
+
+        if (category && !trash) {
+          const [visible, hidden] = await Promise.all([
+            allOptions("/categories?status=1", token),
+            allOptions("/categories?status=0", token),
+          ]);
+          choices.parent_id = [...visible, ...hidden];
         }
 
         if (active) {
@@ -941,7 +949,7 @@ export default function ManagementPage({
 
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Hình ảnh</th>
                   <th>Tên</th>
                   <th>Slug</th>
@@ -979,9 +987,9 @@ export default function ManagementPage({
                 )}
 
                 {result.data.map(
-                  (item) => (
+                  (item, index) => (
                     <tr key={item.id}>
-                      <td>{item.id}</td>
+                      <td>{(result.meta?.from ?? 1) + index}</td>
 
                       <td>
                         <AdminImage

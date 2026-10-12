@@ -19,7 +19,16 @@ const fields = [
     type: "number",
     min: 0,
     step: "any",
-    nullable: true,
+    required: true,
+  },
+  {
+    name: "discount_percent",
+    label: "Khuyến mãi (%)",
+    type: "number",
+    min: 0,
+    max: 100,
+    default: 0,
+    required: true,
   },
   {
     name: "qty",
@@ -30,7 +39,14 @@ const fields = [
     default: 0,
   },
   { name: "image", label: "Hình ảnh", required: true, maxLength: 255 },
-  { name: "unit", label: "Đơn vị", nullable: true, maxLength: 30 },
+  {
+    name: "unit",
+    label: "Đơn vị",
+    type: "select",
+    valueType: "string",
+    required: true,
+    options: ["Cái", "Chiếc", "Bộ", "Hộp"].map((name) => ({ id: name, name })),
+  },
   {
     name: "status",
     label: "Trạng thái",

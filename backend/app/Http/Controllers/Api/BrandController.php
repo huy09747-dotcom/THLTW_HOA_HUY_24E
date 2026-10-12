@@ -39,7 +39,7 @@ class BrandController extends Controller
         }
 
         $brands = $query
-            ->latest()
+            ->latest('id')
             ->paginate(
                 (int) ($data['per_page'] ?? 10),
                 ['*'],
@@ -89,6 +89,12 @@ class BrandController extends Controller
     {
         $brand = Brand::findOrFail($id);
 
+        if ($brand->products()->withTrashed()->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'products' => 'Khong the xoa: van con san pham thuoc thuong hieu nay.',
+            ]);
+        }
+
         $brand->delete();
 
         return response()->json([
@@ -99,7 +105,7 @@ class BrandController extends Controller
     // Danh sách trong thùng rác
     public function trash(): AnonymousResourceCollection
     {
-        $items = Brand::onlyTrashed()->orderBy('id')->paginate(10);
+        $items = Brand::onlyTrashed()->orderByDesc('id')->paginate(10);
 
         return BrandResource::collection($items);
     }
@@ -117,6 +123,12 @@ class BrandController extends Controller
     public function forceDelete($id)
     {
         $item = Brand::onlyTrashed()->findOrFail($id);
+        if ($item->products()->withTrashed()->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'products' => 'Khong the xoa: van con san pham thuoc thuong hieu nay.',
+            ]);
+        }
+
         $item->forceDelete();
 
         return response()->json(['message' => 'Da xoa vinh vien.']);
