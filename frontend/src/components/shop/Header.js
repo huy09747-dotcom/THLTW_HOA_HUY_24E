@@ -5,7 +5,7 @@ import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
 
-export default function Header() {
+export default function Header({ settings }) {
   const pathname = usePathname();
   const { user, cart, loading } = useCart();
   return (
@@ -14,12 +14,12 @@ export default function Header() {
         <Link
           href="/"
           className="brand"
-          aria-label="HH Shop - Trang chủ"
+          aria-label={(settings?.site_name || "HH Shop") + " - Trang chủ"}
         >
           <span className="brand-mark">HH</span>
           <span>
-            HH<span className="brand-light"> Shop</span>
-            <small>CÔNG NGHỆ MỖI NGÀY</small>
+            {settings?.site_name || "HH Shop"}
+            <small>{settings?.tagline}</small>
           </span>
         </Link>
         <form
@@ -36,9 +36,10 @@ export default function Header() {
           <button type="submit">Tìm</button>
         </form>
         <div className="header-actions">
-          <Link href="/login">
+          <Link href={user ? "/profile" : "/login"}>
             {loading ? "Tài khoản" : user ? "Tài khoản" : "Đăng nhập"}
           </Link>
+          {user && <Link href="/orders">Đơn hàng</Link>}
           <Link href="/cart">
             Giỏ hàng <span>{cart.count}</span>
           </Link>
@@ -62,6 +63,8 @@ export default function Header() {
             Sản phẩm
           </Link>
           <CategoryMenu />
+          <Link href="/about">Giới thiệu</Link>
+          <Link href="/contact">Liên hệ</Link>
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>
         </div>
       </nav>

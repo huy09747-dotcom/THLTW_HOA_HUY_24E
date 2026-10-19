@@ -12,6 +12,8 @@ const links = [
   ["/admin/orders", "Đơn hàng"],
   ["/admin/users", "Người dùng"],
   ["/admin/posts", "Bài viết"],
+  ["/admin/pages", "Trang đơn"],
+  ["/admin/settings", "Cấu hình website"],
   ["/admin/menus", "Menu"],
 ];
 

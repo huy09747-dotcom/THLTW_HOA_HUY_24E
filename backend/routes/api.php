@@ -131,6 +131,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Đăng xuất user / admin và thu hồi token hiện tại
+Route::put('/profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // ==================== CHI TIẾT SẢN PHẨM USER ====================
@@ -252,4 +254,14 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/menus')->group(funct
     // Xóa vĩnh viễn
     Route::delete('/{id}/force', [\App\Http\Controllers\Api\MenuController::class, 'forceDelete'])->whereNumber('id');
 
+});
+
+// Trang đơn và cấu hình website
+Route::get('/pages/{slug}', [\App\Http\Controllers\Api\PageController::class, 'show']);
+Route::get('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'show']);
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/pages', [\App\Http\Controllers\Api\PageController::class, 'index']);
+    Route::put('/pages/{slug}', [\App\Http\Controllers\Api\PageController::class, 'update']);
+    Route::get('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'show']);
+    Route::put('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'update']);
 });

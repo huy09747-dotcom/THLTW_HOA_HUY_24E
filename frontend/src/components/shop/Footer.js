@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer({ settings }) {
   return (
     <footer className="site-footer">
       <div className="container footer-grid">
@@ -9,12 +9,10 @@ export default function Footer() {
             href="/"
             className="footer-brand"
           >
-            HH<span> Shop</span>
+            {settings?.site_name || "HH Shop"}
           </Link>
           <p>
-            Không gian khám phá sản phẩm công nghệ
-            <br />
-            cho cuộc sống mỗi ngày.
+            {settings?.tagline}
           </p>
         </div>
         <div>
@@ -25,13 +23,17 @@ export default function Footer() {
         </div>
         <div>
           <h2>Thông tin website</h2>
-          <p>Đồ án Thực hành lập trình web</p>
-          <p>THLTW_HOA_HUY_24E</p>
+          <Link href="/about">Giới thiệu</Link>
+          <Link href="/purchase-policy">Chính sách mua hàng</Link>
+          <Link href="/contact">Liên hệ</Link>
+          {settings?.contact_email && <p>{settings.contact_email}</p>}
+          {settings?.contact_phone && <p>{settings.contact_phone}</p>}
+          {settings?.address && <p>{settings.address}</p>}
         </div>
       </div>
       <div className="container footer-bottom">
-        <span>© {new Date().getFullYear()} HH Shop.</span>
-        <span>Công nghệ gần hơn với bạn.</span>
+        <span>© {new Date().getFullYear()} {settings?.site_name || "HH Shop"}.</span>
+        <span>{settings?.footer_text}</span>
       </div>
     </footer>
   );
