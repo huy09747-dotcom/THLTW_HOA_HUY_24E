@@ -54,7 +54,15 @@ class SitePagesTest extends TestCase
                 $table->softDeletes();
             });
         }
-        (require database_path('migrations/2026_10_19_000001_create_site_settings_table.php'))->up();
+        Schema::create('cauhinh', function (Blueprint $table) {
+            $table->id();
+            $table->string('tenwebsite');
+            foreach (['logo','favicon','diachi','facebook','instagram','youtube','seo_title','seo_keywords'] as $column) $table->string($column)->nullable();
+            $table->string('email',150)->nullable();
+            $table->string('sodienthoai',20)->nullable();
+            $table->text('seo_description')->nullable();
+            $table->timestamps();
+        });
         DB::table('nguoidung')->insert([
             ['id' => 1, 'roles' => 'admin', 'status' => 1],
             ['id' => 2, 'roles' => 'user', 'status' => 1],
@@ -119,10 +127,23 @@ class SitePagesTest extends TestCase
         $this->putJson('/api/admin/site-settings',$body)->assertOk()->assertJsonMissingPath('data.password');
         $this->getJson('/api/site-settings')->assertJsonPath('data.site_name',$body['site_name'])->assertJsonPath('data.address',$body['address']);
         $this->putJson('/api/admin/site-settings',['site_name'=>'Tên mới'])->assertOk();
-        $this->assertDatabaseCount('site_settings',1);
+        $this->assertDatabaseCount('cauhinh',1);
+        $this->assertDatabaseHas('cauhinh',['tenwebsite'=>'Tên mới','email'=>'shop@example.com']);
         $this->putJson('/api/admin/site-settings',['site_name'=>''])->assertUnprocessable();
         $this->putJson('/api/admin/site-settings',['site_name'=>'Shop','contact_email'=>'invalid'])->assertUnprocessable();
         $this->putJson('/api/admin/site-settings',['site_name'=>'Shop','contact_phone'=>'javascript:alert(1)'])->assertUnprocessable();
+    }
+
+    public function test_existing_config_row_is_reused_and_unedited_columns_are_preserved(): void
+    {
+        DB::table('cauhinh')->insert(['id'=>7,'tenwebsite'=>'Existing','logo'=>'https://example.com/logo.png','email'=>'old@example.com']);
+        $this->getJson('/api/site-settings')->assertJsonPath('data.site_name','Existing');
+        $this->admin();
+        $this->putJson('/api/admin/site-settings',['site_name'=>'Updated','contact_email'=>'new@example.com'])->assertOk();
+        $this->assertDatabaseCount('cauhinh',1);
+        $this->assertDatabaseHas('cauhinh',['id'=>7,'tenwebsite'=>'Updated','logo'=>'https://example.com/logo.png']);
+        $this->putJson('/api/admin/site-settings',['site_name'=>'Updated','facebook'=>'javascript:alert(1)'])->assertUnprocessable();
+        $this->putJson('/api/admin/site-settings',['site_name'=>'Updated','contact_phone'=>str_repeat('1',21)])->assertUnprocessable();
     }
 
     public function test_page_validation_and_post_slug_conflicts(): void

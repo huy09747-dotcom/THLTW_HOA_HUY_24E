@@ -6,7 +6,7 @@ import { getSiteSettings } from "@/services/siteContent";
 
 export async function generateMetadata() {
   const settings=await getSiteSettings();
-  return {title:{default:settings.site_name,template:"%s | "+settings.site_name},description:settings.meta_description || ""};
+  return {title:{default:settings.seo_title || settings.site_name,template:"%s | "+settings.site_name},description:settings.meta_description || "", keywords:settings.seo_keywords || undefined, ...(settings.favicon && /^https?:\/\//i.test(settings.favicon) ? {icons:{icon:settings.favicon}} : {})};
 }
 export default async function ShopLayout({ children }) {
   const settings=await getSiteSettings();
