@@ -61,17 +61,14 @@ class DonhangController extends Controller
     // Lịch sử đơn hàng của người dùng đang đăng nhập
     public function myOrders(Request $request)
     {
+        $request->validate(['page' => 'sometimes|integer|min:1|max:2147483647']);
         $donhangs = Donhang::where(
             'user_id',
             $request->user()->id
         )
-            ->with('items.sanpham')
             ->latest('id')
-            ->get();
+            ->paginate(10);
 
-        return response()->json([
-            'message' => 'Lich su don hang.',
-            'data' => $donhangs,
-        ]);
+        return \App\Http\Resources\DonhangResource::collection($donhangs);
     }
 }

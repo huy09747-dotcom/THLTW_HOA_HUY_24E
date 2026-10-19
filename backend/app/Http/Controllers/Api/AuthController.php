@@ -44,12 +44,30 @@ class AuthController extends Controller
             return response()->json(['message' => 'Tai khoan khong hoat dong.'], 403);
         }
 
+        if (isset($data['audience']) && $user->roles !== $data['audience']) {
+            return response()->json(['message' => 'Vui lòng đăng nhập đúng khu vực user hoặc admin.'], 403);
+        }
+
         return response()->json([
             'message' => 'Dang nhap thanh cong.',
             'user' => $user,
             'token' => $user->createToken('api')->plainTextToken,
             'token_type' => 'Bearer',
         ]);
+    }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'email' => ['required', 'email', 'max:255', \Illuminate\Validation\Rule::unique('nguoidung', 'email')->ignore($user->id)],
+            'phone' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('nguoidung', 'phone')->ignore($user->id)],
+            'address' => 'nullable|string|max:255',
+        ]);
+        $user->fill($data)->save();
+        return response()->json(['message' => 'Đã cập nhật hồ sơ.', 'user' => $user->fresh()]);
     }
 
     public function logout(Request $request): JsonResponse

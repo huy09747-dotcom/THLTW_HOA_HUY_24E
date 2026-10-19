@@ -9,7 +9,7 @@ class BaiVietController extends Controller
 {
     public function index()
     {
-        $baiviets = BaiViet::all();
+        $baiviets = BaiViet::where('post_type', 'post')->where('status', 1)->get();
 
         return response()->json($baiviets);
     }

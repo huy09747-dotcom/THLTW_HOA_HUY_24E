@@ -76,10 +76,23 @@ export default function CartProvider({ children }) {
     }
   }
   function login(email, password) {
-    return authenticate("/login", { email, password });
+    return authenticate("/login", { email, password, audience: "user" });
   }
   function register(body) {
     return authenticate("/register", body);
+  }
+  async function updateProfile(body) {
+    setBusy(true);
+    setError("");
+    try {
+      const result = await api("/profile", { method: "PUT", body, token });
+      setUser(result.user);
+      return true;
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) clearSession();
+      setError(e.message);
+      return false;
+    } finally { setBusy(false); }
   }
   async function logout() {
     setBusy(true);
@@ -88,7 +101,7 @@ export default function CartProvider({ children }) {
       await api("/logout", { method: "POST", token });
       clearSession();
     } catch (e) {
-      if (e.status === 401) clearSession();
+      if (e.status === 401 || e.status === 403) clearSession();
       else setError(e.message);
     } finally {
       setBusy(false);
@@ -128,7 +141,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ user, cart, loading, busy, error, login, register, logout, changeCart, checkout }}
+      value={{ user, token, cart, loading, busy, error, login, register, logout, updateProfile, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>

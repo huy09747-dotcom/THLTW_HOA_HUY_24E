@@ -57,7 +57,7 @@ export default function AdminAuthProvider({ children }) {
     try {
       const result = await api("/login", {
         method: "POST",
-        body: { email, password },
+        body: { email, password, audience: "admin" },
       });
       if (!isAdmin(result.user)) {
         await adminApi("/logout", result.token, { method: "POST" });
