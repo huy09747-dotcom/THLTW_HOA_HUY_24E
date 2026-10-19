@@ -29,6 +29,7 @@ export default function Footer({ settings }) {
           {settings?.contact_email && <p>{settings.contact_email}</p>}
           {settings?.contact_phone && <p>{settings.contact_phone}</p>}
           {settings?.address && <p>{settings.address}</p>}
+          {[['facebook','Facebook'],['instagram','Instagram'],['youtube','YouTube']].map(([key,label]) => settings?.[key] && /^https?:\/\//i.test(settings[key]) ? <a key={key} href={settings[key]} target="_blank" rel="noopener noreferrer">{label}</a> : null)}
         </div>
       </div>
       <div className="container footer-bottom">

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { adminApi } from "@/services/adminApi";
 import styles from "../admin.module.css";
-const fields = [["site_name","Tên website","text"],["tagline","Khẩu hiệu","text"],["contact_email","Email liên hệ","email"],["contact_phone","Điện thoại liên hệ","tel"],["address","Địa chỉ","text"],["opening_hours","Giờ làm việc","text"],["footer_text","Nội dung chân trang","text"],["meta_description","Mô tả website (SEO)","textarea"]];
+const fields = [["site_name","Tên website","text"],["contact_email","Email liên hệ","email"],["contact_phone","Điện thoại liên hệ","tel"],["address","Địa chỉ","text"],["logo","URL logo (http/https)","url"],["favicon","URL favicon (http/https)","url"],["facebook","Facebook","url"],["instagram","Instagram","url"],["youtube","YouTube","url"],["seo_title","Tiêu đề SEO","text"],["seo_keywords","Từ khóa SEO","text"],["meta_description","Mô tả website (SEO)","textarea"]];
 export default function SettingsAdmin() {
   const {token}=useAdminAuth();
   const [settings,setSettings]=useState(null);
@@ -21,7 +21,7 @@ export default function SettingsAdmin() {
   return <div><h1 className={styles.title}>Cấu hình website</h1><p className={styles.description}>Thông tin dùng chung cho đầu trang, chân trang và trang Liên hệ.</p>
     {error && <p role="alert" className={styles.error}>{error}</p>}{notice && <p role="status">{notice}</p>}
     {!settings ? error ? <button className={styles.button} onClick={() => {setError("");setRetry(retry+1);}}>Thử lại</button> : <p role="status">Đang tải cấu hình…</p> : <form onSubmit={save} className={styles.form}><fieldset disabled={busy} style={{border:0,padding:0,display:"grid",gap:12}}>
-      {fields.map(([name,label,type]) => <div key={name}><label htmlFor={name}>{label}</label>{type==="textarea" ? <textarea id={name} name={name} defaultValue={settings[name] || ""} rows={4} maxLength={500}/> : <input id={name} name={name} type={type} defaultValue={settings[name] || ""} maxLength={name==="contact_phone" ? 30 : 255} required={name==="site_name"}/>}</div>)}
+      {fields.map(([name,label,type]) => <div key={name}><label htmlFor={name}>{label}</label>{type==="textarea" ? <textarea id={name} name={name} defaultValue={settings[name] || ""} rows={4} maxLength={500}/> : <input id={name} name={name} type={type} defaultValue={settings[name] || ""} maxLength={name==="contact_phone" ? 20 : name==="contact_email" ? 150 : 255} required={name==="site_name"}/>}</div>)}
       <button className={styles.primaryButton}>{busy ? "Đang lưu…" : "Lưu cấu hình"}</button>
     </fieldset></form>}
   </div>;

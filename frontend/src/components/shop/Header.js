@@ -16,7 +16,10 @@ export default function Header({ settings }) {
           className="brand"
           aria-label={(settings?.site_name || "HH Shop") + " - Trang chủ"}
         >
-          <span className="brand-mark">HH</span>
+          {settings?.logo && /^https?:\/\//i.test(settings.logo) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={settings.logo} alt="" width={44} height={44} style={{objectFit:"contain"}} />
+          ) : <span className="brand-mark">HH</span>}
           <span>
             {settings?.site_name || "HH Shop"}
             <small>{settings?.tagline}</small>
