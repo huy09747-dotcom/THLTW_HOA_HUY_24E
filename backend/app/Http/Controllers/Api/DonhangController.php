@@ -58,6 +58,14 @@ class DonhangController extends Controller
         ]);
     }
 
+    public function myOrder(Request $request, int $id)
+    {
+        $order = Donhang::where('user_id', $request->user()->id)->with('items')->findOrFail($id);
+        $data = $order->only(['id', 'code', 'name', 'phone', 'email', 'address', 'note', 'status', 'subtotal', 'discount', 'total', 'payment_method', 'payment_status', 'created_at']);
+        $data['items'] = $order->items->map(fn ($item) => $item->only(['id', 'product_id', 'item_name', 'price', 'qty', 'amount']));
+        return response()->json(['data' => $data]);
+    }
+
     // Lịch sử đơn hàng của người dùng đang đăng nhập
     public function myOrders(Request $request)
     {

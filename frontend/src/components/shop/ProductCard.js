@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "./CartProvider";
 import { formatPrice, imageUrl } from "@/utils/format";
 
 export function ProductImage({ image, name }) {
@@ -28,6 +30,27 @@ export function ProductImage({ image, name }) {
   );
 }
 export default function ProductCard({ product }) {
+  const { user, loading, busy, error, changeCart } = useCart();
+  const router = useRouter();
+  const lock = useRef(false);
+  const [action, setAction] = useState(null);
+  const [feedback, setFeedback] = useState("");
+  const available = Number(product.qty) > 0 && Number(product.is_available) === 1;
+
+  async function purchase(buyNow) {
+    if (lock.current || busy || loading || !available) return;
+    if (!user) { router.push("/login"); return; }
+    lock.current = true;
+    setAction(buyNow ? "buy" : "add");
+    setFeedback("");
+    try {
+      const success = await changeCart("/cart/items", "POST", { product_id: product.id, quantity: 1 });
+      if (success) {
+        setFeedback("success");
+        if (buyNow) router.push("/cart");
+      } else setFeedback("error");
+    } finally { lock.current = false; setAction(null); }
+  }
   const onSale = Number(product.discount_percent) > 0
     && product.price_sale != null
     && product.final_price != null
@@ -75,8 +98,18 @@ export default function ProductCard({ product }) {
               ? "Còn hàng"
               : "Tạm hết hàng"}
           </span>
-          <Link href={`/products/${encodeURIComponent(product.slug)}`}>Xem chi tiết ↗</Link>
+
         </div>
+        <div className="product-card-actions">
+          <button type="button" className="secondary-button" disabled={loading || busy || !!action || !available} onClick={() => purchase(false)} aria-label={"Thêm " + product.name + " vào giỏ hàng"}>
+            {action === "add" ? "Đang thêm…" : "Thêm vào giỏ hàng"}
+          </button>
+          <button type="button" className="primary-button" disabled={loading || busy || !!action || !available} onClick={() => purchase(true)} aria-label={"Mua ngay " + product.name}>
+            {action === "buy" ? "Đang xử lý…" : "Mua ngay"}
+          </button>
+        </div>
+        {feedback === "success" && <p className="product-card-feedback" role="status">Đã thêm vào giỏ hàng.</p>}
+        {feedback === "error" && <p className="product-card-feedback error-message" role="alert">{error || "Chưa thêm được sản phẩm. Vui lòng thử lại."}</p>}
       </div>
     </article>
   );

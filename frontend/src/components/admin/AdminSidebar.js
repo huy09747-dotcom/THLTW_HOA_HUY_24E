@@ -11,6 +11,8 @@ const links = [
   ["/admin/brands", "Thương hiệu"],
   ["/admin/orders", "Đơn hàng"],
   ["/admin/users", "Người dùng"],
+  ["/admin/reviews", "Đánh giá & chấm điểm"],
+  ["/admin/banners", "Banner"],
   ["/admin/posts", "Bài viết"],
   ["/admin/pages", "Trang đơn"],
   ["/admin/settings", "Cấu hình website"],

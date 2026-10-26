@@ -1,0 +1,67 @@
+{
+  "settings": {
+    "tenwebsite": "HH Shop",
+    "email": "hotro@hhshop.example",
+    "sodienthoai": "0000 000 000",
+    "diachi": "Phòng thực hành THLTW — địa chỉ minh họa cho đồ án",
+    "facebook": "https://example.com/hh-shop/facebook",
+    "instagram": "https://example.com/hh-shop/instagram",
+    "youtube": "https://example.com/hh-shop/youtube",
+    "seo_title": "HH Shop | Điện thoại, laptop và phụ kiện công nghệ",
+    "seo_description": "Khám phá HH Shop: cửa hàng công nghệ mô phỏng với sản phẩm, giỏ hàng, tài khoản và theo dõi đơn hàng. Đồ án THLTW_HOA_HUY_24E.",
+    "seo_keywords": "HH Shop, điện thoại, laptop, phụ kiện, công nghệ, THLTW"
+  },
+  "pages": [
+    {
+      "slug": "about",
+      "title": "Giới thiệu HH Shop",
+      "description": "Công nghệ gần hơn với bạn — khám phá cửa hàng và trải nghiệm mua sắm tại HH Shop. Nội dung mẫu phục vụ trình diễn đồ án.",
+      "sections": [
+        ["Chào mừng đến với HH Shop", "HH Shop là website cửa hàng công nghệ được xây dựng trong đồ án THLTW_HOA_HUY_24E. Bạn có thể khám phá sản phẩm, tạo tài khoản và trải nghiệm quy trình đặt hàng trên cùng một hệ thống."],
+        ["Ý tưởng của chúng tôi", "Một cửa hàng trực tuyến nên giúp người mua tìm được sản phẩm phù hợp nhanh chóng. HH Shop tập trung vào danh mục rõ ràng, thông tin dễ đọc và các bước mua sắm dễ theo dõi."],
+        ["Điện thoại cho mỗi ngày", "Khám phá nhóm điện thoại để học tập, liên lạc và giải trí. Xem thông tin từng sản phẩm và đối chiếu nhu cầu sử dụng trước khi lựa chọn."],
+        ["Laptop cho học tập và công việc", "Nhóm laptop giúp bạn tìm hiểu các lựa chọn phục vụ học tập, làm việc và sáng tạo. Giá và tình trạng sản phẩm được lấy từ dữ liệu quản lý của cửa hàng."],
+        ["Phụ kiện công nghệ", "Các phụ kiện giúp hoàn thiện trải nghiệm sử dụng thiết bị. Tìm theo danh mục hoặc từ khóa để xem những sản phẩm đang được giới thiệu."],
+        ["Khám phá theo thương hiệu", "Bộ lọc thương hiệu hỗ trợ thu hẹp kết quả tìm kiếm. Mỗi sản phẩm liên kết với danh mục và thương hiệu tương ứng để bạn tra cứu thuận tiện."],
+        ["Trải nghiệm mua sắm", "Từ danh sách sản phẩm, bạn có thể mở chi tiết, chọn số lượng và thêm vào giỏ. Hãy kiểm tra lại sản phẩm và thông tin nhận hàng trước khi xác nhận đơn."],
+        ["Tài khoản của bạn", "Đăng ký để có hồ sơ cá nhân và danh sách đơn hàng riêng. Bạn có thể cập nhật thông tin liên hệ trong trang Hồ sơ và đăng xuất sau khi sử dụng máy dùng chung."],
+        ["Nội dung được cập nhật", "Thông tin sản phẩm, bài viết và các trang giới thiệu được quản trị viên cập nhật trong hệ thống. Khi tải lại trang, người dùng nhận nội dung được công bố từ database."],
+        ["Đồng hành cùng đồ án", "Website hiện phục vụ học tập và trình diễn. Thông tin liên hệ, hình ảnh nhận diện và các chính sách mẫu cần được chủ cửa hàng thay bằng thông tin thực trước khi sử dụng để kinh doanh."]
+      ]
+    },
+    {
+      "slug": "purchase-policy",
+      "title": "Chính sách mua hàng",
+      "description": "Hướng dẫn mua sắm và xử lý đơn hàng tại HH Shop. Đây là chính sách minh họa cho bản demo, chưa phải cam kết kinh doanh thực tế.",
+      "sections": [
+        ["Phạm vi áp dụng", "Nội dung này mô tả luồng mua hàng trong bản demo HH Shop. Các đơn hàng được tạo để kiểm tra chức năng; không chuyển tiền thật theo thông tin minh họa."],
+        ["Thông tin sản phẩm", "Đọc tên, mô tả, giá và tình trạng hiển thị tại thời điểm đặt hàng. Nếu có điểm chưa rõ, liên hệ cửa hàng trước khi xác nhận lựa chọn."],
+        ["Giá bán và ưu đãi", "Giá áp dụng được hiển thị ở sản phẩm và bước đặt hàng. Kiểm tra tổng tiền trước khi xác nhận; không tự suy diễn ưu đãi từ nội dung quảng cáo cũ."],
+        ["Các bước đặt hàng", "Chọn sản phẩm → thêm vào giỏ → kiểm tra số lượng → nhập thông tin nhận hàng → xác nhận. Bạn cần đăng nhập để lưu đơn vào tài khoản của mình."],
+        ["Thông tin người nhận", "Nhập đầy đủ họ tên, số điện thoại và địa chỉ nhận hàng. Trong bản demo nên dùng dữ liệu thử nghiệm, tránh nhập thông tin cá nhân nhạy cảm."],
+        ["Phương thức thanh toán", "Chọn phương thức được cung cấp ở bước đặt hàng. Trạng thái thanh toán được hiển thị trong danh sách đơn; thao tác đặt đơn không tự chứng minh rằng tiền đã được thanh toán."],
+        ["Xác nhận và giao hàng", "Theo dõi trạng thái đơn trong tài khoản. Thời gian và chi phí giao hàng thực tế cần được cửa hàng xác nhận riêng khi triển khai kinh doanh."],
+        ["Thay đổi hoặc hủy đơn", "Nếu cần đổi thông tin hay hủy đơn, cung cấp mã đơn cho bộ phận hỗ trợ. Khả năng xử lý phụ thuộc trạng thái đơn; trang người dùng hiện dùng để theo dõi đơn hàng."],
+        ["Đổi trả và bảo hành", "Chuẩn bị mã đơn, thông tin sản phẩm và mô tả vấn đề khi yêu cầu hỗ trợ. Điều kiện, thời hạn và chi phí cụ thể cần được công bố bằng chính sách thực của cửa hàng, không được mặc định từ bản demo."],
+        ["Hỗ trợ và cập nhật chính sách", "Xem trang Liên hệ để biết kênh hỗ trợ đang được công bố. Quản trị viên có thể chỉnh sửa nội dung này; hãy đọc lại thông tin trước mỗi lần đặt hàng."]
+      ]
+    },
+    {
+      "slug": "contact",
+      "title": "Liên hệ HH Shop",
+      "description": "Chọn đúng nội dung cần hỗ trợ để trao đổi thuận tiện hơn. Email, số điện thoại, địa chỉ và liên kết trong bản demo là dữ liệu minh họa, không phải kênh tiếp nhận thực tế.",
+      "sections": [
+        ["Kết nối với HH Shop", "Thông tin liên hệ được hiển thị ở khối bên dưới và chân trang, lấy từ cấu hình website. Trong buổi trình diễn, hãy trao đổi trực tiếp với nhóm thực hiện đồ án."],
+        ["Tư vấn chọn sản phẩm", "Chuẩn bị tên hoặc mã sản phẩm cùng nhu cầu sử dụng. Những thông tin này giúp người hỗ trợ hiểu bạn đang tìm điện thoại, laptop hay phụ kiện nào."],
+        ["Hỗ trợ đặt hàng", "Mô tả bước bạn đang thực hiện: chọn sản phẩm, thêm giỏ hàng hay xác nhận đơn. Nếu có thông báo lỗi, ghi lại nội dung để nhóm kiểm tra."],
+        ["Tra cứu đơn hàng", "Đăng nhập rồi mở Đơn hàng của tôi. Khi trao đổi về một đơn cụ thể, cung cấp mã đơn để tránh nhầm với các đơn khác."],
+        ["Cập nhật thông tin nhận hàng", "Chuẩn bị mã đơn và thông tin cần điều chỉnh. Việc sửa hồ sơ cá nhân không đồng nghĩa thông tin trong đơn đã đặt cũng được thay đổi."],
+        ["Hỗ trợ tài khoản", "Nêu rõ vấn đề đăng ký, đăng nhập hay tài khoản bị khóa. Không gửi mật khẩu hoặc token đăng nhập trong nội dung hỗ trợ."],
+        ["Hỗ trợ sau mua hàng", "Cung cấp mã đơn, sản phẩm liên quan và mô tả tình trạng. Với bản demo, nhóm sẽ dùng tình huống này để minh họa quy trình tiếp nhận."],
+        ["Góp ý về website", "Bạn có thể góp ý về bố cục, nội dung và trải nghiệm sử dụng. Kèm đường dẫn trang và mô tả thao tác để nhóm dễ tái hiện vấn đề."],
+        ["Trao đổi hợp tác", "Các yêu cầu giới thiệu sản phẩm hoặc hợp tác cần có tên đơn vị, nội dung đề xuất và thông tin phản hồi. Liên kết mạng xã hội hiện là liên kết mẫu."],
+        ["Lưu ý khi gửi thông tin", "Trang này hiển thị thông tin liên hệ, chưa có form gửi yêu cầu tự động. Thay toàn bộ kênh liên hệ mẫu trong Cấu hình website trước khi đưa cửa hàng vào sử dụng thực tế."]
+      ]
+    }
+  ]
+}

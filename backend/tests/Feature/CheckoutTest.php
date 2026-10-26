@@ -14,6 +14,7 @@ class CheckoutTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \Illuminate\Support\Facades\Mail::fake();
         $this->assertSame(':memory:', config('database.connections.sqlite.database'));
         $this->assertSame('sqlite', config('database.default'));
         foreach ([
@@ -68,6 +69,27 @@ class CheckoutTest extends TestCase
         $this->assertDatabaseHas('chitietgiohang', ['giohang_id' => 2]);
         $this->postJson('/api/checkout', $this->shipping())->assertUnprocessable();
         $this->assertDatabaseCount('donhang', 1);
+    }
+
+    public function test_order_detail_is_private_and_preserves_purchase_snapshot(): void
+    {
+        $this->getJson('/api/my-orders/1')->assertUnauthorized();
+        Sanctum::actingAs(User::findOrFail(1));
+        $id = $this->postJson('/api/checkout', $this->shipping())->assertCreated()->json('data.id');
+        DB::table('sanpham')->where('id', 1)->update(['name'=>'Changed', 'price_sale'=>999, 'deleted_at'=>now()]);
+        $this->getJson('/api/my-orders/'.$id)->assertOk()
+            ->assertJsonPath('data.items.0.item_name','Phone')
+            ->assertJsonPath('data.items.0.price',100)
+            ->assertJsonPath('data.items.0.qty',2)
+            ->assertJsonPath('data.total',200)
+            ->assertJsonPath('data.address','123 Test')
+            ->assertJsonMissingPath('data.user_id');
+        Sanctum::actingAs(User::findOrFail(2));
+        $this->getJson('/api/my-orders/'.$id)->assertNotFound();
+        $this->getJson('/api/my-orders/9999')->assertNotFound();
+        Sanctum::actingAs(User::findOrFail(1));
+        DB::table('donhang')->where('id',$id)->update(['deleted_at'=>now()]);
+        $this->getJson('/api/my-orders/'.$id)->assertNotFound();
     }
 
     public function test_insufficient_stock_leaves_cart_and_orders_unchanged(): void

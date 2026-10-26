@@ -39,8 +39,8 @@ export default function Header({ settings }) {
           <button type="submit">Tìm</button>
         </form>
         <div className="header-actions">
-          <Link href={user ? "/profile" : "/login"}>
-            {loading ? "Tài khoản" : user ? "Tài khoản" : "Đăng nhập"}
+          <Link href={user ? "/profile" : "/login"} title={user?.name || user?.username || undefined} style={{maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+            {loading ? "Tài khoản" : user ? (user.name || user.username || "Tài khoản") : "Đăng nhập"}
           </Link>
           {user && <Link href="/orders">Đơn hàng</Link>}
           <Link href="/cart">
@@ -66,6 +66,7 @@ export default function Header({ settings }) {
             Sản phẩm
           </Link>
           <CategoryMenu />
+          <Link href="/news" className={pathname === "/news" || pathname.startsWith("/news/") ? "nav-active" : ""}>Bài viết</Link>
           <Link href="/about">Giới thiệu</Link>
           <Link href="/contact">Liên hệ</Link>
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>

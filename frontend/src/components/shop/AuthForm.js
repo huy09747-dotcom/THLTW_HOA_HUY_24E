@@ -27,9 +27,7 @@ export default function AuthForm({ registerMode = false }) {
 
     if (success) {
       form.reset();
-      const next = new URLSearchParams(window.location.search).get("next");
-      const safeNext = ["/cart", "/profile", "/orders"].includes(next) || /^\/products\/\d+$/.test(next || "");
-      router.replace(safeNext ? next : "/profile");
+      router.replace("/");
     }
   }
 
@@ -133,7 +131,6 @@ export default function AuthForm({ registerMode = false }) {
           {busy ? "Đang xử lý…" : registerMode ? "Đăng ký" : "Đăng nhập"}
         </button>
       </form>
-      {!registerMode && <p><Link href="/admin/login">Đăng nhập dành cho quản trị viên</Link></p>}
       <p>
         {registerMode ? "Đã có tài khoản? " : "Chưa có tài khoản? "}
         <Link href={registerMode ? "/login" : "/register"}>

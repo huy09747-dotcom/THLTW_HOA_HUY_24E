@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 import { useCart } from "./CartProvider";
 
 export default function CheckoutForm({ onSuccess }) {
   const { user, busy, checkout } = useCart();
   const [open, setOpen] = useState(false);
+  const [methods,setMethods]=useState([{id:'cod',label:'Thanh toán khi nhận hàng',enabled:true}]);
+  const [methodError,setMethodError]=useState('');
+  useEffect(()=>{let active=true;api('/payment-methods').then(r=>{if(active)setMethods(r.data);}).catch(e=>{if(active)setMethodError(e.message);});return()=>{active=false;};},[]);
 
   async function submit(event) {
     event.preventDefault();
@@ -72,7 +76,10 @@ export default function CheckoutForm({ onSuccess }) {
       />
       <label htmlFor="order-note">Ghi chú</label>
       <textarea id="order-note" name="note" maxLength={2000} rows={2} />
-      <p>Thanh toán khi nhận hàng (COD)</p>
+      <label htmlFor="payment-method">Phương thức thanh toán</label>
+      <select id="payment-method" name="payment_method" defaultValue="cod" disabled={busy}>{methods.map(m=><option key={m.id} value={m.id} disabled={!m.enabled}>{m.label}{!m.enabled?' — chưa cấu hình':''}</option>)}</select>
+      <p>Thanh toán online sử dụng cổng sandbox. Sau khi tạo đơn, mở chi tiết đơn để tiếp tục thanh toán.</p>
+      {methodError&&<p role="alert">{methodError}</p>}
       <button
         type="submit"
         className="primary-button checkout-button"

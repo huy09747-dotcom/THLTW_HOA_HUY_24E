@@ -4,12 +4,16 @@ import CategoryList from "@/components/shop/CategoryList";
 import { getProductPage } from "@/services/productServices";
 import { getCategories } from "@/services/categoryServices";
 
+import BannerCarousel from "@/components/shop/BannerCarousel";
+import { api } from "@/services/api";
+
 export default async function Home() {
-  const [newResult, hotResult, saleResult, categoriesResult] = await Promise.allSettled([
+  const [newResult, hotResult, saleResult, categoriesResult, bannersResult] = await Promise.allSettled([
     getProductPage(),
     getProductPage({ is_featured: "1" }),
     getProductPage({ on_sale: "1" }),
     getCategories(),
+    api("/banners"),
   ]);
   const categories = categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
   const sections = [
@@ -19,51 +23,7 @@ export default async function Home() {
   ];
   return (
     <div className="container home-page">
-      <section
-        className="hero"
-        aria-labelledby="hero-title"
-      >
-        <div className="hero-copy">
-          <span className="eyebrow">CHÀO MỪNG ĐẾN VỚI HH SHOP</span>
-          <h1 id="hero-title">
-            Công nghệ mới.
-            <br />
-            <span>Cảm hứng mỗi ngày.</span>
-          </h1>
-          <p>
-            Khám phá những sản phẩm công nghệ phù hợp với phong cách và nhu cầu của bạn.
-          </p>
-          <Link
-            className="primary-button"
-            href="/products"
-          >
-            Khám phá sản phẩm <span aria-hidden="true">↗</span>
-          </Link>
-          <span className="hero-caption">KẾT NỐI · SÁNG TẠO · TRẢI NGHIỆM</span>
-        </div>
-        <div
-          className="hero-art"
-          aria-hidden="true"
-        >
-          <div className="orbit" />
-          <div className="orbit orbit-outer" />
-          <div className="phone phone-back">
-            <div className="camera">
-              <i />
-              <i />
-              <i />
-            </div>
-          </div>
-          <div className="phone phone-front">
-            <div className="phone-island" />
-            <div className="phone-glow" />
-            <span>
-              HH<small>EXPLORE MORE</small>
-            </span>
-          </div>
-          <span className="art-caption">YOUR EVERYDAY INSPIRATION</span>
-        </div>
-      </section>
+      <BannerCarousel banners={bannersResult.status === "fulfilled" ? bannersResult.value : []} />
       <section
         id="danh-muc"
         className="home-section"
