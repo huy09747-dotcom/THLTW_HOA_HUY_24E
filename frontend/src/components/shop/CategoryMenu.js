@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { getCategories } from "@/services/categoryServices";
 import CategoryList from "./CategoryList";
 
-export default function CategoryMenu() {
+export default function CategoryMenu({label="Danh mục"}) {
   const [open, setOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function CategoryMenu() {
         aria-expanded={open}
         aria-controls="category-menu-panel"
       >
-        Danh mục <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
+        {label} <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
       </button>
       {open && (
         <div

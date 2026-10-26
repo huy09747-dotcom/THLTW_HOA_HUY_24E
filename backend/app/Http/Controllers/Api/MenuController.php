@@ -26,16 +26,29 @@ class MenuController extends Controller
             $query->where('name', 'like', '%' . $data['search'] . '%');
         }
 
-        return MenuResource::collection($query->latest('id')->paginate(10));
+        return MenuResource::collection($query->orderBy('sort_order')->orderBy('id')->paginate(10));
+    }
+
+    public function publicIndex()
+    {
+        $items=Menu::where('status',1)->orderBy('sort_order')->orderBy('id')->get()->filter(function($item){
+            if($item->type==='custom')return preg_match('~^/(?!/)[^\\\\\s]*$~u',$item->link) || (filter_var($item->link,FILTER_VALIDATE_URL) && in_array(strtolower(parse_url($item->link,PHP_URL_SCHEME)),['http','https']));
+            $model=match($item->type){'category'=>\App\Models\Category::class,'brand'=>\App\Models\Brand::class,'topic'=>\App\Models\ChudeBaiViet::class,'page'=>\App\Models\BaiViet::class,default=>null};
+            $target=$model ? $model::where('status',1)->find($item->table_id) : null;
+            if(!$target || ($item->type==='page' && $target->post_type!=='page'))return false;
+            $item->link=match($item->type){'category'=>'/products?category='.$target->id,'brand'=>'/products?brand='.$target->id,'topic'=>'/news?topic='.rawurlencode($target->slug),'page'=>'/'.rawurlencode($target->slug)};
+            return true;
+        })->values();
+        return MenuResource::collection($items);
     }
 
     public function options()
     {
         return response()->json([
-            'category' => \App\Models\Category::orderBy('name')->get(['id', 'name']),
-            'brand' => \App\Models\Brand::orderBy('name')->get(['id', 'name']),
-            'topic' => \App\Models\ChudeBaiViet::orderBy('name')->get(['id', 'name']),
-            'page' => \App\Models\BaiViet::where('post_type', 'page')->orderBy('title')->get(['id', 'title as name']),
+            'category' => \App\Models\Category::orderBy('name')->get(['id', 'name', 'slug']),
+            'brand' => \App\Models\Brand::orderBy('name')->get(['id', 'name', 'slug']),
+            'topic' => \App\Models\ChudeBaiViet::orderBy('name')->get(['id', 'name', 'slug']),
+            'page' => \App\Models\BaiViet::where('post_type', 'page')->orderBy('title')->get(['id', 'title as name', 'slug']),
         ]);
     }
 

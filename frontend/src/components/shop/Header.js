@@ -5,7 +5,7 @@ import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
 
-export default function Header({ settings }) {
+export default function Header({ settings, menus }) {
   const pathname = usePathname();
   const { user, cart, loading } = useCart();
   return (
@@ -53,6 +53,7 @@ export default function Header({ settings }) {
         aria-label="Điều hướng chính"
       >
         <div className="container nav-inner">
+          {menus ? menus.map(item=>item.link==='/#danh-muc'?<CategoryMenu key={item.id} label={item.name}/>:<Link key={item.id} href={item.link} className={pathname===item.link?'nav-active':''}>{item.name}</Link>) : <>
           <Link
             href="/"
             className={pathname === "/" ? "nav-active" : ""}
@@ -69,6 +70,7 @@ export default function Header({ settings }) {
           <Link href="/news" className={pathname === "/news" || pathname.startsWith("/news/") ? "nav-active" : ""}>Bài viết</Link>
           <Link href="/about">Giới thiệu</Link>
           <Link href="/contact">Liên hệ</Link>
+          </>}
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>
         </div>
       </nav>

@@ -28,6 +28,7 @@ class MenuRequest extends FormRequest
         }
 
         return [
+            'sort_order' => ['sometimes','integer','min:0','max:9999'],
             'name' => ['required', 'string', 'max:255'],
             'link' => ['required', 'string', 'max:255', function ($attribute, $value, $fail) {
                 $internal = preg_match('~^/(?!/)[^\\\\\s]*$~u', $value);

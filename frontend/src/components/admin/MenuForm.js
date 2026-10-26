@@ -14,6 +14,8 @@ const types = {
 export default function MenuForm({ initial, options, onSave, onCancel, busy }) {
   const [type, setType] = useState(initial.type || "custom");
   const [target, setTarget] = useState(initial.table_id ?? "");
+  const [link,setLink]=useState(initial.link || "");
+  function targetLink(value){const item=(options[type]||[]).find(x=>String(x.id)===value);setTarget(value);if(item)setLink(type==='category'?'/products?category='+item.id:type==='brand'?'/products?brand='+item.id:type==='topic'?'/news?topic='+encodeURIComponent(item.slug):'/'+item.slug);}
   const choices = options[type] || [];
 
   function submit(event) {
@@ -21,6 +23,7 @@ export default function MenuForm({ initial, options, onSave, onCancel, busy }) {
     const data = new FormData(event.currentTarget);
     onSave({
       name: data.get("name"),
+      sort_order: Number(data.get("sort_order")),
       link: data.get("link"),
       type,
       table_id: type === "custom" ? null : Number(target),
@@ -39,7 +42,7 @@ export default function MenuForm({ initial, options, onSave, onCancel, busy }) {
           </div>
           <div>
             <label htmlFor="menu-link">Đường dẫn *</label>
-            <input id="menu-link" name="link" defaultValue={initial.link || ""} placeholder="/products" maxLength={255} required />
+            <input id="menu-link" name="link" value={link} readOnly={type !== "custom"} onChange={e=>setLink(e.target.value)} placeholder="/products" maxLength={255} required />
           </div>
           <div>
             <label htmlFor="menu-type">Loại menu *</label>
@@ -49,6 +52,7 @@ export default function MenuForm({ initial, options, onSave, onCancel, busy }) {
               onChange={(event) => {
                 setType(event.target.value);
                 setTarget("");
+                setLink("");
               }}
             >
               {Object.entries(types).map(([value, label]) => (
@@ -59,7 +63,7 @@ export default function MenuForm({ initial, options, onSave, onCancel, busy }) {
           {type !== "custom" && (
             <div>
               <label htmlFor="menu-target">Đối tượng liên kết *</label>
-              <select id="menu-target" value={target} onChange={(event) => setTarget(event.target.value)} required>
+              <select id="menu-target" value={target} onChange={(event) => targetLink(event.target.value)} required>
                 <option value="" disabled hidden>Chọn đối tượng liên kết</option>
                 {target !== "" && !choices.some((item) => String(item.id) === String(target)) && (
                   <option value={target} disabled>Liên kết không còn hợp lệ — hãy chọn lại</option>

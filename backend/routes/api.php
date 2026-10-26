@@ -296,3 +296,5 @@ Route::middleware(['auth:sanctum','admin'])->prefix('admin/banners')->group(func
  Route::put('/{id}',[BannerController::class,'update'])->whereNumber('id');
  Route::delete('/{id}',[BannerController::class,'destroy'])->whereNumber('id');
 });
+
+Route::get('/menus', [\App\Http\Controllers\Api\MenuController::class, 'publicIndex']);
