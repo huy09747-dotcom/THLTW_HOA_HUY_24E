@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/components/shop/CartProvider";
 import { api } from "@/services/api";
 import { formatPrice } from "@/utils/format";
+import styles from "./orders.module.css";
 const statuses = {1:"Chờ xác nhận",2:"Đã xác nhận",3:"Đang giao",4:"Hoàn thành",5:"Đã hủy"};
 const payments = {unpaid:"Chưa thanh toán",paid:"Đã thanh toán",refunded:"Đã hoàn tiền"};
 export default function OrdersPage() {
@@ -24,13 +25,13 @@ export default function OrdersPage() {
   if (loading) return <p className="container catalog-page" role="status">Đang kiểm tra tài khoản…</p>;
   if (!user) return <section className="auth-page"><h1>Đơn hàng của tôi</h1><Link href="/login?next=/orders">Đăng nhập để xem đơn hàng</Link></section>;
   const pending = state.page !== page || state.token !== token || state.retry !== retry;
-  return <section className="container catalog-page"><h1>Đơn hàng của tôi</h1><p><Link href="/profile">Về hồ sơ cá nhân</Link></p>
-    {pending ? <p role="status">Đang tải đơn hàng…</p> : state.error ? <div><p role="alert" className="error-message">{state.error}</p><button className="primary-button" onClick={() => setRetry(retry+1)}>Thử lại</button></div> : <>
-      {state.result.data.length === 0 ? <p>Bạn chưa có đơn hàng. <Link href="/products">Mua sắm ngay</Link></p> : <div style={{overflowX:"auto"}}><table style={{width:"100%",textAlign:"left",borderSpacing:"16px"}}>
-        <caption>Lịch sử mua hàng</caption><thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th></tr></thead>
-        <tbody>{state.result.data.map(order => <tr key={order.id}><td>{order.code || "#"+order.id}</td><td>{order.created_at ? new Date(order.created_at).toLocaleString("vi-VN") : "—"}</td><td>{formatPrice(order.total)}</td><td>{payments[order.payment_status] || order.payment_status}</td><td>{statuses[order.status] || "—"}</td></tr>)}</tbody>
-      </table></div>}
-      <div className="auth-links"><button className="primary-button" disabled={page<=1} onClick={() => setPage(page-1)}>Trang trước</button><span>Trang {page} / {state.result.meta.last_page}</span><button className="primary-button" disabled={page>=state.result.meta.last_page} onClick={() => setPage(page+1)}>Trang sau</button></div>
+  return <section className={"container "+styles.page}>
+    <Link href="/profile" className={styles.back}>← Tài khoản của tôi</Link>
+    <header className={styles.heading}><div><p className={styles.eyebrow}>MUA SẮM CÙNG HH SHOP</p><h1>Đơn hàng của tôi</h1><p className={styles.muted}>Theo dõi và xem lại những lựa chọn của bạn.</p></div><Link className={styles.primary} href="/products">Khám phá sản phẩm <span>↗</span></Link></header>
+    {pending ? <div className={styles.panel}><p role="status" className={styles.skeleton}>Đang tải đơn hàng…</p></div> : state.error ? <div className={styles.error}><p role="alert">{state.error}</p><button className={styles.button} onClick={() => setRetry(retry+1)}>Thử lại</button></div> : <>
+      <div className={styles.heading}><h2>Lịch sử mua hàng <span className={styles.count}>{state.result.meta.total}</span></h2><span className={styles.muted}>Mới nhất trước</span></div>
+      {state.result.data.length===0 ? <div className={styles.panel}><div className={styles.empty}><span className={styles.icon} aria-hidden="true">◇</span><h2>Chưa có đơn hàng nào</h2><p className={styles.muted}>Sản phẩm yêu thích tiếp theo đang chờ bạn khám phá.</p><Link href="/products" className={styles.primary}>Bắt đầu mua sắm →</Link></div></div> : state.result.data.map(order => <article key={order.id} className={styles.card}><div className={styles.top}><div><span className={styles.label}>Mã đơn hàng</span><p className={styles.code}>{order.code || "#"+order.id}</p></div><span className={styles.badge} data-status={order.status}>{statuses[order.status] || "Chưa xác định"}</span></div><div className={styles.body}><div className={styles.row}><span className={styles.icon} aria-hidden="true">◇</span><div><span className={styles.label}>Ngày đặt hàng</span><p>{order.created_at ? new Date(order.created_at).toLocaleString("vi-VN") : "—"}</p><p className={styles.muted}>{payments[order.payment_status] || order.payment_status}</p></div></div><div><span className={styles.label}>Tổng thanh toán</span><strong className={styles.price}>{formatPrice(order.total)}</strong></div><Link href={"/orders/"+order.id} className={styles.primary} aria-label={"Xem chi tiết đơn "+(order.code || order.id)}>Xem chi tiết <span>→</span></Link></div></article>)}
+      {state.result.meta.last_page>1 && <nav className={styles.pagination} aria-label="Phân trang đơn hàng"><button className={styles.button} disabled={page<=1} onClick={() => setPage(page-1)}>← Trang trước</button><span className={styles.muted}>{page} / {state.result.meta.last_page}</span><button className={styles.button} disabled={page>=state.result.meta.last_page} onClick={() => setPage(page+1)}>Trang sau →</button></nav>}
     </>}
   </section>;
 }

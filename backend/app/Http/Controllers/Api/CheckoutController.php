@@ -16,6 +16,8 @@ class CheckoutController extends Controller
 {
     public function store(CheckoutRequest $request)
     {
+        $method=$request->validated('payment_method','cod');
+        app(\App\Services\SandboxPayment::class)->ensureConfigured($method);
         $order = DB::transaction(function () use ($request) {
             User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
 
@@ -64,7 +66,7 @@ class CheckoutController extends Controller
                 'subtotal' => $total,
                 'discount' => 0,
                 'total' => $total,
-                'payment_method' => 'cod',
+                'payment_method' => $request->validated('payment_method','cod'),
                 'payment_status' => 'unpaid',
             ]));
             $order->items()->createMany($lines);
@@ -73,9 +75,12 @@ class CheckoutController extends Controller
             return $order;
         }, 3);
 
+        $emailStatus='queued';
+        try { \Illuminate\Support\Facades\Mail::to($order->email)->queue(new \App\Mail\OrderConfirmation($order)); }
+        catch (\Throwable $e) { report($e); $emailStatus='failed'; }
         return response()->json([
             'message' => 'Dat hang thanh cong.',
-            'data' => $order->only(['id', 'code', 'total', 'payment_method', 'payment_status']),
+            'data' => array_merge($order->only(['id', 'code', 'total', 'payment_method', 'payment_status']), ['email_status'=>$emailStatus]),
         ], 201);
     }
 }

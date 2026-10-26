@@ -32,7 +32,8 @@ export default function CartPage() {
           <h2>Đặt hàng thành công</h2>
           <p>Mã đơn hàng: {order.code}</p>
           <p>Tổng tiền: {formatPrice(order.total)}</p>
-          <p>Thanh toán khi nhận hàng.</p>
+          <p>{order.payment_method==='cod'?'Thanh toán khi nhận hàng.':'Mở chi tiết đơn hàng để tiếp tục thanh toán sandbox.'}</p><p>{order.email_status==='queued'?'Email xác nhận đã được đưa vào hàng đợi gửi.':'Đơn đã được lưu nhưng chưa đưa được email vào hàng đợi. Vui lòng liên hệ hỗ trợ.'}</p>
+          <Link href={`/orders/${order.id}`} className="primary-button">Xem chi tiết đơn hàng</Link>
         </div>
       )}
       {error && (
@@ -58,6 +59,7 @@ export default function CartPage() {
         <>
           <div className="account-row">
             <span>Xin chào, {user?.name || "bạn"}</span>
+            <Link href="/orders">Đơn hàng của tôi</Link>
             {user && (
               <button
                 type="button"

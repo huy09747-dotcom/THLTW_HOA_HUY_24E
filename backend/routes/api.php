@@ -265,3 +265,34 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'show']);
     Route::put('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'update']);
 });
+
+Route::get('/my-orders/{id}', [DonhangController::class, 'myOrder'])->middleware('auth:sanctum')->whereNumber('id');
+
+// Đánh giá và nội dung công khai
+Route::get('/products/{id}/reviews', [\App\Http\Controllers\Api\ReviewController::class,'index'])->whereNumber('id');
+Route::middleware(['auth:sanctum'])->group(function(){
+ Route::get('/products/{id}/my-review',[\App\Http\Controllers\Api\ReviewController::class,'mine'])->whereNumber('id');
+ Route::put('/products/{id}/my-review',[\App\Http\Controllers\Api\ReviewController::class,'save'])->whereNumber('id');
+ Route::delete('/products/{id}/my-review',[\App\Http\Controllers\Api\ReviewController::class,'destroy'])->whereNumber('id');
+ Route::post('/my-orders/{id}/payment',[\App\Http\Controllers\Api\PaymentController::class,'start'])->whereNumber('id')->middleware('throttle:10,1');
+ Route::post('/my-orders/{id}/payment/verify',[\App\Http\Controllers\Api\PaymentController::class,'verify'])->whereNumber('id')->middleware('throttle:20,1');
+});
+Route::get('/payment-methods',[\App\Http\Controllers\Api\PaymentController::class,'methods']);
+Route::post('/payments/momo/ipn',[\App\Http\Controllers\Api\PaymentController::class,'momo']);
+Route::get('/payments/vnpay/ipn',[\App\Http\Controllers\Api\PaymentController::class,'vnpay']);
+Route::get('/news-topics',[\App\Http\Controllers\Api\NewsController::class,'topics']);
+Route::get('/news',[\App\Http\Controllers\Api\NewsController::class,'index']);
+Route::get('/news/{slug}',[\App\Http\Controllers\Api\NewsController::class,'show']);
+
+Route::middleware(['auth:sanctum','admin'])->prefix('admin/reviews')->group(function(){
+ Route::get('/',[\App\Http\Controllers\Api\AdminReviewController::class,'index']);
+ Route::patch('/{id}',[\App\Http\Controllers\Api\AdminReviewController::class,'update'])->whereNumber('id');
+ Route::delete('/{id}',[\App\Http\Controllers\Api\AdminReviewController::class,'destroy'])->whereNumber('id');
+});
+
+Route::middleware(['auth:sanctum','admin'])->prefix('admin/banners')->group(function(){
+ Route::get('/',[BannerController::class,'adminIndex']);
+ Route::post('/',[BannerController::class,'store']);
+ Route::put('/{id}',[BannerController::class,'update'])->whereNumber('id');
+ Route::delete('/{id}',[BannerController::class,'destroy'])->whereNumber('id');
+});

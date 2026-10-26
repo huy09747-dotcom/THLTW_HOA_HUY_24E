@@ -21,13 +21,13 @@ class CartApiTest extends TestCase
             'CREATE TABLE personal_access_tokens (id INTEGER PRIMARY KEY AUTOINCREMENT, tokenable_type TEXT, tokenable_id INTEGER, name TEXT, token TEXT UNIQUE, abilities TEXT, last_used_at TEXT, expires_at TEXT, created_at TEXT, updated_at TEXT)',
             'CREATE TABLE danhmuc (id INTEGER PRIMARY KEY, name TEXT, deleted_at TEXT)',
             'CREATE TABLE thuonghieu (id INTEGER PRIMARY KEY, name TEXT, deleted_at TEXT)',
-            'CREATE TABLE sanpham (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, brand_id INTEGER, name TEXT, price_sale INTEGER, price_buy INTEGER, qty INTEGER, image TEXT, status INTEGER, is_available INTEGER, created_at TEXT, updated_at TEXT, deleted_at TEXT)',
+            'CREATE TABLE sanpham (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, brand_id INTEGER, name TEXT, slug TEXT, price_sale INTEGER, price_buy INTEGER, qty INTEGER, image TEXT, status INTEGER, is_available INTEGER, created_at TEXT, updated_at TEXT, deleted_at TEXT)',
             'CREATE TABLE giohang (id INTEGER PRIMARY KEY AUTOINCREMENT, nguoidung_id INTEGER REFERENCES nguoidung(id), created_at TEXT, updated_at TEXT)',
             'CREATE TABLE chitietgiohang (id INTEGER PRIMARY KEY AUTOINCREMENT, giohang_id INTEGER REFERENCES giohang(id), sanpham_id INTEGER REFERENCES sanpham(id), soluong INTEGER)',
         ] as $sql) {
             DB::statement($sql);
         }
-        DB::table('sanpham')->insert(['id' => 1, 'name' => 'Test product', 'price_sale' => 200, 'price_buy' => 100, 'qty' => 5, 'status' => 1, 'is_available' => 1]);
+        DB::table('sanpham')->insert(['id' => 1, 'name' => 'Test product', 'slug' => 'test-product', 'price_sale' => 200, 'price_buy' => 100, 'qty' => 5, 'status' => 1, 'is_available' => 1]);
     }
 
     private function token(): string
@@ -52,7 +52,7 @@ class CartApiTest extends TestCase
     {
         $this->getJson('/api/cart')->assertUnauthorized();
         $this->postJson('/api/cart/items', ['product_id' => 1, 'quantity' => 1])->assertUnauthorized();
-        $this->getJson('/api/products/1')->assertOk()->assertJsonPath('data.name', 'Test product');
+        $this->getJson('/api/products/test-product')->assertOk()->assertJsonPath('data.name', 'Test product');
         $this->getJson('/api/products/9999')->assertNotFound();
     }
 

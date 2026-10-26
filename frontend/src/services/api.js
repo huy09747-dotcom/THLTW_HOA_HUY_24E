@@ -12,7 +12,7 @@ export async function api(path, { token, method = "GET", body } = {}) {
     response = await fetch(`${base}${path}`, {
       method,
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(path.includes("/payment") ? 35000 : 10000),
       headers: {
         Accept: "application/json",
         ...(body && !multipart ? { "Content-Type": "application/json" } : {}),

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getProduct, getRelatedProducts } from "@/services/productServices";
 import { formatPrice } from "@/utils/format";
 import ProductCard, { ProductImage } from "@/components/shop/ProductCard";
+import ProductReviews from "@/components/shop/ProductReviews";
 import AddToCart from "@/components/shop/AddToCart";
 
 export default async function ProductDetailPage({ params }) {
@@ -85,6 +86,7 @@ export default async function ProductDetailPage({ params }) {
         <h2 className="detail-heading">Thông tin sản phẩm</h2>
         <p className="detail-text">{product.detail || "Thông tin đang được cập nhật."}</p>
       </section>
+      <ProductReviews productId={product.id} />
       <section className="home-section" aria-labelledby="related-products-title">
         <div className="section-heading">
           <h2 id="related-products-title">Sản phẩm liên quan</h2>

@@ -1,0 +1,9 @@
+import Link from "next/link";
+import {api} from "@/services/api";
+import {ProductImage} from "@/components/shop/ProductCard";
+export const metadata={title:'Tin tức & sự kiện'};
+export default async function NewsPage({searchParams}) {
+ const query=await searchParams;const page=Number(query.page)>0&&Number.isInteger(Number(query.page))?Number(query.page):1;const topic=typeof query.topic==='string'?query.topic:'';
+ let result,topics,error;try{[result,topics]=await Promise.all([api('/news?'+new URLSearchParams({page:String(page),topic})),api('/news-topics')]);}catch(e){error=e.message;}
+ return <section className="container catalog-page"><p className="eyebrow">KHÁM PHÁ HH SHOP</p><h1>Tin tức & sự kiện</h1><p>Cập nhật câu chuyện công nghệ và các hoạt động mới.</p>{error?<p role="alert">{error}</p>:<><nav className="news-topics" aria-label="Chủ đề bài viết"><Link href="/news" aria-current={!topic?'page':undefined}>Tất cả</Link>{topics.data.map(t=><Link key={t.id} href={'/news?topic='+encodeURIComponent(t.slug)} aria-current={topic===t.slug?'page':undefined}>{t.name}</Link>)}</nav><div className="news-grid">{result.data.map(post=><article className="commerce-panel" key={post.id}>{post.image&&<ProductImage image={post.image} name={post.title}/>}<p className="eyebrow">{post.topic_name}</p><h2><Link href={'/news/'+encodeURIComponent(post.slug)}>{post.title}</Link></h2><p>{post.description}</p><Link className="news-action" href={'/news/'+encodeURIComponent(post.slug)}>Đọc bài viết →</Link></article>)}</div>{!result.data.length&&<p>Chưa có bài viết trong chủ đề này.</p>}<div className="news-pagination">{page>1&&<Link className="news-action" href={'/news?'+new URLSearchParams({page:String(page-1),topic})}>← Trang trước</Link>}<span>Trang {page} / {result.meta.last_page}</span>{page<result.meta.last_page&&<Link className="news-action" href={'/news?'+new URLSearchParams({page:String(page+1),topic})}>Trang sau →</Link>}</div></>}</section>;
+}
