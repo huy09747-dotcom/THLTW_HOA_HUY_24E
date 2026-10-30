@@ -158,6 +158,9 @@ class PayosPayment
                 && (float) $locked->total === (float) $attempt->amount, 409, 'Don hang khong khop.');
             if ($locked->payment_status === 'unpaid') {
                 $locked->payment_status = 'paid';
+                if ((int) $locked->status === 1) {
+                    $locked->status = 2;
+                }
                 $locked->save();
             }
             DB::table('payment_attempts')->where('id', $attempt->id)->update([

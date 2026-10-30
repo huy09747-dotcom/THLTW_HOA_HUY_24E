@@ -3,15 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
 import { api } from "@/services/api";
-import { formatPrice } from "@/utils/format";
-
-const labels = {
-  cod: "Thanh toán khi nhận hàng",
-  payos: "Chuyển khoản ngân hàng",
-  momo: "MoMo sandbox",
-  paypal: "PayPal sandbox",
-  vnpay: "Thẻ nội địa / VNPAY sandbox",
-};
+import styles from "@/app/(shop)/orders/orders.module.css";
 
 export default function OrderPayment({ order, onUpdated }) {
   const { token } = useCart();
@@ -90,34 +82,33 @@ export default function OrderPayment({ order, onUpdated }) {
     && order.payment_status === "unpaid"
     && Number(order.status) !== 5;
 
+  if (!payable) return null;
+
   return (
-    <section className="commerce-panel">
-      <h3>{labels[order.payment_method] || order.payment_method}</h3>
-      {order.payment_status === "paid" && <p role="status">Đã thanh toán</p>}
-      {payable && (
-        <>
-          <div className="auth-links">
-            <button className="primary-button" disabled={busy} onClick={() => action()}>
-              {busy ? "Đang xử lý…" : "Thanh toán ngay"}
-            </button>
-            <button disabled={busy} onClick={() => action(true)}>Kiểm tra thanh toán</button>
-          </div>
-          {offer && (
-            <div>
-              <p>
-                Tổng thanh toán: <strong>{offer.currency === "USD"
-                  ? `${(offer.amount / 100).toFixed(2)} USD`
-                  : formatPrice(offer.amount)}</strong>
-              </p>
-              <a className="primary-button" href={offer.url}>
-                {order.payment_method === "payos" ? "Mở mã QR thanh toán" : "Đến cổng thanh toán"} ↗
-              </a>
-            </div>
-          )}
-        </>
+    <div className={styles.paymentActions}>
+      <button
+        type="button"
+        className={styles.primary}
+        disabled={busy}
+        onClick={() => action()}
+      >
+        {busy ? "Đang xử lý…" : "Thanh toán ngay"}
+      </button>
+      <button
+        type="button"
+        className={styles.button}
+        disabled={busy}
+        onClick={() => action(true)}
+      >
+        Kiểm tra thanh toán
+      </button>
+      {offer && (
+        <a className={styles.back} href={offer.url}>
+          {order.payment_method === "payos" ? "Mở mã QR thanh toán" : "Đến cổng thanh toán"} ↗
+        </a>
       )}
       {error && <p role="alert" className="error-message">{error}</p>}
-      {notice && <p role="status">{notice}</p>}
-    </section>
+      {notice && <p role="status" className={styles.muted}>{notice}</p>}
+    </div>
   );
 }

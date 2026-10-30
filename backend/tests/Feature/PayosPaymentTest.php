@@ -120,8 +120,24 @@ class PayosPaymentTest extends TestCase
         $payload = ['data' => $data, 'signature' => $this->sign($data)];
         $this->postJson('/api/payments/payos/webhook', $payload)->assertOk();
         $this->postJson('/api/payments/payos/webhook', $payload)->assertOk();
-        $this->assertDatabaseHas('donhang', ['id' => $id, 'payment_status' => 'paid', 'status' => 1]);
+        $this->assertDatabaseHas('donhang', ['id' => $id, 'payment_status' => 'paid', 'status' => 2]);
         \Illuminate\Support\Facades\Http::assertSentCount(1);
+    }
+
+    public function test_payment_does_not_reopen_cancelled_or_regress_shipping_orders(): void
+    {
+        $id = $this->preparePayment();
+        $a = $this->attempt($id);
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response([
+            'code' => '00', 'data' => ['id' => 'abc', 'orderCode' => (int) $a->reference,
+                'amount' => 10000, 'amountPaid' => 10000, 'amountRemaining' => 0, 'status' => 'PAID'],
+        ])]);
+        foreach ([3, 4, 5] as $status) {
+            DB::table('donhang')->where('id', $id)->update(['status' => $status, 'payment_status' => 'unpaid']);
+            DB::table('payment_attempts')->where('id', $a->id)->update(['status' => 'pending']);
+            app(\App\Services\PayosPayment::class)->verify(\App\Models\Donhang::findOrFail($id));
+            $this->assertDatabaseHas('donhang', ['id' => $id, 'status' => $status, 'payment_status' => 'paid']);
+        }
     }
 
     public function test_return_parameters_cannot_mark_an_unpaid_order_paid(): void
