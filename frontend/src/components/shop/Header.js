@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ShopIcon from "./ShopIcon";
 import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
@@ -8,6 +9,8 @@ import { useCart } from "@/components/shop/CartProvider";
 export default function Header({ settings, menus }) {
   const pathname = usePathname();
   const { user, cart, loading } = useCart();
+  const accountLabel = loading ? "Tài khoản" : user ? `Tài khoản: ${user.name || user.username || "của bạn"}` : "Đăng nhập";
+
   return (
     <header className="site-header">
       <div className="container header-top">
@@ -30,21 +33,37 @@ export default function Header({ settings, menus }) {
           role="search"
           action="/products"
         >
-          <span aria-hidden="true">⌕</span>
           <input
             name="q"
             aria-label="Tìm kiếm sản phẩm"
             placeholder="Bạn đang tìm sản phẩm gì?"
           />
-          <button type="submit">Tìm</button>
+          <button type="submit" className="search-icon-button" title="Tìm kiếm" aria-label="Tìm kiếm sản phẩm">
+            <ShopIcon name="search" />
+          </button>
         </form>
         <div className="header-actions">
-          <Link href={user ? "/profile" : "/login"} title={user?.name || user?.username || undefined} style={{maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-            {loading ? "Tài khoản" : user ? (user.name || user.username || "Tài khoản") : "Đăng nhập"}
+          <Link
+            href={user ? "/profile" : "/login"}
+            className="shop-icon-button"
+            title={accountLabel}
+            aria-label={accountLabel}
+          >
+            <ShopIcon name="user" />
           </Link>
-          {user && <Link href="/orders">Đơn hàng</Link>}
-          <Link href="/cart">
-            Giỏ hàng <span>{cart.count}</span>
+          {user && (
+            <Link href="/orders" className="shop-icon-button" title="Đơn hàng" aria-label="Đơn hàng của bạn">
+              <ShopIcon name="orders" />
+            </Link>
+          )}
+          <Link
+            href="/cart"
+            className="shop-icon-button"
+            title="Giỏ hàng"
+            aria-label={`Giỏ hàng: ${cart.count} sản phẩm`}
+          >
+            <ShopIcon name="cart" />
+            <span className="cart-count" aria-hidden="true">{cart.count}</span>
           </Link>
         </div>
       </div>

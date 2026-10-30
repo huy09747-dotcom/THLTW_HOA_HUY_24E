@@ -15,9 +15,9 @@ class ReviewController extends Controller {
  }
  public function save(Request $request,int $id) {
   $this->product($id);$data=$request->validate(['rating'=>'required|integer|between:1,5','comment'=>'required|string|max:2000']);
-  DB::table('product_reviews')->upsert([array_merge($data,['product_id'=>$id,'user_id'=>$request->user()->id,'created_at'=>now(),'updated_at'=>now()])],['product_id','user_id'],['rating','comment','updated_at']);
+  DB::table('product_reviews')->upsert([array_merge($data,['product_id'=>$id,'user_id'=>$request->user()->id,'is_visible'=>true,'created_at'=>now(),'updated_at'=>now()])],['product_id','user_id'],['rating','comment','is_visible','updated_at']);
   return response()->json(['message'=>'Đã lưu đánh giá của bạn.']);
  }
- public function mine(Request $request,int $id){$this->product($id);return response()->json(['data'=>DB::table('product_reviews')->where('product_id',$id)->where('user_id',$request->user()->id)->first(['rating','comment','is_visible'])]);}
+ public function mine(Request $request,int $id){$this->product($id);return response()->json(['data'=>DB::table('product_reviews')->where('product_id',$id)->where('user_id',$request->user()->id)->where('is_visible',true)->first(['rating','comment'])]);}
  public function destroy(Request $request,int $id){$this->product($id);DB::table('product_reviews')->where('product_id',$id)->where('user_id',$request->user()->id)->delete();return response()->json(['message'=>'Đã xóa đánh giá của bạn.']);}
 }

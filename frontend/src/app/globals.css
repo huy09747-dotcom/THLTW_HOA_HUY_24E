@@ -64,7 +64,11 @@ input:disabled {
   top: 12px;
 }
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   background: #fff;
+  box-shadow: 0 3px 16px rgb(18 63 53 / 6%);
 }
 .header-top {
   display: flex;
@@ -1478,3 +1482,170 @@ button:disabled {
 @media(max-width:1000px){.product-carousel-track{grid-auto-columns:calc((100% - 40px)/3)}}
 @media(max-width:760px){.product-carousel-track{grid-auto-columns:calc((100% - 16px)/2);gap:16px}.product-carousel-previous{left:-10px}.product-carousel-next{right:-10px}.product-carousel-arrow{width:36px;height:36px}}
 @media(max-width:440px){.product-carousel-track{grid-auto-columns:88%}}
+
+.cart-notice {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(390px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid #c8e1d5;
+  border-radius: 16px;
+  background: #fff;
+  color: #174e40;
+  box-shadow: 0 12px 40px rgb(18 63 53 / 16%);
+}
+.cart-notice-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e6f5ed;
+  font-size: 20px;
+}
+.cart-notice-content {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.cart-notice-content strong,
+.cart-notice-content a {
+  display: block;
+}
+.cart-notice-content a {
+  margin-top: 4px;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cart-notice > button {
+  flex: 0 0 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f3;
+  color: #486258;
+  font-size: 23px;
+  cursor: pointer;
+}
+.cart-notice-error {
+  color: #a32e28;
+  border-color: #f0cfcc;
+}
+@media (max-width: 600px) {
+  .cart-notice {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+.shop-icon {
+  display: block;
+  flex-shrink: 0;
+}
+.header-actions {
+  gap: 10px;
+}
+.header-actions .shop-icon-button,
+.search-box .search-icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: var(--accent);
+  transition: background-color 150ms ease;
+}
+.header-actions .shop-icon-button:hover,
+.search-box .search-icon-button:hover {
+  background: #edf4f0;
+}
+.header-actions .shop-icon-button:focus-visible,
+.search-box .search-icon-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.header-actions .cart-count {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  min-width: 19px;
+  padding: 2px 5px;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+}
+.product-card-actions .cart-icon-button,
+.purchase-row .cart-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
+  width: 48px;
+  min-height: 44px;
+  padding: 10px;
+}
+.icon-spinning {
+  animation: shop-icon-spin 800ms linear infinite;
+}
+@keyframes shop-icon-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-spinning { animation: none; }
+}
+
+.product-card-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.purchase-row .card-add-button,
+.product-card-actions .card-add-button,
+.purchase-row .card-buy-button,
+.product-card-actions .card-buy-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 66px;
+  padding: 10px 6px;
+  border-radius: 11px;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+.purchase-row .card-add-button,
+.product-card-actions .card-add-button {
+  flex-direction: column;
+  gap: 5px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: #fff;
+}
+.purchase-row .card-add-button:hover:not(:disabled),
+.product-card-actions .card-add-button:hover:not(:disabled) {
+  background: #edf6f2;
+}
+.purchase-row .card-buy-button,
+.product-card-actions .card-buy-button {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+.purchase-row .card-buy-button:hover:not(:disabled),
+.product-card-actions .card-buy-button:hover:not(:disabled) {
+  background: #124c40;
+  box-shadow: 0 4px 10px rgb(18 76 64 / 18%);
+}
