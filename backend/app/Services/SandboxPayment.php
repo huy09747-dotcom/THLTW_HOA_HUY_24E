@@ -12,7 +12,7 @@ class SandboxPayment
     public function configured(string $method): bool
     {
         $keys = match ($method) {
-            'cod'=>[], 'momo'=>['partner','access','secret'],
+            'cod'=>[], 'payos'=>['client','key','checksum'], 'momo'=>['partner','access','secret'],
             'paypal'=>['client','secret','vnd_per_usd'], 'vnpay'=>['tmn','secret'], default=>['invalid'],
         };
         foreach ($keys as $key) if (!config("payments.$method.$key")) return false;
@@ -20,7 +20,7 @@ class SandboxPayment
     }
     public function ensureConfigured(string $method): void
     {
-        if (!$this->configured($method)) throw ValidationException::withMessages(['payment_method'=>'Phương thức chưa được cấu hình sandbox.']);
+        if (!$this->configured($method)) throw ValidationException::withMessages(['payment_method'=>'Phương thức chưa được cấu hình.']);
     }
     private function sign(array $data, string $secret): string
     {
@@ -36,6 +36,7 @@ class SandboxPayment
     }
     public function start(Donhang $order, string $ip): array
     {
+        if ($order->payment_method === 'payos') return app(PayosPayment::class)->start($order);
         $method=$order->payment_method;
         $this->ensureConfigured($method);
         abort_if($method==='cod' || $order->payment_status!=='unpaid' || (int)$order->status===5,422,'Đơn không thể thanh toán online.');

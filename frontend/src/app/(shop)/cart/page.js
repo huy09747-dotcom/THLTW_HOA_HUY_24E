@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { api } from "@/services/api";
 import { useState } from "react";
 import CheckoutForm from "@/components/shop/CheckoutForm";
 
@@ -10,32 +11,55 @@ import { formatPrice } from "@/utils/format";
 
 export default function CartPage() {
   const [order, setOrder] = useState(null);
-  const { user, cart, loading, busy, error, logout, changeCart } = useCart();
+  const { user, token, cart, loading, busy, error, logout, changeCart } = useCart();
+
+  const [paymentError, setPaymentError] = useState("");
+  const [openingPayment, setOpeningPayment] = useState(false);
+
+  async function completeCheckout(savedOrder) {
+    setOrder(savedOrder);
+    if (savedOrder.payment_method !== "payos") return;
+    setOpeningPayment(true);
+    setPaymentError("");
+    try {
+      const result = await api(`/my-orders/${savedOrder.id}/payment`, {
+        method: "POST",
+        token,
+        body: { return_origin: window.location.origin },
+      });
+      window.location.assign(result.data.url);
+    } catch (exception) {
+      setPaymentError(exception.message);
+    } finally {
+      setOpeningPayment(false);
+    }
+  }
 
   if (loading)
     return (
       <div
-        className="container catalog-page"
+        className="container catalog-page cart-page"
         role="status"
       >
         Đang tải giỏ hàng…
       </div>
     );
   return (
-    <div className="container catalog-page">
+    <div className="container catalog-page cart-page">
       <p className="breadcrumb">
         <Link href="/">Trang chủ</Link> / Giỏ hàng
       </p>
       <h1>Giỏ hàng của bạn</h1>
       {user && order && (
         <div className="success" role="status">
-          <h2>Đặt hàng thành công</h2>
+          <h2>{openingPayment ? "Đang mở thanh toán…" : "Đã lưu đơn hàng"}</h2>
           <p>Mã đơn hàng: {order.code}</p>
           <p>Tổng tiền: {formatPrice(order.total)}</p>
-          <p>{order.payment_method==='cod'?'Thanh toán khi nhận hàng.':'Mở chi tiết đơn hàng để tiếp tục thanh toán sandbox.'}</p><p>{order.email_status==='queued'?'Email xác nhận đã được đưa vào hàng đợi gửi.':'Đơn đã được lưu nhưng chưa đưa được email vào hàng đợi. Vui lòng liên hệ hỗ trợ.'}</p>
+          <p>{order.payment_method==='cod'?'Thanh toán khi nhận hàng.':'Mở chi tiết đơn hàng để tiếp tục thanh toán.'}</p><p>{order.email_status==='queued'?'Email xác nhận đã được đưa vào hàng đợi gửi.':'Đơn đã được lưu nhưng chưa đưa được email vào hàng đợi. Vui lòng liên hệ hỗ trợ.'}</p>
           <Link href={`/orders/${order.id}`} className="primary-button">Xem chi tiết đơn hàng</Link>
         </div>
       )}
+      {paymentError && <p role="alert" className="error-message">{paymentError} Bạn có thể mở chi tiết đơn để thanh toán lại.</p>}
       {error && (
         <p
           role="alert"
@@ -148,7 +172,7 @@ export default function CartPage() {
                   <span>Tạm tính</span>
                   <strong>{formatPrice(cart.total)}</strong>
                 </div>
-                <CheckoutForm onSuccess={setOrder} />
+                <CheckoutForm onSuccess={completeCheckout} />
                 <Link href="/products">← Tiếp tục mua sắm</Link>
               </aside>
             </div>

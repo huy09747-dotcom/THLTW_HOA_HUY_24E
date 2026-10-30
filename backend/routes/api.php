@@ -298,3 +298,6 @@ Route::middleware(['auth:sanctum','admin'])->prefix('admin/banners')->group(func
 });
 
 Route::get('/menus', [\App\Http\Controllers\Api\MenuController::class, 'publicIndex']);
+
+// Thanh toán payOS: nhận kết quả và tự động xác nhận đơn hàng
+Route::post('/payments/payos/webhook', [\App\Http\Controllers\Api\PaymentController::class, 'payos']);
