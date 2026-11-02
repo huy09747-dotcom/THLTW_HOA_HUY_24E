@@ -44,7 +44,7 @@ class PayosPayment
     public function start(Donhang $order, ?string $origin = null): array
     {
         $base = rtrim(config('payments.frontend'), '/');
-        $allowed = [$base];
+        $allowed = array_merge([$base], config('payments.frontend_origins', []));
         if (in_array(parse_url($base, PHP_URL_HOST), ['localhost', '127.0.0.1'], true)) {
             $allowed[] = str_replace('localhost', '127.0.0.1', $base);
             $allowed[] = str_replace('127.0.0.1', 'localhost', $base);

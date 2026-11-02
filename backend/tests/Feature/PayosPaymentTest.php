@@ -200,6 +200,20 @@ class PayosPaymentTest extends TestCase
         $this->assertDatabaseHas('donhang', ['id'=>$id,'payment_status'=>'unpaid']);
     }
 
+    public function test_configured_frontend_origin_is_allowed_but_other_origins_are_rejected(): void
+    {
+        $id = $this->preparePayment();
+        config(['payments.frontend_origins'=>['http://localhost:3001']]);
+        \Illuminate\Support\Facades\Http::fake(function ($request) use ($id) {
+            $this->assertSame('http://localhost:3001/orders/'.$id, $request['returnUrl']);
+            $this->assertSame($request['returnUrl'], $request['cancelUrl']);
+            $data=['orderCode'=>$request['orderCode'],'amount'=>10000,'checkoutUrl'=>'https://pay.payos.vn/web/new','paymentLinkId'=>'new'];
+            return \Illuminate\Support\Facades\Http::response(['code'=>'00','data'=>$data,'signature'=>$this->sign($data)]);
+        });
+        $this->postJson('/api/my-orders/'.$id.'/payment',['return_origin'=>'http://localhost:3001'])->assertOk();
+        $this->postJson('/api/my-orders/'.$id.'/payment',['return_origin'=>'http://localhost:3002'])->assertUnprocessable();
+    }
+
     public function test_external_return_origin_is_rejected(): void
     {
         $id = $this->preparePayment();
