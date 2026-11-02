@@ -1,5 +1,6 @@
 "use client";
 
+import { categoryPath } from "@/utils/categories";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAdminAuth } from "./AdminAuthProvider";
@@ -1003,13 +1004,17 @@ export default function ManagementPage({
                         <strong>{item.name}</strong>
                         {category && (
                           <div className={styles.categoryRelation}>
-                            {Number(item.parent_id) === 0
-                              ? "Danh mục gốc"
-                              : "Thuộc: " + (
-                                (options.parent_id || []).find(
-                                  (parent) => Number(parent.id) === Number(item.parent_id)
-                                )?.name || "Danh mục #" + item.parent_id
-                              )}
+                            <span className="category-level" data-child={Number(item.parent_id) !== 0}>
+                              {Number(item.parent_id) === 0 ? "Danh mục gốc" : "Danh mục con"}
+                            </span>
+                            {Number(item.parent_id) !== 0 && (
+                              <span className="category-path">{categoryPath(item, options.parent_id || [])}</span>
+                            )}
+                            {(options.parent_id || []).some(child => Number(child.parent_id) === Number(item.id)) && (
+                              <span className="category-path">
+                                Nhóm con: {(options.parent_id || []).filter(child => Number(child.parent_id) === Number(item.id)).map(child => child.name).join(", ")}
+                              </span>
+                            )}
                           </div>
                         )}
                       </td>

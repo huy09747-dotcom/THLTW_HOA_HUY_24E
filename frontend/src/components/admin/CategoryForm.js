@@ -1,3 +1,4 @@
+import { categoryOptions } from "@/utils/categories";
 import EntityForm from "./EntityForm";
 
 const fields = [
@@ -6,7 +7,7 @@ const fields = [
   { name: "image", label: "Hình ảnh", nullable: true, maxLength: 255 },
   {
     name: "parent_id",
-    label: "Thuộc danh mục",
+    label: "Danh mục cha",
     type: "select",
     min: 0,
     max: 4294967295,
@@ -49,32 +50,22 @@ export default function CategoryForm(props) {
       }
     }
   }
-  const parents = categories
-    .filter((item) => !excluded.has(Number(item.id)))
-    .map((item) => {
-      const names = [item.name];
-      const visited = new Set([Number(item.id)]);
-      let parentId = Number(item.parent_id);
-      while (parentId && !visited.has(parentId)) {
-        visited.add(parentId);
-        const parent = categories.find((entry) => Number(entry.id) === parentId);
-        if (!parent) {
-          names.unshift("Cha không còn tồn tại");
-          break;
-        }
-        names.unshift(parent.name);
-        parentId = Number(parent.parent_id);
-      }
-      return { ...item, name: names.join(" → ") + (Number(item.status) === 0 ? " (đang ẩn)" : "") };
-    });
+  const parents = categoryOptions(categories.filter(item => !excluded.has(Number(item.id))));
   return (
+    <div>
+      <div className="category-guide">
+        <strong>Chọn vị trí trong cây danh mục</strong>
+        <p>Chọn “Danh mục gốc” để tạo nhóm lớn. Chọn một danh mục cha để tạo nhóm con bên trong.</p>
+        <span>Ví dụ: Gaming → Bàn phím gaming → sản phẩm bàn phím</span>
+      </div>
     <EntityForm
       {...props}
       fields={fields}
       options={{
         ...props.options,
-        parent_id: [{ id: 0, name: "Danh mục gốc (không có cha)" }, ...parents],
+        parent_id: [{ id: 0, name: "Danh mục gốc — không có cha" }, ...parents],
       }}
     />
+    </div>
   );
 }
