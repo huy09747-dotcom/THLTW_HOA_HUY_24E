@@ -8,8 +8,11 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
 
 function FavoriteError() {
-  const { favoriteError } = useCart();
-  return favoriteError ? <p className="container error-message" role="alert">{favoriteError}</p> : null;
+  const { favoriteError, favoriteNotice } = useCart();
+  return <>
+    {favoriteError && <p className="container error-message" role="alert">{favoriteError}</p>}
+    {favoriteNotice && <p className="favorite-notice" role="status">{favoriteNotice}</p>}
+  </>;
 }
 
 export default function Header({ settings, menus }) {
