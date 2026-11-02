@@ -1,5 +1,6 @@
 "use client";
 
+import CouponEntry from "./CouponEntry";
 import { useEffect, useState } from "react";
 import { api } from "@/services/api";
 import { useCart } from "./CartProvider";
@@ -94,6 +95,7 @@ export default function CheckoutForm({ onSuccess }) {
         <label htmlFor="order-note">Ghi chú</label>
         <textarea id="order-note" name="note" maxLength={2000} rows={1} />
       </div>
+      <CouponEntry />
       <label htmlFor="payment-method">Phương thức thanh toán</label>
       <select id="payment-method" name="payment_method" value={method} onChange={(event) => setMethod(event.target.value)} disabled={busy || submitting}>{methods.map(m=><option key={m.id} value={m.id} disabled={!m.enabled}>{m.label}{!m.enabled?' — chưa cấu hình':''}</option>)}</select>
       {methodError&&<p role="alert">{methodError}</p>}

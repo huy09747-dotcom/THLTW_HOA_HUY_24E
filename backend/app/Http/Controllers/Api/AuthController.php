@@ -17,6 +17,9 @@ class AuthController extends Controller
     {
         return DB::transaction(function () use ($request) {
             $user = new User($request->validated());
+            if (!$user->username) {
+                $user->username = 'user_'.strtolower((string) \Illuminate\Support\Str::ulid());
+            }
             $user->roles = 'user';
             $user->status = 1;
             $user->save();

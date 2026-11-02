@@ -34,6 +34,17 @@ class Product extends Model
         'is_featured',
     ];
 
+    public function scopeWithReviewSummary($query)
+    {
+        $reviews = \Illuminate\Support\Facades\DB::table('product_reviews')
+            ->whereColumn('product_id', 'sanpham.id')
+            ->where('is_visible', true);
+
+        return $query->select('sanpham.*')
+            ->selectSub((clone $reviews)->selectRaw('COUNT(*)'), 'review_count')
+            ->selectSub((clone $reviews)->selectRaw('AVG(rating)'), 'review_average');
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');

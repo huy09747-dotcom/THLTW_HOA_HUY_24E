@@ -1,5 +1,6 @@
 "use client";
 
+import FavoriteButton from "./FavoriteButton";
 import ShopIcon from "./ShopIcon";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
@@ -61,6 +62,7 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="product-card">
+      <FavoriteButton productId={product.id} />
       <Link
         href={`/products/${encodeURIComponent(product.slug)}`}
         className="product-card-visual"
@@ -81,6 +83,28 @@ export default function ProductCard({ product }) {
         <h3>
           <Link href={`/products/${encodeURIComponent(product.slug)}`}>{product.name}</Link>
         </h3>
+        <div className="product-card-rating">
+          {Number(product.review_count) > 0 ? (
+            <span
+              className="product-rating-summary"
+              aria-label={`${product.review_average} trên 5 sao, ${product.review_count} đánh giá`}
+            >
+              <span className="product-rating-stars" aria-hidden="true">
+                <span>★★★★★</span>
+                <span
+                  className="product-rating-fill"
+                  style={{ width: `${Math.max(0, Math.min(5, Number(product.review_average) || 0)) * 20}%` }}
+                >
+                  ★★★★★
+                </span>
+              </span>
+              <strong aria-hidden="true">{Number(product.review_average).toLocaleString("vi-VN")}</strong>
+              <span aria-hidden="true">({product.review_count})</span>
+            </span>
+          ) : (
+            <span className="product-rating-empty">Chưa có đánh giá</span>
+          )}
+        </div>
         {onSale ? (
           <div className="product-sale-prices">
             <p className="product-original-price">

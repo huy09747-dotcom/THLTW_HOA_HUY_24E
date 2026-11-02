@@ -301,3 +301,30 @@ Route::get('/menus', [\App\Http\Controllers\Api\MenuController::class, 'publicIn
 
 // Thanh toán payOS: nhận kết quả và tự động xác nhận đơn hàng
 Route::post('/payments/payos/webhook', [\App\Http\Controllers\Api\PaymentController::class, 'payos']);
+
+// Khach hang huy don dang cho xac nhan
+Route::post('/my-orders/{id}/cancel', [DonhangController::class, 'cancelMyOrder'])
+    ->middleware('auth:sanctum')
+    ->whereNumber('id');
+
+// Quen mat khau va dat lai mat khau qua email
+Route::post('/forgot-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'forgot'])
+    ->middleware('throttle:5,1');
+Route::post('/reset-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'reset'])
+    ->middleware('throttle:5,1');
+
+// Ma giam gia va thong ke danh cho admin
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
+    Route::get('/admin/coupons', [\App\Http\Controllers\Api\CouponController::class, 'index']);
+    Route::post('/admin/coupons', [\App\Http\Controllers\Api\CouponController::class, 'save']);
+    Route::put('/admin/coupons/{id}', [\App\Http\Controllers\Api\CouponController::class, 'save'])->whereNumber('id');
+});
+// Khach hang ap dung ma va luu san pham yeu thich
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/coupons/preview', [\App\Http\Controllers\Api\CouponController::class, 'preview'])->middleware('throttle:20,1');
+    Route::get('/favorites/ids', [\App\Http\Controllers\Api\FavoriteController::class, 'ids']);
+    Route::get('/favorites', [\App\Http\Controllers\Api\FavoriteController::class, 'index']);
+    Route::put('/favorites/{id}', [\App\Http\Controllers\Api\FavoriteController::class, 'store'])->whereNumber('id');
+    Route::delete('/favorites/{id}', [\App\Http\Controllers\Api\FavoriteController::class, 'destroy'])->whereNumber('id');
+});

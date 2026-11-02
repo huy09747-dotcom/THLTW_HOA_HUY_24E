@@ -58,18 +58,29 @@ class CheckoutController extends Controller
                 $product->save();
             }
 
+            $coupon = app(\App\Services\CouponDiscount::class)->calculate($request->validated('coupon_code'), $total);
+            if ($request->validated('payment_method', 'cod') === 'payos' && $total === $coupon['discount']) {
+                throw ValidationException::withMessages(['payment_method' => 'Đơn được giảm toàn bộ tiền, vui lòng chọn thanh toán khi nhận hàng.']);
+            }
             $order = Donhang::create(array_merge($request->validated(), [
                 'user_id' => $request->user()->id,
                 'code' => 'HH-'.strtoupper((string) Str::ulid()),
-                'status' => 2,
+                'status' => 1,
                 'order_type' => 'delivery',
                 'subtotal' => $total,
-                'discount' => 0,
-                'total' => $total,
+                'discount' => $coupon['discount'],
+                'total' => $total - $coupon['discount'],
                 'payment_method' => $request->validated('payment_method','cod'),
                 'payment_status' => 'unpaid',
             ]));
             $order->items()->createMany($lines);
+            if ($coupon['coupon']) {
+                DB::table('coupon_usages')->insert([
+                    'coupon_id'=>$coupon['coupon']->id, 'user_id'=>$request->user()->id,
+                    'order_id'=>$order->id, 'discount'=>$coupon['discount'],
+                    'created_at'=>now(), 'updated_at'=>now(),
+                ]);
+            }
             ChiTietGioHang::whereIn('id', $items->pluck('id'))->delete();
 
             return $order;

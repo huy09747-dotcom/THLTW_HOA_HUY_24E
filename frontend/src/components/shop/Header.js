@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import ShopLogo from "@/components/ShopLogo";
 import ShopIcon from "./ShopIcon";
 import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
+
+function FavoriteError() {
+  const { favoriteError } = useCart();
+  return favoriteError ? <p className="container error-message" role="alert">{favoriteError}</p> : null;
+}
 
 export default function Header({ settings, menus }) {
   const pathname = usePathname();
@@ -19,10 +25,7 @@ export default function Header({ settings, menus }) {
           className="brand"
           aria-label={(settings?.site_name || "HH Shop") + " - Trang chủ"}
         >
-          {settings?.logo && /^https?:\/\//i.test(settings.logo) ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={settings.logo} alt="" width={44} height={44} style={{objectFit:"contain"}} />
-          ) : <span className="brand-mark">HH</span>}
+          <ShopLogo />
           <span>
             {settings?.site_name || "HH Shop"}
             <small>{settings?.tagline}</small>
@@ -43,6 +46,9 @@ export default function Header({ settings, menus }) {
           </button>
         </form>
         <div className="header-actions">
+          <Link href="/favorites" className="shop-icon-button header-favorite" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">
+            <ShopIcon name="heart" />
+          </Link>
           <Link
             href={user ? "/profile" : "/login"}
             className="shop-icon-button"
@@ -67,6 +73,7 @@ export default function Header({ settings, menus }) {
           </Link>
         </div>
       </div>
+      {user && <FavoriteError />}
       <nav
         className="main-nav"
         aria-label="Điều hướng chính"

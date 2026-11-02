@@ -33,6 +33,7 @@ function paymentStatusLabel(status) {
 }
 
 function paymentMethodLabel(method) {
+  if (method === "payos") return "Chuyển khoản ngân hàng";
   if (method === "cod") return "Thanh toán khi nhận hàng";
   return method || "—";
 }
@@ -170,7 +171,9 @@ export default function OrderTable() {
               <tbody>
                 {orders.map((order) => (
                   <tr key={order.id}>
-                    <td>{order.code || order.id}</td>
+                    <td title={order.code || String(order.id)}>
+                      <strong>HH-{String(order.id).padStart(6, "0")}</strong>
+                    </td>
                     <td>{order.name || order.nguoidung?.name || "—"}</td>
                     <td>{order.phone || "—"}</td>
                     <td>{formatPrice(order.total ?? 0)}</td>

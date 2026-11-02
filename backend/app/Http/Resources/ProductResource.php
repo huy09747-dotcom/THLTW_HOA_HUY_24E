@@ -28,6 +28,8 @@ class ProductResource extends JsonResource
 
             'image' => $this->image,
             'qty' => $this->qty,
+            'review_count' => (int) ($this->review_count ?? 0),
+            'review_average' => round((float) ($this->review_average ?? 0), 1),
 
             'detail' => $this->detail,
             'description' => $this->description,

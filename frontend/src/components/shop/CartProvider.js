@@ -16,6 +16,33 @@ export default function CartProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [favoriteState, setFavoriteState] = useState({ token: null, ids: [] });
+  const [favoriteBusy, setFavoriteBusy] = useState(false);
+  const [favoriteError, setFavoriteError] = useState("");
+  const favoriteIds = favoriteState.token === token ? favoriteState.ids : [];
+  useEffect(() => {
+    if (!token) return;
+    let active = true;
+    api("/favorites/ids", { token }).then(result => {
+      if (active) setFavoriteState({ token, ids: result.data.map(Number) });
+    }).catch(e => { if (active) setFavoriteError(e.message); });
+    return () => { active = false; };
+  }, [token]);
+
+  async function toggleFavorite(id) {
+    if (!token || favoriteBusy) return;
+    setFavoriteBusy(true);
+    setFavoriteError("");
+    const selected = favoriteIds.includes(Number(id));
+    try {
+      await api(`/favorites/${id}`, { token, method: selected ? "DELETE" : "PUT" });
+      setFavoriteState(previous => ({ token, ids: selected
+        ? previous.ids.filter(value => value !== Number(id))
+        : [...new Set([...previous.ids, Number(id)])] }));
+    } catch (e) { setFavoriteError(e.message); }
+    finally { setFavoriteBusy(false); }
+  }
+
   function clearSession() {
     sessionStorage.removeItem("hh-shop-token");
     setToken(null);
@@ -141,7 +168,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ user, token, cart, loading, busy, error, login, register, logout, updateProfile, changeCart, checkout }}
+      value={{ favoriteIds, favoriteBusy, favoriteError, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>

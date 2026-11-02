@@ -27,6 +27,22 @@ export default function OrderDetailPage() {
   const { user, token, loading } = useCart();
   const [state, setState] = useState({});
   const [retry, setRetry] = useState(0);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState("");
+
+  async function cancelOrder() {
+    if (!window.confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
+    setCancelling(true);
+    setCancelError("");
+    try {
+      await api(`/my-orders/${encodeURIComponent(id)}/cancel`, { method: "POST", token });
+      setRetry(n => n + 1);
+    } catch (error) {
+      setCancelError(error.message);
+    } finally {
+      setCancelling(false);
+    }
+  }
 
   useEffect(() => {
     if (!token) return;
@@ -99,7 +115,7 @@ export default function OrderDetailPage() {
               <div className={styles.top}>
                 <div>
                   <span className={styles.label}>Mã đơn hàng</span>
-                  <p className={styles.code}>{order.code || "#" + order.id}</p>
+                  <p className={styles.code}>{"HH-" + String(order.id).padStart(6, "0")}</p>
                   <p className={styles.muted}>
                     {order.created_at ? new Date(order.created_at).toLocaleString("vi-VN") : "—"}
                   </p>
@@ -211,7 +227,18 @@ export default function OrderDetailPage() {
                 <span className={styles.label}>Tổng thanh toán</span>
                 <strong>{formatPrice(order.total)}</strong>
               </div>
-              <OrderPayment order={order} onUpdated={() => setRetry(n => n + 1)} />
+              {Number(order.status) === 1 && order.payment_status === "unpaid" && (
+            <button
+              type="button"
+              className={styles.cancelButton}
+              disabled={cancelling}
+              onClick={cancelOrder}
+            >
+              {cancelling ? "Đang hủy…" : "Hủy đơn hàng"}
+            </button>
+          )}
+          {cancelError && <p role="alert" className="error-message">{cancelError}</p>}
+          <OrderPayment order={order} onUpdated={() => setRetry(n => n + 1)} />
             </section>
           </aside>
         </div>

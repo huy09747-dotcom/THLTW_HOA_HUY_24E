@@ -14,6 +14,7 @@ class CheckoutRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'coupon_code' => ['nullable', 'string', 'max:40'],
             'payment_method' => ['sometimes', 'required', 'in:cod,payos'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'regex:/^\\+?[0-9]{9,15}$/'],

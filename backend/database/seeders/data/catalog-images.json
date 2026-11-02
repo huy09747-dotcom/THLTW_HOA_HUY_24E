@@ -1,0 +1,137 @@
+[
+    {
+        "table": "sanpham",
+        "name": "Bàn phím Logitech K120",
+        "image": "/images/catalog-real/sanpham-19.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Bàn phím Logitech K380",
+        "image": "/images/catalog-real/sanpham-20.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Bàn phím Logitech MX Keys",
+        "image": "/images/catalog-real/sanpham-21.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Màn hình Dell P2422H",
+        "image": "/images/catalog-real/sanpham-22.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Màn hình Dell S2721HN",
+        "image": "/images/catalog-real/sanpham-23.webp"
+    },
+    {
+        "table": "sanpham",
+        "name": "Màn hình Dell U2723QE",
+        "image": "/images/catalog-real/sanpham-24.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Đồng hồ Xiaomi Smart Band 8",
+        "image": "/images/catalog-real/sanpham-25.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Đồng hồ Xiaomi Redmi Watch 3",
+        "image": "/images/catalog-real/sanpham-26.png"
+    },
+    {
+        "table": "sanpham",
+        "name": "Đồng hồ Xiaomi Watch S1",
+        "image": "/images/catalog-real/sanpham-27.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "USB Kingston DataTraveler 64GB",
+        "image": "/images/catalog-real/sanpham-28.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Thẻ nhớ Kingston Canvas 128GB",
+        "image": "/images/catalog-real/sanpham-29.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "SSD Kingston NV2 1TB",
+        "image": "/images/catalog-real/sanpham-30.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Loa JBL Go 3",
+        "image": "/images/catalog-real/sanpham-31.jpg"
+    },
+    {
+        "table": "sanpham",
+        "name": "Loa JBL Flip 6",
+        "image": "/images/catalog-real/sanpham-32.png"
+    },
+    {
+        "table": "sanpham",
+        "name": "Loa JBL Charge 5",
+        "image": "/images/catalog-real/sanpham-33.png"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Apple",
+        "image": "/images/catalog-real/thuonghieu-1.png"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Samsung",
+        "image": "/images/catalog-real/thuonghieu-3.png"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Logitech",
+        "image": "/images/catalog-real/thuonghieu-4.jpg"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Dell",
+        "image": "/images/catalog-real/thuonghieu-5.png"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Xiaomi",
+        "image": "/images/catalog-real/thuonghieu-6.png"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "Kingston",
+        "image": "/images/catalog-real/thuonghieu-7.webp"
+    },
+    {
+        "table": "thuonghieu",
+        "name": "JBL",
+        "image": "/images/catalog-real/thuonghieu-8.png"
+    },
+    {
+        "table": "danhmuc",
+        "name": "Bàn phím",
+        "image": "/images/catalog-real/sanpham-19.jpg"
+    },
+    {
+        "table": "danhmuc",
+        "name": "Màn hình",
+        "image": "/images/catalog-real/sanpham-22.jpg"
+    },
+    {
+        "table": "danhmuc",
+        "name": "Đồng hồ thông minh",
+        "image": "/images/catalog-real/sanpham-26.png"
+    },
+    {
+        "table": "danhmuc",
+        "name": "Thiết bị lưu trữ",
+        "image": "/images/catalog-real/sanpham-30.jpg"
+    },
+    {
+        "table": "danhmuc",
+        "name": "Loa Bluetooth",
+        "image": "/images/catalog-real/sanpham-33.png"
+    }
+]

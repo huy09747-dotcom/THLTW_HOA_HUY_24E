@@ -1,3 +1,4 @@
+import ShopLogo from "@/components/ShopLogo";
 import Link from "next/link";
 
 export default function Footer({ settings }) {
@@ -7,8 +8,9 @@ export default function Footer({ settings }) {
         <div>
           <Link
             href="/"
-            className="footer-brand"
+            className="footer-brand footer-brand-with-logo"
           >
+            <ShopLogo size={44} />
             {settings?.site_name || "HH Shop"}
           </Link>
           <p>

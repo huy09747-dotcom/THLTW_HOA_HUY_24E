@@ -82,6 +82,26 @@ class PayosPaymentTest extends TestCase
         return DB::table('payment_attempts')->where('order_id', $id)->first();
     }
 
+    public function test_customer_cancel_checks_owner_status_and_restocks_only_once(): void
+    {
+        $id = $this->preparePayment();
+        DB::table('chitietdonhang')->insert([
+            'order_id'=>$id, 'product_id'=>1, 'price'=>100, 'qty'=>2, 'amount'=>200,
+        ]);
+        Sanctum::actingAs(User::findOrFail(2));
+        $this->postJson('/api/my-orders/'.$id.'/cancel')->assertNotFound();
+        Sanctum::actingAs(User::findOrFail(1));
+        DB::table('donhang')->where('id',$id)->update(['status'=>2]);
+        $this->postJson('/api/my-orders/'.$id.'/cancel')->assertUnprocessable();
+        DB::table('donhang')->where('id',$id)->update(['status'=>1, 'payment_status'=>'paid']);
+        $this->postJson('/api/my-orders/'.$id.'/cancel')->assertUnprocessable();
+        DB::table('donhang')->where('id',$id)->update(['payment_status'=>'unpaid']);
+        $this->postJson('/api/my-orders/'.$id.'/cancel')->assertOk();
+        $this->postJson('/api/my-orders/'.$id.'/cancel')->assertOk();
+        $this->assertDatabaseHas('sanpham',['id'=>1,'qty'=>7]);
+        $this->assertDatabaseHas('donhang',['id'=>$id,'status'=>5]);
+    }
+
     public function test_start_uses_database_amount_and_reuses_link(): void
     {
         $id = $this->preparePayment();

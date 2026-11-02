@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <title>HH Shop — H bình phương</title>
+  <defs>
+    <linearGradient id="emerald" x1="12" y1="4" x2="119" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#228C75"/>
+      <stop offset=".55" stop-color="#126451"/>
+      <stop offset="1" stop-color="#083E35"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="84" y1="25" x2="106" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF0BB"/>
+      <stop offset="1" stop-color="#E8B75E"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="124" height="124" rx="32" fill="url(#emerald)"/>
+  <rect x="7" y="7" width="114" height="114" rx="27" stroke="#FFFFFF" stroke-opacity=".16"/>
+  <path d="M15 44C34 16 68 5 106 20" stroke="#FFFFFF" stroke-opacity=".09" stroke-width="18" stroke-linecap="round"/>
+  <path d="M29 36H43V59H67V36H81V96H67V73H43V96H29V36Z" fill="#FFFFFF"/>
+  <path d="M88 32C88 25 94 21 101 21C108 21 114 25 114 32C114 37 111 40 106 44L99 49H114V57H87V50L100 39C104 36 106 34 106 32C106 30 104 28 101 28C98 28 96 30 96 33L88 32Z" fill="url(#gold)"/>
+  <path d="M31 108H79" stroke="#91D1B5" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  icons: { icon: "/default-favicon.ico" },
+  icons: { icon: { url: "/hh-shop-logo.svg", type: "image/svg+xml" } },
   title: "HH Shop | Công nghệ mỗi ngày",
   description: "Khám phá sản phẩm công nghệ tại HH Shop.",
 };

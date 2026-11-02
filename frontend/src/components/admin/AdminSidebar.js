@@ -1,5 +1,6 @@
 "use client";
 
+import ShopLogo from "@/components/ShopLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/app/admin/admin.module.css";
@@ -10,6 +11,7 @@ const links = [
   ["/admin/products", "Sản phẩm"],
   ["/admin/brands", "Thương hiệu"],
   ["/admin/orders", "Đơn hàng"],
+  ["/admin/coupons", "Mã giảm giá"],
   ["/admin/users", "Người dùng"],
   ["/admin/reviews", "Đánh giá & chấm điểm"],
   ["/admin/banners", "Banner"],
@@ -26,8 +28,9 @@ export default function AdminSidebar() {
     <aside className={styles.sidebar}>
       <Link
         href="/admin"
-        className={styles.brand}
+        className={`${styles.brand} ${styles.brandWithLogo}`}
       >
+        <ShopLogo size={42} />
         HH Shop
       </Link>
       <p className={styles.caption}>KHU VỰC QUẢN TRỊ</p>
