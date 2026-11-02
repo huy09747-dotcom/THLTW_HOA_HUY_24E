@@ -26,6 +26,7 @@ const fields = [
 
 export default function CouponsPage() {
   const { token } = useAdminAuth();
+  const [query,setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [retry, setRetry] = useState(0);
   const [state, setState] = useState({});
@@ -37,11 +38,11 @@ export default function CouponsPage() {
   useEffect(() => {
     if (!token) return;
     let active = true;
-    adminApi(`/admin/coupons?page=${page}`, token).then(result => {
+    adminApi(`/admin/coupons?page=${page}&${query}`, token).then(result => {
       if (active) setState({ result, page, retry });
     }).catch(e => { if (active) setState({ error: e.message, page, retry }); });
     return () => { active = false; };
-  }, [token, page, retry]);
+  }, [token, page, retry, query]);
 
   async function save(event) {
     event.preventDefault();
@@ -87,9 +88,13 @@ export default function CouponsPage() {
       </form>
       <p className={styles.description}>Một đơn áp dụng một mã. Lượt được tính khi đặt đơn thành công, kể cả đơn hủy. Bỏ chọn hoạt động để ngừng mã.</p>
       {message && <p role="status">{message}</p>}{(error || state.error) && <p role="alert" className="error-message">{error || state.error}</p>}
+      <form className="feature-panel feature-actions" onSubmit={e=>{e.preventDefault();setPage(1);setQuery(new URLSearchParams(new FormData(e.currentTarget)).toString());setRetry(n=>n+1);}}><input name="search" placeholder="Tìm mã" aria-label="Tìm mã" maxLength={255}/><select name="status" aria-label="Hoạt động"><option value="">Tất cả</option><option value="1">Bật</option><option value="0">Tắt</option></select><button>Lọc</button></form>
       {pending ? <p role="status">Đang tải…</p> : state.result && <>
         <div className="feature-panel feature-table"><table className={styles.table}><thead><tr><th>Mã</th><th>Giảm</th><th>Đơn tối thiểu</th><th>Đã dùng / Giới hạn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
-          {state.result.data.map(item => <tr key={item.id}><td><strong>{item.code}</strong></td><td>{item.type === "percent" ? `${item.value}%` : formatPrice(item.value)}{item.max_discount && <small> · Tối đa {formatPrice(item.max_discount)}</small>}</td><td>{formatPrice(item.min_order)}</td><td>{item.used} / {item.usage_limit ?? "∞"}</td><td>{item.active ? "Bật" : "Tắt"}<small>{item.ends_at ? ` · Hết hạn: ${new Date(item.ends_at.replace(" ", "T") + "Z").toLocaleString("vi-VN")}` : ""}</small></td><td><button className={styles.button} disabled={busy} onClick={() => edit(item)}>Sửa</button></td></tr>)}
+          {state.result.data.map(item => <tr key={item.id}><td><strong>{item.code}</strong></td><td>{item.type === "percent" ? `${item.value}%` : formatPrice(item.value)}{item.max_discount && <small> · Tối đa {formatPrice(item.max_discount)}</small>}</td><td>{formatPrice(item.min_order)}</td><td>{item.used} / {item.usage_limit ?? "∞"}</td><td>{item.active ? "Bật" : "Tắt"}<small>{item.ends_at ? ` · Hết hạn: ${new Date(item.ends_at.replace(" ", "T") + "Z").toLocaleString("vi-VN")}` : ""}</small></td><td><button className={styles.button} disabled={busy} onClick={() => edit(item)}>Sửa</button><button className={styles.dangerButton} disabled={busy} onClick={async()=>{
+            if(!window.confirm(`Xóa mã ${item.code}?`))return;setBusy(true);setError("");
+            try{await adminApi(`/admin/coupons/${item.id}`,token,{method:"DELETE"});setRetry(n=>n+1);}catch(e){setError(e.message);}finally{setBusy(false);}
+          }}>Xóa</button></td></tr>)}
           {!state.result.data.length && <tr><td colSpan={6}>Chưa có mã giảm giá.</td></tr>}
         </tbody></table></div>
         <div className="feature-actions"><button disabled={page <= 1} onClick={() => setPage(n => n - 1)}>Trang trước</button><span>{page} / {state.result.last_page}</span><button disabled={page >= state.result.last_page} onClick={() => setPage(n => n + 1)}>Trang sau</button></div>

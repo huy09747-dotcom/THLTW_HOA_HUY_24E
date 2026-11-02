@@ -1,8 +1,8 @@
 import axiosClient from "@/lib/axiosClient";
 
-export function getOrders(page, token) {
+export function getOrders(page, token, filters = "") {
   return axiosClient.get("/donhangs", {
-    params: { page },
+    params: { page, ...Object.fromEntries(new URLSearchParams(filters)) },
     token,
   });
 }

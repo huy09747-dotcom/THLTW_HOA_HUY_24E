@@ -12,7 +12,7 @@ class Donhang extends Model
     protected $table = 'donhang';
 
     protected $fillable = [
-        'user_id', 'name', 'phone', 'email', 'address', 'note', 'status',
+        'guest_session_id', 'user_id', 'name', 'phone', 'email', 'address', 'note', 'status',
         'code', 'order_type', 'subtotal', 'discount', 'total',
         'payment_status', 'payment_method',
     ];

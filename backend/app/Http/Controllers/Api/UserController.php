@@ -16,8 +16,18 @@ class UserController extends Controller
         $request->validate(['page' => 'sometimes|integer|min:1|max:2147483647']);
 
         return UserResource::collection(
-            User::where('roles', 'user')->latest('id')->paginate(10)
+            \App\Support\AdminFilters::apply(User::where('roles', 'user'), $request, ['name','email','phone'])->latest('id')->paginate(10)
         );
+    }
+
+    public function destroy(int $id)
+    {
+        DB::transaction(function() use($id) {
+            $user=User::where('roles','user')->lockForUpdate()->findOrFail($id);
+            abort_if($user->orders()->withTrashed()->exists(),422,'Thành viên đã có đơn hàng. Hãy khóa tài khoản thay vì xóa.');
+            $user->tokens()->delete(); $user->delete();
+        });
+        return response()->json(['message'=>'Đã xóa thành viên.']);
     }
 
     public function show(int $id)

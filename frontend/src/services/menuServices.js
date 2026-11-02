@@ -2,9 +2,9 @@ import axiosClient from "@/lib/axiosClient";
 
 const path = "/admin/menus";
 
-export function getList(page, search, trash, token) {
+export function getList(page, search, trash, token, status = "") {
   return axiosClient.get(trash ? `${path}/trash` : path, {
-    params: { page, search: search || undefined },
+    params: { page, search: search || undefined, status: status || undefined },
     token,
   });
 }

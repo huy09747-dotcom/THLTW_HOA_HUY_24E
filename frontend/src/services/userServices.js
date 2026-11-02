@@ -1,8 +1,8 @@
 import axiosClient from "@/lib/axiosClient";
 
-export function getUsers(page, token) {
+export function getUsers(page, token, filters = "") {
   return axiosClient.get("/admin/users", {
-    params: { page },
+    params: { page, ...Object.fromEntries(new URLSearchParams(filters)) },
     token,
   });
 }

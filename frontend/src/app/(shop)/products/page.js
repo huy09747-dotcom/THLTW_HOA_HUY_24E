@@ -10,7 +10,7 @@ export const metadata = { title: "Sản phẩm | HH Shop" };
 export default async function ProductsPage({ searchParams }) {
   const query = await searchParams;
   const filters = {};
-  for (const key of ["q", "category", "brand", "min_price", "max_price", "hot", "sale"]) {
+  for (const key of ["q", "category", "brand", "min_price", "max_price", "hot", "sale", "sort"]) {
     if (typeof query[key] === "string" && query[key].trim()) {
       filters[key] = query[key].trim();
     }
@@ -26,6 +26,7 @@ export default async function ProductsPage({ searchParams }) {
     max_price: "max_price",
     hot: "is_featured",
     sale: "on_sale",
+    sort: "sort",
   };
   for (const [key, value] of Object.entries(filters)) {
     params[mapping[key]] = value;
@@ -100,9 +101,15 @@ export default async function ProductsPage({ searchParams }) {
             placeholder="Không giới hạn"
           />
         </div>
-        {["category", "hot", "sale"].map((key) => filters[key] ? (
+        {["category", "hot", "sale", "sort"].map((key) => filters[key] ? (
           <input key={key} type="hidden" name={key} value={filters[key]} />
         ) : null)}
+        <div>
+          <label htmlFor="catalog-sort">Sắp xếp</label>
+          <select id="catalog-sort" name="sort" defaultValue={filters.sort || "newest"}>
+            <option value="newest">Mới nhất</option><option value="price_asc">Giá tăng dần</option><option value="price_desc">Giá giảm dần</option>
+          </select>
+        </div>
         <div className="shop-filter-actions">
           <button type="submit" className="primary-button">Tìm kiếm / Lọc</button>
           <Link href="/products">Xóa bộ lọc</Link>

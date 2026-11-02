@@ -7,7 +7,7 @@
         <p>Xin chào {{ $order['name'] }},</p>
         <p>Trạng thái đơn hàng: <strong>{{ [1=>'Chờ xác nhận',2=>'Đã xác nhận — đang đóng gói',3=>'Đang giao',4=>'Hoàn thành',5=>'Đã hủy'][$order['status']] ?? 'Đang cập nhật' }}</strong></p>
         <p>Thanh toán: <strong>{{ ['paid'=>'Đã thanh toán','unpaid'=>'Chưa thanh toán','refunded'=>'Đã hoàn tiền'][$order['payment_status']] ?? 'Đang cập nhật' }}</strong></p>
-        <p><a href="{{ rtrim(config('payments.frontend'),'/').'/orders/'.$order['id'] }}">Xem chi tiết đơn hàng</a></p>
+        <p><a href="{{ rtrim(config('payments.frontend'),'/').(!empty($order['guest_session_id']) ? '/guest-orders/' : '/orders/').$order['id'] }}">Xem chi tiết đơn hàng</a></p>
         <p>Cảm ơn bạn đã mua sắm tại HH Shop.</p>
     </div>
 </body>

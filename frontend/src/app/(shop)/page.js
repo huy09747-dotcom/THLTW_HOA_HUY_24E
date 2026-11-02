@@ -8,12 +8,13 @@ import BannerCarousel from "@/components/shop/BannerCarousel";
 import { api } from "@/services/api";
 
 export default async function Home() {
-  const [newResult, hotResult, saleResult, categoriesResult, bannersResult] = await Promise.allSettled([
+  const [newResult, hotResult, saleResult, categoriesResult, bannersResult, newsResult] = await Promise.allSettled([
     getProductPage(),
     getProductPage({ is_featured: "1" }),
     getProductPage({ on_sale: "1" }),
     getCategories(),
     api("/banners"),
+    api("/news"),
   ]);
   const categories = categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
   const sections = [
@@ -69,6 +70,15 @@ export default async function Home() {
           )}
         </section>
       ))}
+      <section className="home-section">
+        <div className="section-heading"><h2>Bài viết mới nhất</h2><Link href="/news">Xem tất cả ↗</Link></div>
+        {newsResult.status === "rejected" ? <p role="alert">Chưa tải được bài viết.</p> : <div className="news-grid">
+          {newsResult.value.data.slice(0,3).map(post => <article className="feature-panel" key={post.id}>
+            <h3><Link href={`/news/${encodeURIComponent(post.slug)}`}>{post.title}</Link></h3><p>{post.description}</p><Link href={`/news/${encodeURIComponent(post.slug)}`}>Đọc bài viết →</Link>
+          </article>)}
+          {!newsResult.value.data.length && <p>Chưa có bài viết.</p>}
+        </div>}
+      </section>
     </div>
   );
 }

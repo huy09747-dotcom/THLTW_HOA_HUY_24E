@@ -21,6 +21,7 @@ class ProductController extends Controller
             'brand_id' => 'nullable|integer|min:1',
             'min_price' => 'nullable|numeric|min:0',
             'max_price' => 'nullable|numeric|min:0' . ($request->filled('min_price') ? '|gte:min_price' : ''),
+            'sort' => 'nullable|in:newest,price_asc,price_desc',
             'on_sale' => 'sometimes|in:0,1',
             'status' => 'nullable|integer|in:0,1,2',
             'is_available' => 'nullable|in:0,1',
@@ -31,8 +32,7 @@ class ProductController extends Controller
             'max_price.min' => 'Gia khong duoc am.',
         ]);
 
-        $query = Product::withReviewSummary()->with(['category', 'brand'])
-            ->latest('id');
+        $query = Product::withReviewSummary()->with(['category', 'brand']);
 
         // Tìm kiếm theo tên, slug hoặc SKU
         if ($request->filled('search')) {
@@ -41,7 +41,8 @@ class ProductController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                     ->orWhere('slug', 'like', '%' . $search . '%')
-                    ->orWhere('sku', 'like', '%' . $search . '%');
+                    ->orWhere('sku', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
@@ -83,6 +84,9 @@ class ProductController extends Controller
             $query->whereRaw($finalPrice . ' <= CAST(? AS DECIMAL(20, 2))', [$request->input('max_price')]);
         }
 
+        if ($request->input('sort') === 'price_asc') $query->orderByRaw($finalPrice.' ASC');
+        if ($request->input('sort') === 'price_desc') $query->orderByRaw($finalPrice.' DESC');
+        $query->orderByDesc('id');
         $products = $query->paginate(10)->withQueryString();
 
         return ProductResource::collection($products);
@@ -92,7 +96,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = Product::withReviewSummary()->with(['category', 'brand'])
-            ->where('slug', $slug)->firstOrFail();
+            ->where('status', 1)->where('slug', $slug)->firstOrFail();
 
         return new ProductResource($product);
     }
@@ -124,6 +128,8 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
+        abort_if(\Illuminate\Support\Facades\DB::table('chitietdonhang')->where('product_id',$id)->exists(),422,'Sản phẩm đã thuộc đơn hàng. Hãy ẩn sản phẩm thay vì xóa.');
+        abort_if(\Illuminate\Support\Facades\DB::table('stock_document_items')->where('product_id',$id)->exists(),422,'Sản phẩm có lịch sử kho, không thể xóa.');
         $product->delete();
 
         return response()->json([
@@ -152,6 +158,8 @@ class ProductController extends Controller
     public function forceDelete($id)
     {
         $item = Product::onlyTrashed()->findOrFail($id);
+        abort_if(\Illuminate\Support\Facades\DB::table('chitietdonhang')->where('product_id',$id)->exists(),422,'Sản phẩm đã thuộc đơn hàng, không thể xóa vĩnh viễn.');
+        abort_if(\Illuminate\Support\Facades\DB::table('stock_document_items')->where('product_id',$id)->exists(),422,'Sản phẩm có lịch sử kho, không thể xóa.');
         $item->forceDelete();
 
         return response()->json(['message' => 'Da xoa vinh vien.']);

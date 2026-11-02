@@ -103,6 +103,12 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
+        if (Category::withTrashed()->where('parent_id', $category->id)->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'parent_id' => 'Danh mục còn danh mục con. Hãy chuyển hoặc xóa các danh mục con trước.',
+            ]);
+        }
+
         if ($category->products()->withTrashed()->exists()) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'products' => 'Khong the xoa: van con san pham thuoc danh muc nay.',
@@ -144,6 +150,12 @@ class CategoryController extends Controller
     {
         $category = Category::onlyTrashed()
             ->findOrFail($id);
+
+        if (Category::withTrashed()->where('parent_id', $category->id)->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'parent_id' => 'Danh mục còn danh mục con. Hãy chuyển hoặc xóa các danh mục con trước.',
+            ]);
+        }
 
         if ($category->products()->withTrashed()->exists()) {
             throw \Illuminate\Validation\ValidationException::withMessages([

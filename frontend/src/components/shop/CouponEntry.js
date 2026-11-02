@@ -6,7 +6,7 @@ import { useCart } from "./CartProvider";
 import { formatPrice } from "@/utils/format";
 
 export default function CouponEntry() {
-  const { token, cart, busy } = useCart();
+  const { token, guestToken, cart, busy } = useCart();
   const [code, setCode] = useState("");
   const [state, setState] = useState({});
   const [checking, setChecking] = useState(false);
@@ -16,7 +16,7 @@ export default function CouponEntry() {
     setChecking(true);
     setState({});
     try {
-      const result = await api("/coupons/preview", { token, method: "POST", body: { coupon_code: code } });
+      const result = await api(token ? "/coupons/preview" : "/guest/coupons/preview", { token, guestToken, method: "POST", body: { coupon_code: code } });
       setState({ result: result.data, fingerprint, code: code.trim().toUpperCase() });
     } catch (e) { setState({ error: e.message }); }
     finally { setChecking(false); }

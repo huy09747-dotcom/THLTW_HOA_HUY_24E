@@ -76,26 +76,27 @@ class SitePagesTest extends TestCase
     public function test_only_active_admin_can_edit_pages_and_settings(): void
     {
         foreach(['/api/admin/pages', '/api/admin/site-settings'] as $url) $this->getJson($url)->assertUnauthorized();
-        $this->putJson('/api/admin/pages/about',$this->pageData())->assertUnauthorized();
+        $this->putJson('/api/admin/pages/1',$this->pageData())->assertUnauthorized();
         $this->putJson('/api/admin/site-settings',['site_name'=>'Shop'])->assertUnauthorized();
         Sanctum::actingAs(User::findOrFail(2));
         foreach(['/api/admin/pages', '/api/admin/site-settings'] as $url) $this->getJson($url)->assertForbidden();
-        $this->putJson('/api/admin/pages/about',$this->pageData())->assertForbidden();
+        $this->putJson('/api/admin/pages/1',$this->pageData())->assertForbidden();
         $this->putJson('/api/admin/site-settings',['site_name'=>'Shop'])->assertForbidden();
         $user=User::findOrFail(1);$user->status=0;Sanctum::actingAs($user);
-        $this->putJson('/api/admin/pages/about',$this->pageData())->assertForbidden();
+        $this->putJson('/api/admin/pages/1',$this->pageData())->assertForbidden();
     }
 
     public function test_three_pages_can_be_saved_and_read_publicly(): void
     {
         $this->admin();
-        $this->getJson('/api/admin/pages')->assertOk()->assertJsonCount(3,'data');
+        $this->getJson('/api/admin/pages')->assertOk()->assertJsonCount(0,'data');
         foreach(['about','purchase-policy','contact'] as $slug) {
-            $this->putJson('/api/admin/pages/'.$slug,$this->pageData())->assertOk();
+            $this->postJson('/api/admin/pages',$this->pageData()+['slug'=>$slug])->assertOk();
             $this->getJson('/api/pages/'.$slug)->assertOk()->assertJsonPath('data.detail','Nội dung mới');
             $this->assertDatabaseHas('baiviet',['slug'=>$slug,'post_type'=>'page','created_by'=>1]);
         }
-        $this->putJson('/api/admin/pages/about',array_replace($this->pageData(),['detail'=>'Đã sửa']))->assertOk();
+        $this->getJson('/api/admin/pages')->assertOk()->assertJsonCount(3,'data');
+        $this->putJson('/api/admin/pages/1',array_replace($this->pageData(),['detail'=>'Đã sửa','slug'=>'about']))->assertOk();
         $this->assertDatabaseCount('baiviet',3);
         $this->getJson('/api/pages/about')->assertJsonPath('data.detail','Đã sửa');
         $this->getJson('/api/admin/posts')->assertJsonCount(0,'data');
@@ -150,10 +151,10 @@ class SitePagesTest extends TestCase
     {
         $this->admin();
         $this->putJson('/api/admin/pages/unknown',$this->pageData())->assertNotFound();
-        $this->putJson('/api/admin/pages/about',array_replace($this->pageData(),['detail'=>'']))->assertUnprocessable();
-        $this->putJson('/api/admin/pages/about',array_replace($this->pageData(),['status'=>9]))->assertUnprocessable();
+        $this->putJson('/api/admin/pages/1',array_replace($this->pageData(),['slug'=>'about','detail'=>'']))->assertUnprocessable();
+        $this->putJson('/api/admin/pages/1',array_replace($this->pageData(),['slug'=>'about','status'=>9]))->assertUnprocessable();
         DB::table('baiviet')->insert($this->pageData()+['slug'=>'about','post_type'=>'post']);
-        $this->putJson('/api/admin/pages/about',$this->pageData())->assertStatus(409);
+        $this->postJson('/api/admin/pages',$this->pageData()+['slug'=>'about'])->assertUnprocessable();
         $this->getJson('/api/pages/about')->assertNotFound();
     }
 }

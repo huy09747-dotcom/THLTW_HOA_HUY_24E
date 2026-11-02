@@ -35,16 +35,6 @@ export default function AddToCart({ product }) {
   if (!Number(product.is_available) || !max)
     return <p className="notice">Tạm hết hàng</p>;
   if (loading) return <p role="status">Đang tải…</p>;
-  if (!user) {
-    return (
-      <Link
-        className="primary-button"
-        href={"/login?next=" + encodeURIComponent("/products/" + encodeURIComponent(product.slug))}
-      >
-        Đăng nhập để mua hàng
-      </Link>
-    );
-  }
 
   return (
     <div className="add-to-cart">

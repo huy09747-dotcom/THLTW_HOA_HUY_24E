@@ -7,7 +7,7 @@ import { getSiteSettings } from "@/services/siteContent";
 
 export async function generateMetadata() {
   const settings=await getSiteSettings();
-  return {title:{default:settings.seo_title || settings.site_name,template:"%s | "+settings.site_name},description:settings.meta_description || "", keywords:settings.seo_keywords || undefined, icons: { icon: { url: "/hh-shop-logo.svg", type: "image/svg+xml" } }};
+  return {title:{default:settings.seo_title || settings.site_name,template:"%s | "+settings.site_name},description:settings.meta_description || "", keywords:settings.seo_keywords || undefined, icons: { icon: { url: settings.favicon || "/hh-shop-logo.svg" } }};
 }
 export default async function ShopLayout({ children }) {
   const menus=await api("/menus").then(r=>r.data).catch(()=>null);

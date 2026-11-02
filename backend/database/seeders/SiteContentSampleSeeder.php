@@ -34,7 +34,7 @@ class SiteContentSampleSeeder extends Seeder
             }
             $settings = SiteSetting::orderBy('id')->first() ?? new SiteSetting();
             $origin = rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/');
-            $values = $data['settings'] + ['logo' => $origin.'/hh-shop-demo.svg', 'favicon' => $origin.'/default-favicon.ico'];
+            $values = $data['settings'] + ['logo' => $origin.'/hh-shop-logo.svg', 'favicon' => $origin.'/default-favicon.ico'];
             foreach ($values as $column => $value) {
                 if (trim((string) $settings->{$column}) === '') $settings->{$column} = $value;
             }

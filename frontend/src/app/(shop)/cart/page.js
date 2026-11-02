@@ -11,7 +11,7 @@ import { formatPrice } from "@/utils/format";
 
 export default function CartPage() {
   const [order, setOrder] = useState(null);
-  const { user, token, cart, loading, busy, error, logout, changeCart } = useCart();
+  const { user, token, guestToken, cart, loading, busy, error, logout, changeCart } = useCart();
 
   const [paymentError, setPaymentError] = useState("");
   const [openingPayment, setOpeningPayment] = useState(false);
@@ -22,9 +22,10 @@ export default function CartPage() {
     setOpeningPayment(true);
     setPaymentError("");
     try {
-      const result = await api(`/my-orders/${savedOrder.id}/payment`, {
+      const result = await api(token ? `/my-orders/${savedOrder.id}/payment` : `/guest/orders/${savedOrder.id}/payment`, {
         method: "POST",
         token,
+        guestToken,
         body: { return_origin: window.location.origin },
       });
       window.location.assign(result.data.url);
@@ -50,13 +51,13 @@ export default function CartPage() {
         <Link href="/">Trang chủ</Link> / Giỏ hàng
       </p>
       <h1>Giỏ hàng của bạn</h1>
-      {user && order && (
+      {order && (
         <div className="success" role="status">
           <h2>{openingPayment ? "Đang mở thanh toán…" : "Đã lưu đơn hàng"}</h2>
-          <p>Mã đơn hàng: {order.code}</p>
+          <p>Mã đơn hàng: {"HH-" + String(order.id).padStart(6,"0")}</p>
           <p>Tổng tiền: {formatPrice(order.total)}</p>
           <p>{order.payment_method==='cod'?'Thanh toán khi nhận hàng.':'Mở chi tiết đơn hàng để tiếp tục thanh toán.'}</p><p>{order.email_status==='queued'?'Email xác nhận đã được đưa vào hàng đợi gửi.':'Đơn đã được lưu nhưng chưa đưa được email vào hàng đợi. Vui lòng liên hệ hỗ trợ.'}</p>
-          <Link href={`/orders/${order.id}`} className="primary-button">Xem chi tiết đơn hàng</Link>
+          <Link href={`${user ? "/orders" : "/guest-orders"}/${order.id}`} className="primary-button">Xem chi tiết đơn hàng</Link>
         </div>
       )}
       {paymentError && <p role="alert" className="error-message">{paymentError} Bạn có thể mở chi tiết đơn để thanh toán lại.</p>}
@@ -68,22 +69,11 @@ export default function CartPage() {
           {error}
         </p>
       )}
-      {!user ? (
-        <div className="login-panel">
-          <h2>Đăng nhập để sử dụng giỏ hàng</h2>
-          <p>Giỏ hàng được lưu theo tài khoản của bạn.</p>
-          <Link
-            href="/login?next=/cart"
-            className="primary-button"
-          >
-            Đăng nhập
-          </Link>
-        </div>
-      ) : (
+      {(
         <>
           <div className="account-row">
-            <span>Xin chào, {user?.name || "bạn"}</span>
-            <Link href="/orders">Đơn hàng của tôi</Link>
+            <span>Xin chào, {user?.name || "khách hàng"}</span>
+            {user ? <Link href="/orders">Đơn hàng của tôi</Link> : <Link href="/login">Đăng nhập tài khoản</Link>}
             {user && (
               <button
                 type="button"

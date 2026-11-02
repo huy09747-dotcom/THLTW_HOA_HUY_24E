@@ -1,5 +1,6 @@
 "use client";
 
+import ChangePassword from "@/components/shop/ChangePassword";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/components/shop/CartProvider";
@@ -89,6 +90,7 @@ export default function ProfilePage() {
             </button>
           </div>
         </form>
+        <ChangePassword />
       </div>
     </section>
   );
