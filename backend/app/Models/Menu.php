@@ -11,5 +11,5 @@ class Menu extends Model
 
     protected $table = 'menu';
 
-    protected $fillable = ['name', 'link', 'type', 'table_id', 'status'];
+    protected $fillable = ['name', 'link', 'type', 'table_id', 'status', 'sort_order'];
 }

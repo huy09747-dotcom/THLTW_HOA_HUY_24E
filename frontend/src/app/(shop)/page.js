@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ProductCard from "@/components/shop/ProductCard";
+import ProductCarousel from "@/components/shop/ProductCarousel";
 import CategoryList from "@/components/shop/CategoryList";
 import { getProductPage } from "@/services/productServices";
 import { getCategories } from "@/services/categoryServices";
@@ -63,11 +63,7 @@ export default async function Home() {
           {result.status === "rejected" ? (
             <p role="alert" className="error-message">{result.reason.message}</p>
           ) : result.value.data.length ? (
-            <div className="product-grid">
-              {result.value.data.slice(0, 4).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <ProductCarousel products={result.value.data} label={title} />
           ) : (
             <div className="empty-panel"><p>Chưa có {title.toLowerCase()}.</p></div>
           )}

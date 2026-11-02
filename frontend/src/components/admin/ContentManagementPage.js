@@ -157,6 +157,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
                   <th>{isPost ? "Tiêu đề" : "Tên menu"}</th>
                   <th>{isPost ? "Slug" : "Đường dẫn"}</th>
                   <th>{isPost ? "Chủ đề" : "Loại menu"}</th>
+                  {!isPost && <th>Thứ tự</th>}
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -169,6 +170,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
                     <td>{isPost ? item.title : item.name}</td>
                     <td>{isPost ? item.slug : item.link}</td>
                     <td>{isPost ? item.topic_name || "—" : menuTypes[item.type]}</td>
+                    {!isPost && <td>{item.sort_order}</td>}
                     <td>{Number(item.status) === 1 ? "Hoạt động" : Number(item.status) === 2 ? "Chưa xuất bản" : "Ẩn"}</td>
                     <td>
                       <div className={styles.actions}>
@@ -188,7 +190,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
                     </td>
                   </tr>
                 ))}
-                {result.data.length === 0 && <tr><td colSpan={isPost ? 7 : 6}>Chưa có {title}.</td></tr>}
+                {result.data.length === 0 && <tr><td colSpan={7}>Chưa có {title}.</td></tr>}
               </tbody>
             </table>
           </div>

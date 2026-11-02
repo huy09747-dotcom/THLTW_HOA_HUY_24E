@@ -1,11 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { getCategories } from "@/services/categoryServices";
 import CategoryList from "./CategoryList";
 
-export default function CategoryMenu() {
+function MenuCategories({ categories }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const filters = {};
+
+  if (pathname === "/products") {
+    for (const key of ["q", "category", "brand", "min_price", "max_price", "hot", "sale"]) {
+      const value = searchParams.get(key)?.trim();
+      if (value) filters[key] = value;
+    }
+  }
+
+  return (
+    <CategoryList
+      compact
+      categories={categories}
+      selected={filters.category || ""}
+      filters={filters}
+    />
+  );
+}
+
+export default function CategoryMenu({label="Danh mục"}) {
   const [open, setOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,7 +81,7 @@ export default function CategoryMenu() {
         aria-expanded={open}
         aria-controls="category-menu-panel"
       >
-        Danh mục <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
+        {label} <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
       </button>
       {open && (
         <div
@@ -87,10 +109,9 @@ export default function CategoryMenu() {
                 if (event.target.closest("a")) setOpen(false);
               }}
             >
-              <CategoryList
-            compact
-            categories={categories}
-          />
+              <Suspense fallback={<p role="status">Đang tải danh mục…</p>}>
+                <MenuCategories categories={categories} />
+              </Suspense>
             </div>
           )}
         </div>

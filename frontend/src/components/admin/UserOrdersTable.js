@@ -75,7 +75,7 @@ export default function UserOrdersTable({ id }) {
               {result?.data.map((order, index) => (
                 <tr key={order.id}>
                   <td>{(result.from ?? 1) + index}</td>
-                  <td>{order.code || `#${order.id}`}</td>
+                  <td title={order.code || String(order.id)}>HH-{String(order.id).padStart(6, "0")}</td>
                   <td>{formatPrice(order.total)}</td>
                   <td>{payments[order.payment_status] || order.payment_status || "—"}</td>
                   <td>{statuses[order.status] || "—"}</td>

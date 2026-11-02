@@ -76,7 +76,6 @@ export default function AuthForm({ registerMode = false }) {
   const fields = registerMode
     ? [
         ["name", "Họ và tên", "text", "name"],
-        ["username", "Tên đăng nhập", "text", "username"],
         ["email", "Email", "email", "email"],
         ["phone", "Số điện thoại", "tel", "tel"],
         ["address", "Địa chỉ (không bắt buộc)", "text", "street-address"],
@@ -89,7 +88,7 @@ export default function AuthForm({ registerMode = false }) {
       ];
 
   return (
-    <section className="auth-page">
+    <section className={`auth-page${registerMode ? " register-page" : ""}`}>
       <p className="eyebrow">HH SHOP</p>
       <h1>{registerMode ? "Đăng ký thành viên" : "Đăng nhập"}</h1>
       <p>
@@ -131,6 +130,7 @@ export default function AuthForm({ registerMode = false }) {
           {busy ? "Đang xử lý…" : registerMode ? "Đăng ký" : "Đăng nhập"}
         </button>
       </form>
+      {!registerMode && <p><Link href="/forgot-password">Quên mật khẩu?</Link></p>}
       <p>
         {registerMode ? "Đã có tài khoản? " : "Chưa có tài khoản? "}
         <Link href={registerMode ? "/login" : "/register"}>

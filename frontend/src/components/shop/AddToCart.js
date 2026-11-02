@@ -1,14 +1,17 @@
 "use client";
 
+import ShopIcon from "./ShopIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import CartNotice from "./CartNotice";
 import { useCart } from "./CartProvider";
 
 export default function AddToCart({ product }) {
   const { user, loading, busy, error, changeCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const closeNotice = useCallback(() => setAdded(false), []);
   const router = useRouter();
   const max = Math.min(999, Number(product.qty));
   const disabled =
@@ -60,14 +63,17 @@ export default function AddToCart({ product }) {
           }}
         />
         <button
-          className="secondary-button"
+          className="secondary-button card-add-button"
+          title="Thêm vào giỏ hàng"
+          aria-label={"Thêm " + product.name + " vào giỏ hàng"}
           disabled={disabled}
           onClick={() => purchase(false)}
         >
-          Thêm vào giỏ hàng
+          <ShopIcon name="cartPlus" />
+          <span>Thêm vào giỏ</span>
         </button>
         <button
-          className="primary-button"
+          className="primary-button card-buy-button"
           disabled={disabled}
           onClick={() => purchase(true)}
         >
@@ -75,12 +81,7 @@ export default function AddToCart({ product }) {
         </button>
       </div>
       {added && (
-        <p
-          role="status"
-          className="success"
-        >
-          Đã thêm vào giỏ hàng. <Link href="/cart">Xem giỏ hàng →</Link>
-        </p>
+        <CartNotice message="Đã thêm vào giỏ hàng" onClose={closeNotice} />
       )}
       {error && (
         <p

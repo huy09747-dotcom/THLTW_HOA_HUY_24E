@@ -645,3 +645,19 @@
 .userBlocked { border: 1px solid #edc4bb; }
 .content .moneyInput input[type="text"] { border: 0; border-radius: 0; box-shadow: none; }
 @media(max-width:600px) { .content > div > .form { padding: 16px; } }
+
+.categoryRelation {
+  margin-top: 6px;
+  color: #5d786d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.brandWithLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.loginLogo {
+  margin-bottom: 18px;
+}

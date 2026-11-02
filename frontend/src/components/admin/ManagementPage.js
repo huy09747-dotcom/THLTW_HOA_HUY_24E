@@ -999,7 +999,20 @@ export default function ManagementPage({
                         />
                       </td>
 
-                      <td>{item.name}</td>
+                      <td>
+                        <strong>{item.name}</strong>
+                        {category && (
+                          <div className={styles.categoryRelation}>
+                            {Number(item.parent_id) === 0
+                              ? "Danh mục gốc"
+                              : "Thuộc: " + (
+                                (options.parent_id || []).find(
+                                  (parent) => Number(parent.id) === Number(item.parent_id)
+                                )?.name || "Danh mục #" + item.parent_id
+                              )}
+                          </div>
+                        )}
+                      </td>
 
                       <td>{item.slug}</td>
 

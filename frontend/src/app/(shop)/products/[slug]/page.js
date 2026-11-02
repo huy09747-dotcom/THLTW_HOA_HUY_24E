@@ -1,3 +1,4 @@
+import FavoriteButton from "@/components/shop/FavoriteButton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProduct, getRelatedProducts } from "@/services/productServices";
@@ -79,6 +80,7 @@ export default async function ProductDetailPage({ params }) {
               </dd>
             </div>
           </dl>
+          <div className="detail-favorite"><FavoriteButton productId={product.id} /><span>Lưu sản phẩm yêu thích</span></div>
           <AddToCart product={product} />
         </div>
       </div>
@@ -94,7 +96,12 @@ export default async function ProductDetailPage({ params }) {
         {relatedError ? (
           <p role="alert" className="error-message">{relatedError}</p>
         ) : relatedProducts.length ? (
-          <div className="product-grid related-product-grid">
+          <div
+            className="product-grid related-product-grid"
+            role="region"
+            aria-label="Danh sách sản phẩm liên quan, cuộn ngang để xem thêm"
+            tabIndex={0}
+          >
             {relatedProducts.map((item) => (
               <ProductCard
                 key={item.id}

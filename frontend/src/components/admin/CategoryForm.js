@@ -6,11 +6,11 @@ const fields = [
   { name: "image", label: "Hình ảnh", nullable: true, maxLength: 255 },
   {
     name: "parent_id",
-    label: "Danh mục cha",
+    label: "Thuộc danh mục",
     type: "select",
     min: 0,
     max: 4294967295,
-    default: "",
+    default: 0,
     required: true,
   },
   {
@@ -65,7 +65,7 @@ export default function CategoryForm(props) {
         names.unshift(parent.name);
         parentId = Number(parent.parent_id);
       }
-      return { ...item, name: names.join(" → ") };
+      return { ...item, name: names.join(" → ") + (Number(item.status) === 0 ? " (đang ẩn)" : "") };
     });
   return (
     <EntityForm
@@ -73,7 +73,7 @@ export default function CategoryForm(props) {
       fields={fields}
       options={{
         ...props.options,
-        parent_id: [{ id: 0, name: "Không có danh mục cha" }, ...parents],
+        parent_id: [{ id: 0, name: "Danh mục gốc (không có cha)" }, ...parents],
       }}
     />
   );

@@ -31,7 +31,7 @@ class ProductController extends Controller
             'max_price.min' => 'Gia khong duoc am.',
         ]);
 
-        $query = Product::with(['category', 'brand'])
+        $query = Product::withReviewSummary()->with(['category', 'brand'])
             ->latest('id');
 
         // Tìm kiếm theo tên, slug hoặc SKU
@@ -91,7 +91,7 @@ class ProductController extends Controller
     // Chi tiết sản phẩm
     public function show($slug)
     {
-        $product = Product::with(['category', 'brand'])
+        $product = Product::withReviewSummary()->with(['category', 'brand'])
             ->where('slug', $slug)->firstOrFail();
 
         return new ProductResource($product);

@@ -1,5 +1,6 @@
 "use client";
 
+import ShopLogo from "@/components/ShopLogo";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import styles from "../admin.module.css";
@@ -20,6 +21,7 @@ export default function AdminLoginPage() {
 
   return (
     <section className={styles.loginCard}>
+      <div className={styles.loginLogo}><ShopLogo size={56} /></div>
       <p className={styles.caption}>HH SHOP ADMIN</p>
       <h1 className={styles.title}>Đăng nhập quản trị</h1>
       <p className={styles.description}>Đăng nhập để quản lý HH Shop.</p>

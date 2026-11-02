@@ -75,8 +75,10 @@ class AdminReviewTest extends TestCase
   $this->patchJson('/api/admin/reviews/'.$id,['is_visible'=>false])->assertOk();
   $this->getJson('/api/products/1/reviews')->assertJsonPath('summary.count',1)->assertJsonPath('summary.average',5)->assertJsonMissing(['comment'=>'Needs work']);
   $this->getJson('/api/admin/reviews?visibility=hidden')->assertJsonCount(1,'data');
-  Sanctum::actingAs(User::findOrFail(2));$this->putJson('/api/products/1/my-review',['rating'=>4,'comment'=>'Edited','is_visible'=>true])->assertOk();
-  $this->assertDatabaseHas('product_reviews',['id'=>$id,'is_visible'=>0]);
+  Sanctum::actingAs(User::findOrFail(2));
+  $this->getJson('/api/products/1/my-review')->assertOk()->assertJsonPath('data',null);
+  $this->putJson('/api/products/1/my-review',['rating'=>4,'comment'=>'Edited','is_visible'=>true])->assertOk();
+  $this->assertDatabaseHas('product_reviews',['id'=>$id,'is_visible'=>1,'comment'=>'Edited']);
   Sanctum::actingAs(User::findOrFail(1));$this->patchJson('/api/admin/reviews/'.$id,['is_visible'=>true])->assertOk();
   $this->getJson('/api/products/1/reviews')->assertJsonPath('summary.count',2)->assertJsonPath('summary.average',4.5);
   $this->deleteJson('/api/admin/reviews/'.$id)->assertOk();$this->assertDatabaseCount('product_reviews',1);

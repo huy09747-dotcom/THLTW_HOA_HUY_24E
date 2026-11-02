@@ -47,15 +47,45 @@ class DonhangController extends Controller
             ],
         ]);
 
-        $donhang = Donhang::findOrFail($id);
-
-        $donhang->status = $validated['status'];
-        $donhang->save();
+        $donhang = \Illuminate\Support\Facades\DB::transaction(function () use ($id, $validated) {
+            $order = Donhang::whereKey($id)->lockForUpdate()->firstOrFail();
+            abort_if((int) $order->status === 5 && (int) $validated['status'] !== 5,
+                422, 'Khong the thay doi don da huy.');
+            if ((int) $validated['status'] === 5 && (int) $order->status !== 5) {
+                foreach ($order->items()->orderBy('product_id')->get() as $item) {
+                    \App\Models\Product::withTrashed()->whereKey($item->product_id)->increment('qty', (int) $item->qty);
+                }
+            }
+            if ((int) $validated['status'] === 4 && $order->payment_method === 'cod') {
+                $order->payment_status = 'paid';
+            }
+            $order->status = $validated['status'];
+            $order->save();
+            return $order;
+        });
 
         return response()->json([
             'message' => 'Cap nhat trang thai don hang thanh cong.',
             'data' => $donhang,
         ]);
+    }
+
+    public function cancelMyOrder(Request $request, int $id)
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $id) {
+            $order = Donhang::where('user_id', $request->user()->id)
+                ->whereKey($id)->lockForUpdate()->firstOrFail();
+            if ((int) $order->status === 5) return;
+            abort_unless((int) $order->status === 1 && $order->payment_status === 'unpaid',
+                422, 'Chi co the huy don chua thanh toan va dang cho xac nhan.');
+            foreach ($order->items()->orderBy('product_id')->get() as $item) {
+                \App\Models\Product::withTrashed()->whereKey($item->product_id)
+                    ->increment('qty', (int) $item->qty);
+            }
+            $order->status = 5;
+            $order->save();
+        });
+        return response()->json(['message' => 'Da huy don hang.']);
     }
 
     public function myOrder(Request $request, int $id)

@@ -1,8 +1,11 @@
 "use client";
 
+import FavoriteButton from "./FavoriteButton";
+import ShopIcon from "./ShopIcon";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import CartNotice from "./CartNotice";
 import { useCart } from "./CartProvider";
 import { formatPrice, imageUrl } from "@/utils/format";
 
@@ -35,6 +38,7 @@ export default function ProductCard({ product }) {
   const lock = useRef(false);
   const [action, setAction] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const closeNotice = useCallback(() => setFeedback(""), []);
   const available = Number(product.qty) > 0 && Number(product.is_available) === 1;
 
   async function purchase(buyNow) {
@@ -58,6 +62,7 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="product-card">
+      <FavoriteButton productId={product.id} />
       <Link
         href={`/products/${encodeURIComponent(product.slug)}`}
         className="product-card-visual"
@@ -78,6 +83,28 @@ export default function ProductCard({ product }) {
         <h3>
           <Link href={`/products/${encodeURIComponent(product.slug)}`}>{product.name}</Link>
         </h3>
+        <div className="product-card-rating">
+          {Number(product.review_count) > 0 ? (
+            <span
+              className="product-rating-summary"
+              aria-label={`${product.review_average} trên 5 sao, ${product.review_count} đánh giá`}
+            >
+              <span className="product-rating-stars" aria-hidden="true">
+                <span>★★★★★</span>
+                <span
+                  className="product-rating-fill"
+                  style={{ width: `${Math.max(0, Math.min(5, Number(product.review_average) || 0)) * 20}%` }}
+                >
+                  ★★★★★
+                </span>
+              </span>
+              <strong aria-hidden="true">{Number(product.review_average).toLocaleString("vi-VN")}</strong>
+              <span aria-hidden="true">({product.review_count})</span>
+            </span>
+          ) : (
+            <span className="product-rating-empty">Chưa có đánh giá</span>
+          )}
+        </div>
         {onSale ? (
           <div className="product-sale-prices">
             <p className="product-original-price">
@@ -101,15 +128,39 @@ export default function ProductCard({ product }) {
 
         </div>
         <div className="product-card-actions">
-          <button type="button" className="secondary-button" disabled={loading || busy || !!action || !available} onClick={() => purchase(false)} aria-label={"Thêm " + product.name + " vào giỏ hàng"}>
-            {action === "add" ? "Đang thêm…" : "Thêm vào giỏ hàng"}
+          <button
+            type="button"
+            className="secondary-button card-add-button"
+            disabled={loading || busy || !!action || !available}
+            onClick={() => purchase(false)}
+            title="Thêm vào giỏ hàng"
+            aria-label={action === "add" ? "Đang thêm vào giỏ hàng" : "Thêm " + product.name + " vào giỏ hàng"}
+            aria-busy={action === "add"}
+          >
+            <ShopIcon
+              name={action === "add" ? "loading" : "cartPlus"}
+              className={action === "add" ? "icon-spinning" : ""}
+            />
+            <span>{action === "add" ? "Đang thêm…" : "Thêm vào giỏ"}</span>
           </button>
-          <button type="button" className="primary-button" disabled={loading || busy || !!action || !available} onClick={() => purchase(true)} aria-label={"Mua ngay " + product.name}>
+          <button
+            type="button"
+            className="primary-button card-buy-button"
+            disabled={loading || busy || !!action || !available}
+            onClick={() => purchase(true)}
+            aria-label={"Mua ngay " + product.name}
+            aria-busy={action === "buy"}
+          >
             {action === "buy" ? "Đang xử lý…" : "Mua ngay"}
           </button>
         </div>
-        {feedback === "success" && <p className="product-card-feedback" role="status">Đã thêm vào giỏ hàng.</p>}
-        {feedback === "error" && <p className="product-card-feedback error-message" role="alert">{error || "Chưa thêm được sản phẩm. Vui lòng thử lại."}</p>}
+        {feedback && (
+          <CartNotice
+            success={feedback === "success"}
+            message={feedback === "success" ? "Đã thêm vào giỏ hàng" : error || "Chưa thêm được sản phẩm. Vui lòng thử lại."}
+            onClose={closeNotice}
+          />
+        )}
       </div>
     </article>
   );

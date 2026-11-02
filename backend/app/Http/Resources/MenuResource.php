@@ -11,6 +11,7 @@ class MenuResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'sort_order' => (int) $this->sort_order,
             'name' => $this->name,
             'link' => $this->link,
             'type' => $this->type,

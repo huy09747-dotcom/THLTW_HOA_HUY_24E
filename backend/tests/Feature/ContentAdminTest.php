@@ -27,6 +27,8 @@ class ContentAdminTest extends TestCase
             Schema::create($name, function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
+                $table->string('slug')->nullable();
+                $table->integer('status')->default(1);
                 $table->softDeletes();
             });
         }
@@ -54,10 +56,29 @@ class ContentAdminTest extends TestCase
                 $table->softDeletes();
             });
         }
+        (require database_path('migrations/2026_10_26_000003_add_menu_sort_order.php'))->up();
         DB::table('nguoidung')->insert([
             ['id' => 1, 'roles' => 'admin', 'status' => 1],
             ['id' => 2, 'roles' => 'user', 'status' => 1],
         ]);
+    }
+
+    public function test_public_menu_order_visibility_and_target_links(): void
+    {
+        DB::table('danhmuc')->insert(['id'=>1,'name'=>'Keyboard','status'=>1]);
+        foreach([
+            ['name'=>'Second','link'=>'/products','type'=>'custom','status'=>1,'sort_order'=>2,'table_id'=>null],
+            ['name'=>'First','link'=>'/wrong','type'=>'category','status'=>1,'sort_order'=>1,'table_id'=>1],
+            ['name'=>'Hidden','link'=>'/','type'=>'custom','status'=>0,'sort_order'=>0,'table_id'=>null],
+            ['name'=>'Missing','link'=>'/','type'=>'brand','status'=>1,'sort_order'=>0,'table_id'=>999],
+        ] as $row) DB::table('menu')->insert($row);
+        $this->getJson('/api/menus')->assertOk()->assertJsonCount(2,'data')->assertJsonPath('data.0.name','First')->assertJsonPath('data.0.link','/products?category=1');
+        DB::table('danhmuc')->where('id',1)->update(['status'=>0]);
+        $this->getJson('/api/menus')->assertJsonCount(1,'data');
+        $this->admin();
+        $this->putJson('/api/admin/menus/2',['name'=>'First','link'=>'/products?category=1','type'=>'category','table_id'=>1,'status'=>1,'sort_order'=>-1])->assertUnprocessable();
+        $this->deleteJson('/api/admin/menus/1')->assertOk();
+        $this->getJson('/api/menus')->assertJsonCount(0,'data');
     }
 
     private function admin(): void
@@ -139,7 +160,7 @@ class ContentAdminTest extends TestCase
         }
         $pageId = DB::table('baiviet')->insertGetId(array_replace($this->postData(), ['post_type' => 'page', 'slug' => 'about']));
         foreach (['posts', 'menus'] as $kind) {
-            $this->getJson("/api/admin/$kind")->assertOk()->assertJsonCount(10, 'data')->assertJsonPath('meta.total', 11)->assertJsonPath('data.0.id', 11);
+            $this->getJson("/api/admin/$kind")->assertOk()->assertJsonCount(10, 'data')->assertJsonPath('meta.total', 11)->assertJsonPath('data.0.id', $kind === 'menus' ? 1 : 11);
             $this->getJson("/api/admin/$kind?page=2")->assertJsonCount(1, 'data');
         }
         $this->deleteJson("/api/admin/posts/$pageId")->assertNotFound();
