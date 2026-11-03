@@ -101,6 +101,7 @@ export default function Header({ settings, menus }) {
           <Link href="/about">Giới thiệu</Link>
           <Link href="/contact">Liên hệ</Link>
           </>}
+          {!menus?.some(item => item.link === "/purchase-policy") && <Link href="/purchase-policy" className={pathname === "/purchase-policy" ? "nav-active" : ""}>Chính sách mua hàng</Link>}
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>
         </div>
       </nav>
