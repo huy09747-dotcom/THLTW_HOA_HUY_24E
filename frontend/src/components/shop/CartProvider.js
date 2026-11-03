@@ -128,6 +128,21 @@ export default function CartProvider({ children }) {
       return false;
     } finally { setBusy(false); }
   }
+  async function updateProfileAvatar(image) {
+    setBusy(true);
+    setError("");
+    try {
+      const body = new FormData();
+      body.append("image", image);
+      const result = await api("/profile/avatar", { method: "POST", body, token });
+      setUser(result.user);
+      return true;
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) clearSession();
+      setError(e.message);
+      return false;
+    } finally { setBusy(false); }
+  }
   async function logout() {
     setBusy(true);
     setError("");
@@ -175,7 +190,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ favoriteIds, favoriteBusy, favoriteError, favoriteNotice, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, changeCart, checkout }}
+      value={{ favoriteIds, favoriteBusy, favoriteError, favoriteNotice, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, updateProfileAvatar, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>

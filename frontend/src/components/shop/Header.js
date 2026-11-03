@@ -6,6 +6,7 @@ import ShopIcon from "./ShopIcon";
 import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
+import { imageUrl } from "@/utils/format";
 
 function FavoriteError() {
   const { favoriteError, favoriteNotice } = useCart();
@@ -58,7 +59,7 @@ export default function Header({ settings, menus }) {
             title={accountLabel}
             aria-label={accountLabel}
           >
-            <ShopIcon name="user" />
+            {user?.avatar ? <img className="header-avatar" src={imageUrl(user.avatar)} alt="" /> : <ShopIcon name="user" />}
           </Link>
           {user && (
             <Link href="/orders" className="shop-icon-button" title="Đơn hàng" aria-label="Đơn hàng của bạn">

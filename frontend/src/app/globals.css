@@ -1584,6 +1584,7 @@ button:disabled {
   color: var(--accent);
   transition: background-color 150ms ease;
 }
+.header-actions .header-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
 .header-actions .shop-icon-button:hover,
 .search-box .search-icon-button:hover {
   background: #edf4f0;

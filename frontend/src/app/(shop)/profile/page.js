@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/components/shop/CartProvider";
+import { imageUrl } from "@/utils/format";
 import styles from "./profile.module.css";
 
 const fields = [
@@ -13,7 +14,7 @@ const fields = [
 ];
 
 export default function ProfilePage() {
-  const { user, loading, busy, error, updateProfile, logout } = useCart();
+  const { user, loading, busy, error, updateProfile, updateProfileAvatar, logout } = useCart();
   const [notice, setNotice] = useState("");
 
   async function save(event) {
@@ -21,6 +22,15 @@ export default function ProfilePage() {
     setNotice("");
     const values = Object.fromEntries(new FormData(event.currentTarget));
     if (await updateProfile(values)) setNotice("Đã lưu thông tin cá nhân.");
+  }
+
+  async function uploadAvatar(event) {
+    const input = event.currentTarget;
+    const image = input.files?.[0];
+    if (!image) return;
+    setNotice("");
+    if (await updateProfileAvatar(image)) setNotice("Đã cập nhật ảnh đại diện.");
+    input.value = "";
   }
 
   if (loading) return <p className="auth-page" role="status">Đang tải hồ sơ…</p>;
@@ -39,13 +49,18 @@ export default function ProfilePage() {
   return (
     <section className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.avatar} aria-hidden="true">
-          {user.name?.trim().charAt(0).toUpperCase() || "HH"}
+        <div className={styles.avatar}>
+          {user.avatar ? <img src={imageUrl(user.avatar)} alt={`Ảnh đại diện của ${user.name}`} /> : <span aria-hidden="true">{user.name?.trim().charAt(0).toUpperCase() || "HH"}</span>}
         </div>
         <div>
           <p className="eyebrow">TÀI KHOẢN HH SHOP</p>
           <h1>Hồ sơ cá nhân</h1>
           <p className={styles.greeting}>{user.name}</p>
+          <label className={styles.avatarUpload}>
+            {busy ? "Đang tải ảnh…" : "Thay ảnh đại diện"}
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadAvatar} disabled={busy} />
+          </label>
+          <small className={styles.avatarHint}>JPG, PNG hoặc WebP · tối đa 5 MB</small>
         </div>
       </header>
       <div className={styles.content}>

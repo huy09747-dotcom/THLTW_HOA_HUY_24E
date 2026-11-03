@@ -27,7 +27,13 @@
   border-radius: 20px;
   font-size: 28px;
   font-weight: 600;
+  overflow: hidden;
 }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatarUpload { display: inline-flex; margin-top: 7px; color: #176454; font-size: 13px; font-weight: 600; cursor: pointer; }
+.avatarUpload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.avatarUpload:focus-within { outline: 2px solid #88c9b5; outline-offset: 3px; border-radius: 3px; }
+.avatarHint { display: block; margin-top: 4px; color: #6b8078; font-size: 12px; }
 .greeting { color: #5c766d; overflow-wrap: anywhere; }
 .content { padding: 28px 32px; }
 .content h2 { font-size: 18px; font-weight: 600; margin-bottom: 24px; }
