@@ -14,7 +14,7 @@ export default function FavoritesPage() {
   useEffect(() => {
     if (!token) return;
     let active = true;
-    api(`/favorites?page=${page}`, { token }).then(result => {
+    api(`/favorites?page=${page}&per_page=8`, { token }).then(result => {
       if (!active) return;
       if (page > (result.meta?.last_page || 1)) setPage(result.meta?.last_page || 1);
       else setState({ result, page, idsKey, token });

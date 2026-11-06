@@ -6,10 +6,14 @@ import ShopIcon from "./ShopIcon";
 import CategoryMenu from "./CategoryMenu";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/shop/CartProvider";
+import { imageUrl } from "@/utils/format";
 
 function FavoriteError() {
-  const { favoriteError } = useCart();
-  return favoriteError ? <p className="container error-message" role="alert">{favoriteError}</p> : null;
+  const { favoriteError, favoriteNotice } = useCart();
+  return <>
+    {favoriteError && <p className="container error-message" role="alert">{favoriteError}</p>}
+    {favoriteNotice && <p className="favorite-notice" role="status">{favoriteNotice}</p>}
+  </>;
 }
 
 export default function Header({ settings, menus }) {
@@ -58,7 +62,7 @@ export default function Header({ settings, menus }) {
             title={accountLabel}
             aria-label={accountLabel}
           >
-            <ShopIcon name="user" />
+            {user?.avatar ? <img className="header-avatar" src={imageUrl(user.avatar)} alt="" /> : <ShopIcon name="user" />}
           </Link>
           {user && (
             <Link href="/orders" className="shop-icon-button" title="Đơn hàng" aria-label="Đơn hàng của bạn">
@@ -100,6 +104,7 @@ export default function Header({ settings, menus }) {
           <Link href="/about">Giới thiệu</Link>
           <Link href="/contact">Liên hệ</Link>
           </>}
+          {!menus?.some(item => item.link === "/purchase-policy") && <Link href="/purchase-policy" className={pathname === "/purchase-policy" ? "nav-active" : ""}>Chính sách mua hàng</Link>}
           <span className="nav-note">Khám phá không gian công nghệ của bạn</span>
         </div>
       </nav>

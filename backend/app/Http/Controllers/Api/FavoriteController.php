@@ -17,10 +17,10 @@ class FavoriteController extends Controller
 
     public function index(Request $request)
     {
-        $request->validate(['page'=>'sometimes|integer|min:1|max:2147483647']);
+        $data=$request->validate(['page'=>'sometimes|integer|min:1|max:2147483647','per_page'=>'sometimes|integer|min:1|max:100']);
         $products=Product::withReviewSummary()->with(['category','brand'])->where('status',1)
             ->whereIn('id', DB::table('favorites')->where('user_id',$request->user()->id)->select('product_id'))
-            ->orderByDesc('id')->paginate(10);
+            ->orderByDesc('id')->paginate((int) ($data['per_page'] ?? 8));
         return ProductResource::collection($products);
     }
 

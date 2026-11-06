@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -84,6 +85,34 @@ class AuthController extends Controller
             $user->tokens()->where('id','!=',$request->user()->currentAccessToken()->id)->delete();
         });
         return response()->json(['message'=>'Đã đổi mật khẩu và đăng xuất các phiên khác.']);
+    }
+
+    public function updateProfileAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+        ], [
+            'image.required' => 'Vui lòng chọn ảnh đại diện.',
+            'image.image' => 'Tệp tải lên phải là hình ảnh.',
+            'image.mimes' => 'Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.',
+            'image.max' => 'Ảnh đại diện tối đa 5 MB.',
+        ]);
+
+        $user = $request->user();
+        $oldPath = str_starts_with((string) $user->avatar, '/storage/')
+            ? substr($user->avatar, strlen('/storage/'))
+            : null;
+        $path = $request->file('image')->store('images/avatars/'.$user->id, 'public');
+        abort_unless($path, 500, 'Không thể lưu ảnh đại diện.');
+
+        $user->avatar = '/storage/'.$path;
+        $user->save();
+
+        if ($oldPath && str_starts_with($oldPath, 'images/avatars/'.$user->id.'/')) {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        return response()->json(['message' => 'Đã cập nhật ảnh đại diện.', 'user' => $user->fresh()]);
     }
 
     public function logout(Request $request): JsonResponse

@@ -132,6 +132,7 @@ Route::get('/user', function (Request $request) {
 
 // Đăng xuất user / admin và thu hồi token hiện tại
 Route::put('/profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+Route::post('/profile/avatar', [AuthController::class, 'updateProfileAvatar'])->middleware('auth:sanctum');
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 

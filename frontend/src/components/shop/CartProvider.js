@@ -20,6 +20,7 @@ export default function CartProvider({ children }) {
   const [favoriteState, setFavoriteState] = useState({ token: null, ids: [] });
   const [favoriteBusy, setFavoriteBusy] = useState(false);
   const [favoriteError, setFavoriteError] = useState("");
+  const [favoriteNotice, setFavoriteNotice] = useState("");
   const favoriteIds = favoriteState.token === token ? favoriteState.ids : [];
   useEffect(() => {
     if (!token) return;
@@ -34,12 +35,18 @@ export default function CartProvider({ children }) {
     if (!token || favoriteBusy) return;
     setFavoriteBusy(true);
     setFavoriteError("");
+    setFavoriteNotice("");
     const selected = favoriteIds.includes(Number(id));
     try {
       await api(`/favorites/${id}`, { token, method: selected ? "DELETE" : "PUT" });
       setFavoriteState(previous => ({ token, ids: selected
         ? previous.ids.filter(value => value !== Number(id))
         : [...new Set([...previous.ids, Number(id)])] }));
+      setFavoriteNotice(selected
+        ? "Đã gỡ sản phẩm này khỏi sản phẩm yêu thích"
+        : "Đã thêm sản phẩm này vào phần sản phẩm yêu thích");
+      window.clearTimeout(window.favoriteNoticeTimeout);
+      window.favoriteNoticeTimeout = window.setTimeout(() => setFavoriteNotice(""), 3500);
     } catch (e) { setFavoriteError(e.message); }
     finally { setFavoriteBusy(false); }
   }
@@ -141,6 +148,21 @@ export default function CartProvider({ children }) {
       return false;
     } finally { setBusy(false); }
   }
+  async function updateProfileAvatar(image) {
+    setBusy(true);
+    setError("");
+    try {
+      const body = new FormData();
+      body.append("image", image);
+      const result = await api("/profile/avatar", { method: "POST", body, token });
+      setUser(result.user);
+      return true;
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) clearSession();
+      setError(e.message);
+      return false;
+    } finally { setBusy(false); }
+  }
   async function logout() {
     setBusy(true);
     setError("");
@@ -188,7 +210,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ guestToken, favoriteIds, favoriteBusy, favoriteError, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, changeCart, checkout }}
+      value={{ guestToken, favoriteIds, favoriteBusy, favoriteError, favoriteNotice, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, updateProfileAvatar, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>

@@ -2,6 +2,7 @@ import {api} from "@/services/api";
 import Header from "@/components/shop/Header";
 import Footer from "@/components/shop/Footer";
 import CartProvider from "@/components/shop/CartProvider";
+import ContactShortcuts from "@/components/shop/ContactShortcuts";
 
 import { getSiteSettings } from "@/services/siteContent";
 
@@ -17,6 +18,7 @@ export default async function ShopLayout({ children }) {
       <Header settings={settings} menus={menus} />
       <main id="main-content">{children}</main>
       <Footer settings={settings} />
+      <ContactShortcuts />
     </CartProvider>
   );
 }

@@ -1,5 +1,6 @@
 import ShopLogo from "@/components/ShopLogo";
 import Link from "next/link";
+import FooterSocialLinks from "./FooterSocialLinks";
 
 export default function Footer({ settings }) {
   return (
@@ -16,6 +17,7 @@ export default function Footer({ settings }) {
           <p>
             {settings?.tagline}
           </p>
+          <FooterSocialLinks email={settings?.contact_email || "khanhhoatrinh4@gmail.com"} phone={settings?.contact_phone || "0398716527"} />
         </div>
         <div>
           <h2>Khám phá</h2>
