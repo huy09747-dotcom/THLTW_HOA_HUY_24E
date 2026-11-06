@@ -4,7 +4,7 @@ const SERVER_API = (process.env.LARAVEL_API_URL || "http://127.0.0.1:8000/api").
   "",
 );
 
-export async function api(path, { token, method = "GET", body } = {}) {
+export async function api(path, { token, method = "GET", body, guestToken } = {}) {
   const base = typeof window === "undefined" ? SERVER_API : "/api/laravel";
   const multipart = body instanceof FormData;
   let response;
@@ -15,6 +15,7 @@ export async function api(path, { token, method = "GET", body } = {}) {
       signal: AbortSignal.timeout(path.includes("/payment") ? 35000 : 10000),
       headers: {
         Accept: "application/json",
+        ...(guestToken ? { "X-Guest-Token": guestToken } : {}),
         ...(body && !multipart ? { "Content-Type": "application/json" } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },

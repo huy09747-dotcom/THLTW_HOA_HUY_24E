@@ -1796,3 +1796,14 @@ button:disabled {
 .footer-brand-with-logo { display: inline-flex; align-items: center; gap: 12px; }
 .header-actions .header-favorite { color: #dc3636; }
 .header-actions .header-favorite:hover { color: #b91c1c; background: #fff0f0; }
+
+.category-guide { background: linear-gradient(120deg,#edf8f1,#edf4ff); border: 1px solid #cce2d7; border-radius: 12px; padding: 18px 22px; margin: 16px 0; color: #295c4d; font-size: 14px; }
+.category-guide p { margin: 6px 0; }
+.category-guide > span { color: #63796e; font-size: 13px; }
+.category-level { display: inline-block; padding: 4px 9px; border-radius: 6px; background: #e0f2e8; color: #176454; font-weight: 600; }
+.category-level[data-child="true"] { background: #eaf0ff; color: #3c60a6; }
+.category-path { display: block; margin-top: 6px; line-height: 1.6; }
+
+.feature-form textarea { width: 100%; border: 1px solid #bfd4cb; border-radius: 8px; padding: 10px; font: inherit; min-width: 0; resize: vertical; }
+.feature-full { grid-column: 1 / -1; }
+.feature-form select,.feature-actions select { border: 1px solid #bfd4cb; border-radius: 8px; padding: 10px; background: white; }

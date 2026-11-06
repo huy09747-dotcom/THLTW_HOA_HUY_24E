@@ -5,7 +5,7 @@ use App\Models\Banner;
 use Illuminate\Http\Request;
 class BannerController extends Controller {
  public function index(){return response()->json(Banner::visible()->where('position','slideshow')->orderBy('sort_order')->orderBy('id')->get());}
- public function adminIndex(){return response()->json(['data'=>Banner::orderBy('sort_order')->orderBy('id')->get()]);}
+ public function adminIndex(Request $r){return response()->json(\App\Support\AdminFilters::apply(Banner::query(),$r,['name'])->orderBy('sort_order')->orderBy('id')->paginate(10));}
  private function validated(Request $request):array {
   $safeUrl=function($attribute,$value,$fail){
    if(preg_match('/[\\\\\x00-\x20]/',$value) || !(preg_match('~^/(?!/)~',$value) || (filter_var($value,FILTER_VALIDATE_URL) && in_array(strtolower(parse_url($value,PHP_URL_SCHEME)),['http','https'])))) $fail('Đường dẫn phải bắt đầu bằng / hoặc http(s)://.');

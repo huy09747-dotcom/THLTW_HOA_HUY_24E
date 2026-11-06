@@ -26,6 +26,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
   const path = `/admin/${isPost ? "posts" : "menus"}`;
   const Form = isPost ? PostForm : MenuForm;
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [revision, setRevision] = useState(0);
@@ -43,7 +44,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
     async function load() {
       try {
         const [data, choices] = await Promise.all([
-          service.getList(page, query, trash, token),
+          service.getList(page, query, trash, token, status),
           trash ? Promise.resolve({}) : service.getOptions(token),
         ]);
         if (!active) return;
@@ -64,7 +65,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
     }
     load();
     return () => { active = false; };
-  }, [service, page, query, revision, trash, token]);
+  }, [service, page, query, revision, trash, token, status]);
 
   async function mutate(action) {
     setBusy(true);
@@ -128,6 +129,7 @@ export default function ContentManagementPage({ kind, trash = false }) {
             <label htmlFor="content-search">Tìm kiếm</label>
             <input id="content-search" value={search} maxLength={255} onChange={(event) => setSearch(event.target.value)} />
           </div>
+          <div className={styles.filterField}><label htmlFor="content-status">Trạng thái</label><select id="content-status" value={status} onChange={e=>{setStatus(e.target.value);setPage(1);}}><option value="">Tất cả</option><option value="1">Hiển thị</option><option value="0">Ẩn</option><option value="2">Bản nháp</option></select></div>
           <div className={styles.filterActions}>
             <button type="submit" className={styles.primaryButton} disabled={busy || loading}>Tìm kiếm</button>
           </div>

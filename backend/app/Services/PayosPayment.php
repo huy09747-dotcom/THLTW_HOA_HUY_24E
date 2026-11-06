@@ -93,7 +93,7 @@ class PayosPayment
             return ['url' => $attempt->url, 'amount' => $attempt->amount, 'currency' => 'VND'];
         }
 
-        $return = $base.'/orders/'.$order->id;
+        $return = $base.($order->guest_session_id ? '/guest-orders/' : '/orders/').$order->id;
         $body = [
             'orderCode' => (int) $attempt->reference,
             'amount' => (int) $attempt->amount,

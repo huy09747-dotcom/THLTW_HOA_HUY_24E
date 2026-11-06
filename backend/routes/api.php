@@ -262,7 +262,7 @@ Route::get('/pages/{slug}', [\App\Http\Controllers\Api\PageController::class, 's
 Route::get('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'show']);
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::get('/pages', [\App\Http\Controllers\Api\PageController::class, 'index']);
-    Route::put('/pages/{slug}', [\App\Http\Controllers\Api\PageController::class, 'update']);
+    Route::put('/pages/by-slug/{slug}', [\App\Http\Controllers\Api\PageController::class, 'update']);
     Route::get('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'show']);
     Route::put('/site-settings', [\App\Http\Controllers\Api\SiteSettingController::class, 'update']);
 });
@@ -328,4 +328,39 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [\App\Http\Controllers\Api\FavoriteController::class, 'index']);
     Route::put('/favorites/{id}', [\App\Http\Controllers\Api\FavoriteController::class, 'store'])->whereNumber('id');
     Route::delete('/favorites/{id}', [\App\Http\Controllers\Api\FavoriteController::class, 'destroy'])->whereNumber('id');
+});
+
+// Bo sung chuc nang theo bang yeu cau mon hoc
+Route::post('/contacts', [\App\Http\Controllers\Api\ContactController::class,'store'])->middleware('throttle:5,1');
+Route::put('/profile/password', [AuthController::class,'changePassword'])->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum','admin'])->prefix('admin')->group(function () {
+    Route::get('/topics',[\App\Http\Controllers\Api\TopicController::class,'index']);
+    Route::post('/topics',[\App\Http\Controllers\Api\TopicController::class,'save']);
+    Route::put('/topics/{id}',[\App\Http\Controllers\Api\TopicController::class,'save'])->whereNumber('id');
+    Route::delete('/topics/{id}',[\App\Http\Controllers\Api\TopicController::class,'destroy'])->whereNumber('id');
+    Route::post('/pages',[\App\Http\Controllers\Api\PageController::class,'save']);
+    Route::put('/pages/{id}',[\App\Http\Controllers\Api\PageController::class,'save'])->whereNumber('id');
+    Route::delete('/pages/{id}',[\App\Http\Controllers\Api\PageController::class,'destroy'])->whereNumber('id');
+    Route::delete('/users/{id}',[UserController::class,'destroy'])->whereNumber('id');
+    Route::delete('/coupons/{id}',[\App\Http\Controllers\Api\CouponController::class,'destroy'])->whereNumber('id');
+    Route::get('/contacts',[\App\Http\Controllers\Api\ContactController::class,'index']);
+    Route::put('/contacts/{id}',[\App\Http\Controllers\Api\ContactController::class,'update'])->whereNumber('id');
+    Route::delete('/contacts/{id}',[\App\Http\Controllers\Api\ContactController::class,'destroy'])->whereNumber('id');
+    Route::get('/stock/products',[\App\Http\Controllers\Api\StockController::class,'products']);
+    Route::get('/stock',[\App\Http\Controllers\Api\StockController::class,'index']);
+    Route::post('/stock',[\App\Http\Controllers\Api\StockController::class,'store']);
+});
+
+// Gio hang va dat hang cho khach chua dang nhap
+Route::post('/guest/session',[\App\Http\Controllers\Api\GuestCartController::class,'session'])->middleware('throttle:20,1');
+Route::prefix('guest')->middleware(\App\Http\Middleware\GuestSession::class)->group(function () {
+    Route::get('/cart',[\App\Http\Controllers\Api\GuestCartController::class,'index']);
+    Route::post('/cart/items',[\App\Http\Controllers\Api\GuestCartController::class,'change']);
+    Route::put('/cart/items/{id}',[\App\Http\Controllers\Api\GuestCartController::class,'change'])->whereNumber('id');
+    Route::delete('/cart/items/{id}',[\App\Http\Controllers\Api\GuestCartController::class,'change'])->whereNumber('id');
+    Route::post('/checkout',[\App\Http\Controllers\Api\CheckoutController::class,'store'])->middleware('throttle:10,1');
+    Route::post('/coupons/preview',[\App\Http\Controllers\Api\CouponController::class,'preview']);
+    Route::get('/orders/{id}',[\App\Http\Controllers\Api\GuestCartController::class,'show'])->whereNumber('id');
+    Route::post('/orders/{id}/payment',[\App\Http\Controllers\Api\GuestCartController::class,'payment'])->whereNumber('id')->middleware('throttle:10,1');
+    Route::post('/orders/{id}/verify',[\App\Http\Controllers\Api\GuestCartController::class,'verify'])->whereNumber('id')->middleware('throttle:20,1');
 });

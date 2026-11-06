@@ -11,6 +11,7 @@ export function useCart() {
 }
 export default function CartProvider({ children }) {
   const [token, setToken] = useState(null);
+  const [guestToken, setGuestToken] = useState(null);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState(EMPTY_CART);
   const [loading, setLoading] = useState(true);
@@ -55,13 +56,32 @@ export default function CartProvider({ children }) {
     setToken(null);
     setUser(null);
     setCart(EMPTY_CART);
+    // A full reload clears account-specific state and restores the guest cart.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/");
   }
   useEffect(() => {
     let active = true;
     async function restore() {
       try {
         const saved = sessionStorage.getItem("hh-shop-token");
-        if (!saved) return;
+        if (!saved) {
+          let guest = sessionStorage.getItem("hh-guest-token");
+          if (!guest) {
+            guest = (await api("/guest/session", { method: "POST" })).token;
+            sessionStorage.setItem("hh-guest-token", guest);
+          }
+          let basket;
+          try { basket = await api("/guest/cart", { guestToken: guest }); }
+          catch (e) {
+            if (e.status !== 401) throw e;
+            guest = (await api("/guest/session", { method: "POST" })).token;
+            sessionStorage.setItem("hh-guest-token", guest);
+            basket = await api("/guest/cart", { guestToken: guest });
+          }
+          if (active) { setGuestToken(guest); setCart(basket); }
+          return;
+        }
         const [account, basket] = await Promise.all([
           api("/user", { token: saved }),
           api("/cart", { token: saved }),
@@ -161,7 +181,7 @@ export default function CartProvider({ children }) {
     setError("");
     try {
       setCart(
-        await api(path, { method, body, token }),
+        await api(token ? path : `/guest${path}`, { method, body, token, guestToken }),
       );
       return true;
     } catch (e) {
@@ -177,7 +197,7 @@ export default function CartProvider({ children }) {
     setBusy(true);
     setError("");
     try {
-      const result = await api("/checkout", { method: "POST", body, token });
+      const result = await api(token ? "/checkout" : "/guest/checkout", { method: "POST", body, token, guestToken });
       setCart(EMPTY_CART);
       return result.data;
     } catch (e) {
@@ -190,7 +210,7 @@ export default function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ favoriteIds, favoriteBusy, favoriteError, favoriteNotice, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, updateProfileAvatar, changeCart, checkout }}
+      value={{ guestToken, favoriteIds, favoriteBusy, favoriteError, favoriteNotice, toggleFavorite, user, token, cart, loading, busy, error, login, register, logout, updateProfile, updateProfileAvatar, changeCart, checkout }}
     >
       {children}
     </CartContext.Provider>

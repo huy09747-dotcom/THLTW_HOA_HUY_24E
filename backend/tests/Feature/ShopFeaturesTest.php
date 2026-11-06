@@ -14,6 +14,8 @@ use Tests\TestCase;
 
 class ShopFeaturesTest extends TestCase
 {
+    use \Tests\CompletionSchema;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,6 +47,7 @@ class ShopFeaturesTest extends TestCase
             $t->integer('rating'); $t->boolean('is_visible')->default(true);
         });
         (require database_path('migrations/2026_11_02_000001_create_shop_features.php'))->up();
+        $this->completionSchema();
         DB::table('nguoidung')->insert([
             ['id'=>1,'status'=>1,'roles'=>'user','name'=>'Customer','email'=>'test@example.com'],
             ['id'=>2,'status'=>1,'roles'=>'user','name'=>'Other','email'=>'other@example.com'],
@@ -56,14 +59,14 @@ class ShopFeaturesTest extends TestCase
         Sanctum::actingAs(User::find(1));
     }
 
-    private function coupon(array $changes=[]): int
+    protected function coupon(array $changes=[]): int
     {
         return DB::table('coupons')->insertGetId(array_merge([
             'code'=>'SAVE10','type'=>'percent','value'=>10,'min_order'=>10000,'active'=>1,
         ],$changes));
     }
 
-    private function shipping(): array
+    protected function shipping(): array
     {
         return ['name'=>'Customer','phone'=>'0901234567','email'=>'test@example.com','address'=>'Test address','payment_method'=>'cod'];
     }
@@ -179,10 +182,11 @@ class ShopFeaturesTest extends TestCase
         $order->status=2; $order->save();
         Mail::assertQueued(OrderStatusChanged::class,1);
         Sanctum::actingAs(User::find(3));
+        $this->patchJson('/api/donhangs/'.$order->id.'/status',['status'=>3])->assertOk();
         $this->patchJson('/api/donhangs/'.$order->id.'/status',['status'=>4])->assertOk();
         $this->assertDatabaseHas('donhang',['id'=>$order->id,'payment_status'=>'paid','status'=>4]);
-        Mail::assertQueued(OrderStatusChanged::class,2);
+        Mail::assertQueued(OrderStatusChanged::class,3);
         $this->patchJson('/api/donhangs/'.$order->id.'/status',['status'=>4])->assertOk();
-        Mail::assertQueued(OrderStatusChanged::class,2);
+        Mail::assertQueued(OrderStatusChanged::class,3);
     }
 }

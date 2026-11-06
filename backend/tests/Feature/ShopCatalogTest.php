@@ -33,6 +33,9 @@ class ShopCatalogTest extends TestCase
             $table->timestamps();
             $table->softDeletes();
         });
+        \Illuminate\Support\Facades\Schema::create('product_reviews', function (\Illuminate\Database\Schema\Blueprint $t) {
+            $t->id(); $t->unsignedBigInteger('product_id'); $t->integer('rating'); $t->boolean('is_visible')->default(true);
+        });
         for ($id = 1; $id <= 12; $id++) {
             DB::table('sanpham')->insert([
                 'id' => $id, 'name' => "Phone $id", 'slug' => "phone-$id",

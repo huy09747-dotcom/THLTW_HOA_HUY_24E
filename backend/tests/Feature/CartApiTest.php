@@ -27,6 +27,9 @@ class CartApiTest extends TestCase
         ] as $sql) {
             DB::statement($sql);
         }
+        \Illuminate\Support\Facades\Schema::create('product_reviews', function (\Illuminate\Database\Schema\Blueprint $t) {
+            $t->id(); $t->unsignedBigInteger('product_id'); $t->integer('rating'); $t->boolean('is_visible')->default(true);
+        });
         DB::table('sanpham')->insert(['id' => 1, 'name' => 'Test product', 'slug' => 'test-product', 'price_sale' => 200, 'price_buy' => 100, 'qty' => 5, 'status' => 1, 'is_available' => 1]);
     }
 

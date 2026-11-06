@@ -49,7 +49,7 @@ export default function CheckoutForm({ onSuccess }) {
           id="recipient-name"
           name="name"
           autoComplete="name"
-          defaultValue={user.name || ""}
+          defaultValue={user?.name || ""}
           maxLength={255}
           required
         />
@@ -61,7 +61,7 @@ export default function CheckoutForm({ onSuccess }) {
           name="phone"
           type="tel"
           autoComplete="tel"
-          defaultValue={user.phone || ""}
+          defaultValue={user?.phone || ""}
           pattern="[+]?[0-9]{9,15}"
           title="Nhập 9 đến 15 chữ số, có thể bắt đầu bằng dấu +"
           required
@@ -74,7 +74,7 @@ export default function CheckoutForm({ onSuccess }) {
           name="email"
           type="email"
           autoComplete="email"
-          defaultValue={user.email || ""}
+          defaultValue={user?.email || ""}
           maxLength={255}
           required
         />
@@ -85,7 +85,7 @@ export default function CheckoutForm({ onSuccess }) {
           id="recipient-address"
           name="address"
           autoComplete="street-address"
-          defaultValue={user.address || ""}
+          defaultValue={user?.address || ""}
           maxLength={255}
           rows={2}
           required

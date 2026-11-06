@@ -11,6 +11,7 @@ use Tests\TestCase;
 
 class CheckoutTest extends TestCase
 {
+    use \Tests\CompletionSchema;
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +44,7 @@ class CheckoutTest extends TestCase
                 $table->softDeletes();
             });
         }
+        $this->completionSchema();
         DB::table('nguoidung')->insert([['id' => 1, 'status' => 1], ['id' => 2, 'status' => 1]]);
         DB::table('giohang')->insert([['id' => 1, 'nguoidung_id' => 1], ['id' => 2, 'nguoidung_id' => 2]]);
         DB::table('sanpham')->insert(['id' => 1, 'name' => 'Phone', 'status' => 1, 'is_available' => 1, 'price_sale' => 100, 'qty' => 5]);

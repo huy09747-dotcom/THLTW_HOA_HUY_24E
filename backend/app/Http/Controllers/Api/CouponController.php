@@ -14,7 +14,7 @@ class CouponController extends Controller
     public function index(Request $request)
     {
         $request->validate(['page'=>'sometimes|integer|min:1|max:2147483647']);
-        $coupons = DB::table('coupons')->select('coupons.*')->selectSub(
+        $coupons = \App\Support\AdminFilters::apply(DB::table('coupons'),$request,['code'],'active')->select('coupons.*')->selectSub(
             DB::table('coupon_usages')->selectRaw('COUNT(*)')->whereColumn('coupon_id', 'coupons.id'), 'used'
         )->orderByDesc('id')->paginate(10);
         return response()->json($coupons);
@@ -49,13 +49,27 @@ class CouponController extends Controller
         return response()->json(['message'=>'Đã lưu mã giảm giá.']);
     }
 
+    public function destroy(int $id)
+    {
+        DB::transaction(function() use($id) {
+            abort_unless(DB::table('coupons')->where('id',$id)->lockForUpdate()->first(),404);
+            abort_if(DB::table('coupon_usages')->where('coupon_id',$id)->exists(),422,'Mã đã sử dụng. Hãy tắt hoạt động để giữ lịch sử.');
+            DB::table('coupons')->where('id',$id)->delete();
+        });
+        return response()->json(['message'=>'Đã xóa mã giảm giá.']);
+    }
+
     public function preview(Request $request, CouponDiscount $discounts)
     {
         $data = $request->validate(['coupon_code'=>'required|string|max:40']);
-        $items = ChiTietGioHang::whereHas('giohang', fn($q)=>$q->where('nguoidung_id',$request->user()->id))->with('sanpham')->get();
         $subtotal=0;
+        if ($request->attributes->has('guest_session')) {
+            $session=DB::table('guest_sessions')->find($request->attributes->get('guest_session')->id);
+            $items=collect(json_decode($session->items ?? '[]',true))->map(fn($i)=>(object)['sanpham_id'=>$i['product_id'],'soluong'=>$i['quantity']]);
+        } else $items=ChiTietGioHang::whereHas('giohang',fn($q)=>$q->where('nguoidung_id',$request->user()->id))->get();
+        $products=\App\Models\Product::whereIn('id',$items->pluck('sanpham_id'))->get()->keyBy('id');
         foreach ($items as $item) {
-            $p=$item->sanpham;
+            $p=$products->get($item->sanpham_id);
             abort_unless($p && $p->status==1 && $p->is_available && $p->final_price !== null && $item->soluong <= $p->qty,422,'Vui lòng kiểm tra lại giỏ hàng.');
             $subtotal += $p->final_price * $item->soluong;
         }

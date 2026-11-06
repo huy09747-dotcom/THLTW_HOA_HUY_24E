@@ -29,7 +29,10 @@ export default function Header({ settings, menus }) {
           className="brand"
           aria-label={(settings?.site_name || "HH Shop") + " - Trang chủ"}
         >
-          <ShopLogo />
+          {settings?.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={settings.logo} alt="" width={48} height={48} style={{objectFit:"contain"}} />
+          ) : <ShopLogo />}
           <span>
             {settings?.site_name || "HH Shop"}
             <small>{settings?.tagline}</small>

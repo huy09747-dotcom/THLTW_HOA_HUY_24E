@@ -8,7 +8,7 @@ class CheckoutRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->status === 1;
+        return $this->user()?->status === 1 || $this->attributes->has('guest_session');
     }
 
     public function rules(): array

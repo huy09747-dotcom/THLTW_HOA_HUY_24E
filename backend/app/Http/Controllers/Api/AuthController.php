@@ -74,6 +74,19 @@ class AuthController extends Controller
         return response()->json(['message' => 'Đã cập nhật hồ sơ.', 'user' => $user->fresh()]);
     }
 
+    public function changePassword(Request $request): JsonResponse
+    {
+        $data=$request->validate(['current_password'=>'required|string|max:255','password'=>'required|string|min:8|max:255|confirmed']);
+        abort_unless(Hash::check($data['current_password'],$request->user()->password),422,'Mật khẩu hiện tại không đúng.');
+        DB::transaction(function() use($request,$data) {
+            $user=User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
+            abort_unless(Hash::check($data['current_password'],$user->password),422,'Mật khẩu đã thay đổi, vui lòng thử lại.');
+            $user->password=$data['password']; $user->save();
+            $user->tokens()->where('id','!=',$request->user()->currentAccessToken()->id)->delete();
+        });
+        return response()->json(['message'=>'Đã đổi mật khẩu và đăng xuất các phiên khác.']);
+    }
+
     public function updateProfileAvatar(Request $request): JsonResponse
     {
         $request->validate([

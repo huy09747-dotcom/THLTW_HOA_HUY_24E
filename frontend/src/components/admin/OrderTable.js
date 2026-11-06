@@ -41,6 +41,8 @@ function paymentMethodLabel(method) {
 export default function OrderTable() {
   const { token } = useAdminAuth();
 
+  const [filterRevision, setFilterRevision] = useState(0);
+  const [filters, setFilters] = useState("");
   const [page, setPage] = useState(1);
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +60,7 @@ export default function OrderTable() {
 
     async function loadOrders() {
       try {
-        const result = await getOrders(page, token);
+        const result = await getOrders(page, token, filters);
         if (!active) return;
         setOrders(result.data);
         setCurrentPage(result.current_page);
@@ -74,7 +76,7 @@ export default function OrderTable() {
     return () => {
       active = false;
     };
-  }, [page, token]);
+  }, [page, token, filters, filterRevision]);
 
   function changePage(nextPage) {
     setLoading(true);
@@ -141,6 +143,14 @@ export default function OrderTable() {
 
   return (
     <div>
+      <form className="feature-panel feature-actions" onSubmit={e => {
+        e.preventDefault(); setLoading(true); setPage(1); setFilters(new URLSearchParams(new FormData(e.currentTarget)).toString()); setFilterRevision(n => n + 1);
+      }}>
+        <input name="search" placeholder="Mã đơn / tên / email / điện thoại" aria-label="Tìm đơn" maxLength={255} />
+        <select name="status" aria-label="Trạng thái"><option value="">Tất cả trạng thái</option>{STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
+        <label>Từ ngày<input type="date" name="from" /></label><label>Đến ngày<input type="date" name="to" /></label>
+        <button>Tìm kiếm / Lọc</button>
+      </form>
       {error && (
         <p role="alert" style={{ color: "red", marginBottom: 16 }}>
           {error}
@@ -187,13 +197,13 @@ export default function OrderTable() {
                       <select
                         aria-label={`Trạng thái đơn ${order.code || order.id}`}
                         value={Number(order.status)}
-                        disabled={busyId !== null}
+                        disabled={busyId !== null || [4,5].includes(Number(order.status))}
                         onChange={(event) =>
                           handleUpdateStatus(order, event.target.value)
                         }
                       >
                         {STATUS_OPTIONS.map((status) => (
-                          <option key={status.value} value={status.value}>
+                          <option key={status.value} value={status.value} disabled={!({1:[1,2,5],2:[2,3,5],3:[3,4],4:[4],5:[5]}[Number(order.status)] || []).includes(status.value)}>
                             {status.label}
                           </option>
                         ))}
@@ -376,6 +386,8 @@ export default function OrderTable() {
                   <p>Đơn hàng chưa có chi tiết sản phẩm.</p>
                 )}
 
+                <h3>Lịch sử trạng thái</h3>
+                {selectedOrder.history?.length ? <ol>{selectedOrder.history.map(row => <li key={row.id}>{new Date(row.created_at).toLocaleString("vi-VN")} · {row.from_status ? statusLabel(row.from_status) + " → " : ""}{statusLabel(row.to_status)} · {row.actor_id ? `Tài khoản #${row.actor_id}` : "Hệ thống"}</li>)}</ol> : <p>Chưa có lịch sử trước thời điểm cập nhật chức năng.</p>}
                 <h3 style={{ marginTop: 20 }}>
                   Tổng tiền: {formatPrice(selectedOrder.total ?? 0)}
                 </h3>

@@ -41,7 +41,7 @@ function createProxy({ port = 8000, maxBytes = 6 * 1024 * 1024 } = {}) {
     request.on("end", () => {
       if (exceeded) return;
       const headers = {};
-      for (const name of ["accept", "content-type", "authorization", "user-agent", "x-requested-with"]) {
+      for (const name of ["accept", "content-type", "authorization", "user-agent", "x-requested-with", "x-guest-token"]) {
         if (request.headers[name]) headers[name] = request.headers[name];
       }
       headers["content-length"] = String(size);

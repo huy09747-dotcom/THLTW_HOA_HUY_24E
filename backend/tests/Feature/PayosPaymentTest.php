@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class PayosPaymentTest extends TestCase
 {
+    use \Tests\CompletionSchema;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,6 +48,7 @@ class PayosPaymentTest extends TestCase
         Schema::table('nguoidung', function(Blueprint $t){$t->string('name')->nullable();});
         (require database_path('migrations/2026_10_26_000001_create_reviews_and_payments.php'))->up();
         (require database_path('migrations/2026_10_26_000002_add_review_visibility.php'))->up();
+        $this->completionSchema();
         DB::table('nguoidung')->insert([['id' => 1, 'status' => 1], ['id' => 2, 'status' => 1]]);
         DB::table('giohang')->insert([['id' => 1, 'nguoidung_id' => 1], ['id' => 2, 'nguoidung_id' => 2]]);
         DB::table('sanpham')->insert(['id' => 1, 'name' => 'Phone', 'status' => 1, 'is_available' => 1, 'price_sale' => 100, 'qty' => 5]);

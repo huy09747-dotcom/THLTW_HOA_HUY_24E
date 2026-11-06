@@ -43,7 +43,7 @@ export default function ProductCard({ product }) {
 
   async function purchase(buyNow) {
     if (lock.current || busy || loading || !available) return;
-    if (!user) { router.push("/login"); return; }
+
     lock.current = true;
     setAction(buyNow ? "buy" : "add");
     setFeedback("");

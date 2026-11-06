@@ -16,7 +16,15 @@ class DonhangController extends Controller
             'page' => 'sometimes|integer|min:1|max:2147483647',
         ]);
 
-        $donhangs = Donhang::with('nguoidung')
+        $request->validate(['search'=>'nullable|string|max:255','status'=>'nullable|integer|between:1,5','from'=>'nullable|date','to'=>'nullable|date|after_or_equal:from']);
+        $query=\App\Support\AdminFilters::apply(Donhang::with('nguoidung'),$request,['code','name','phone','email']);
+        if ($request->filled('search') && preg_match('/^HH-(\d+)$/i',$request->search,$match)) {
+            $query=Donhang::with('nguoidung')->whereKey((int)$match[1]);
+            if ($request->filled('status')) $query->where('status',$request->status);
+        }
+        if ($request->filled('from')) $query->whereDate('created_at','>=',$request->from);
+        if ($request->filled('to')) $query->whereDate('created_at','<=',$request->to);
+        $donhangs = $query
             ->latest('id')
             ->paginate(10);
 
@@ -30,6 +38,7 @@ class DonhangController extends Controller
             'items.sanpham',
         ])->findOrFail($id);
 
+        $donhang->setAttribute('history', \Illuminate\Support\Facades\DB::table('order_status_history')->where('order_id',$id)->orderBy('id')->get());
         return response()->json([
             'message' => 'Chi tiet don hang.',
             'data' => $donhang,
@@ -49,6 +58,10 @@ class DonhangController extends Controller
 
         $donhang = \Illuminate\Support\Facades\DB::transaction(function () use ($id, $validated) {
             $order = Donhang::whereKey($id)->lockForUpdate()->firstOrFail();
+            $allowed=[1=>[1,2,5],2=>[2,3,5],3=>[3,4],4=>[4],5=>[5]];
+            abort_unless(in_array((int)$validated['status'],$allowed[(int)$order->status] ?? [],true),422,'Không thể chuyển trạng thái theo thứ tự này.');
+            abort_if((int)$validated['status']===2 && $order->payment_method!=='cod' && $order->payment_status!=='paid',422,'Đơn chuyển khoản cần thanh toán trước khi xác nhận.');
+            abort_if((int)$validated['status']===4 && $order->payment_method!=='cod' && $order->payment_status!=='paid',422,'Đơn chưa thanh toán.');
             abort_if((int) $order->status === 5 && (int) $validated['status'] !== 5,
                 422, 'Khong the thay doi don da huy.');
             if ((int) $validated['status'] === 5 && (int) $order->status !== 5) {

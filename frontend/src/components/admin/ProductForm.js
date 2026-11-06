@@ -1,3 +1,4 @@
+import { categoryOptions } from "@/utils/categories";
 import EntityForm from "./EntityForm";
 
 const fields = [
@@ -67,6 +68,7 @@ export default function ProductForm(props) {
     <EntityForm
       {...props}
       fields={fields}
+      options={{ ...props.options, category_id: categoryOptions(props.options?.category_id || []) }}
     />
   );
 }

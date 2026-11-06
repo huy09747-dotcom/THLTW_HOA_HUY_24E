@@ -46,7 +46,7 @@
         </p>
         <p style="color:#60766d;font-size:14px">Bạn có thể xem trạng thái thanh toán và tiến trình giao hàng trong chi tiết đơn hàng.</p>
         <p>
-            <a href="{{ rtrim(config('payments.frontend'), '/').'/orders/'.$order->id }}"
+            <a href="{{ rtrim(config('payments.frontend'), '/').($order->guest_session_id ? '/guest-orders/' : '/orders/').$order->id }}"
                style="display:inline-block;padding:12px 20px;background:#176454;color:#ffffff;text-decoration:none;border-radius:8px">
                 Xem đơn hàng
             </a>

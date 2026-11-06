@@ -20,8 +20,10 @@ class PostController extends Controller
         $data = $request->validate([
             'page' => 'sometimes|integer|min:1|max:2147483647',
             'search' => 'nullable|string|max:255',
+            'status' => 'nullable|integer|in:0,1,2',
         ]);
         $query = $this->query();
+        if (isset($data['status'])) $query->where('status', $data['status']);
         if (!empty($data['search'])) {
             $query->where('title', 'like', '%' . $data['search'] . '%');
         }
