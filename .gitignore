@@ -81,3 +81,11 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 *.cache
+
+
+# Submission configuration and uploaded images shared in the private repository.
+!/backend/.env
+!/frontend/.env
+!/frontend/.env.local
+!/frontend/.env.shared.example
+!/backend/storage/app/public/**
