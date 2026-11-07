@@ -14,14 +14,12 @@ Chạy các lệnh từ thư mục gốc repository, nơi có `backend`, `fronte
 
 ### 1. Database
 
-Khởi động MySQL. Tạo database trống và nhập bản đầy đủ duy nhất trong `docs` bằng MySQL CLI.
+1. Mở Laragon, bật MySQL và mở phpMyAdmin.
+2. Ở trang chính phpMyAdmin, bấm tab Import (Nhập).
+3. Chọn file docs/THLTW_DB_HOA_HUY_24E.sql rồi bấm Import hoặc Go (Thực hiện).
+4. Khi báo thành công, làm mới danh sách bên trái và mở thltw_huy_hoa_24e để kiểm tra các bảng.
 
-```powershell
-mysql -u root -p --execute="CREATE DATABASE IF NOT EXISTS thltw_huy_hoa_24e CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p --default-character-set=utf8mb4 thltw_huy_hoa_24e --execute="source docs/THLTW_DB_HOA_HUY_24E.sql"
-```
-
-Có thể dùng HeidiSQL hoặc phpMyAdmin để tạo database, chọn database đó và import cùng file SQL. Bản nhập chứa cấu trúc, dữ liệu nghiệp vụ và lịch sử migration hiện tại. Hãy nhập vào database dành riêng cho bài này vì file SQL tạo lại các bảng có cùng tên.
+File SQL tự tạo database thltw_huy_hoa_24e với mã hóa utf8mb4 rồi nạp dữ liệu. Tài khoản MySQL dùng trong phpMyAdmin cần quyền tạo database. Nếu nhập lại vào database đã có, file SQL sẽ tạo lại các bảng trùng tên và nạp dữ liệu từ bản nộp.
 
 ### 2. Backend
 

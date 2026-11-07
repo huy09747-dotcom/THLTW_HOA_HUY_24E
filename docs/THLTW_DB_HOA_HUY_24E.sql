@@ -1,6 +1,9 @@
 -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: thltw_huy_hoa_24e
+CREATE DATABASE IF NOT EXISTS `thltw_huy_hoa_24e` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `thltw_huy_hoa_24e`;
+
 -- ------------------------------------------------------
 -- Server version	8.4.3
 
